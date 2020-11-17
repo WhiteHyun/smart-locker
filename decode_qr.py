@@ -1,5 +1,6 @@
-import pyzbar.pyzbar as pyzbar
+import sys
 import cv2
+import pyzbar.pyzbar as pyzbar
 
 END_KEY = 27
 """
@@ -16,10 +17,15 @@ if __name__ == "__main__":
     i = 0  # 캡처 저장용 변수
 
     # 비디오 캡처가 준비되었는지
-    while cap.isOpened():
+    if not cap.isOpened():
+        print("camera open failed")
+        sys.exit()
+
+    while True:
         ret, img = cap.read()  # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
 
         if not ret:
+            print("camera read failed")
             break
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # GRAY 1채널로 변경
