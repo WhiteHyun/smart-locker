@@ -24,13 +24,14 @@ if __name__ == "__main__":
     while True:
         ret, img = cap.read()  # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
 
-        if not ret:
+        if not ret:  # 카메라 캡처에 실패할 경우
             print("camera read failed")
             break
 
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # GRAY 1채널로 변경
+        # RGB 3채널로 되어있는 이미지 파일을 GRAY 1채널로 변경하여 저장
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석한다.
+        decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석
         for d in decoded:
             x, y, w, h = d.rect
             barcode_data = d.data.decode("utf-8")  # 디코드된 값 또는 파일
