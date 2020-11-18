@@ -2,16 +2,7 @@ import sys
 import cv2
 import pyzbar.pyzbar as pyzbar
 
-END_KEY = 27
-"""
-    VideoCapture(index, apiPreference=None) -> retval
-    index: camera_id + domain_offset (CAP_*)id
-        camera_id == 0이면 시스템 기본 카메라
-        domain_offset == 0 이면 auto detect.
-        기본카메라를 기본 방법으로 열려면 index에 0을 전달
-    apiPreference: 선호하는 카메라 처리 방법을 지정
-    retval: cv2.VideoCapture 객체
-"""
+ESC_KEY = 27
 if __name__ == "__main__":
     cap = cv2.VideoCapture(0)
     i = 0  # 캡처 저장용 변수
@@ -46,7 +37,7 @@ if __name__ == "__main__":
         cv2.imshow('img', img)
 
         key = cv2.waitKey(1)
-        if key == ord('q') or key == END_KEY:
+        if key == ord('q') or key == ESC_KEY:
             break
         elif key == ord('s'):
             i += 1
