@@ -81,27 +81,27 @@ if __name__ == "__main__":
             break
 
         # RGB 3채널로 되어있는 이미지 파일을 GRAY 1채널로 변경하여 저장
-        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석
-        # for d in decoded:
-        #     x, y, w, h = d.rect
-        #     barcode_data = d.data.decode("utf-8")  # 디코드된 값 또는 파일
-        #     barcode_type = d.type   # QR타입인지 바코드타입인지 확인
+        decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석
+        for d in decoded:
+            x, y, w, h = d.rect
+            barcode_data = d.data.decode("utf-8")  # 디코드된 값 또는 파일
+            barcode_type = d.type   # QR타입인지 바코드타입인지 확인
 
-        #     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-        #     text = f"{barcode_data} ({barcode_type})"
-        #     cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX,
-        #                 1, (0, 255, 255), 2, cv2.LINE_AA)
+            text = f"{barcode_data} ({barcode_type})"
+            cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, (0, 255, 255), 2, cv2.LINE_AA)
 
         cv2.imshow('img', img)
 
         key = cv2.waitKey(1)
         if key == ord('q') or key == ESC_KEY:
             break
-        # elif key == ord('s'):
-        #     i += 1
-        #     cv2.imwrite(f'capture_{i:03d}.jpg', img)
+        elif key == ord('s'):
+            i += 1
+            cv2.imwrite(f'capture_{i:03d}.jpg', img)
     cap.release()
     cv2.destroyAllWindows()
