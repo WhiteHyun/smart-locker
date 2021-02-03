@@ -27,7 +27,7 @@ class QRCodes:
 
         try:
             import qrcode
-            from lib.error import QRCodeError
+            from error.error import QRCodeError
             qr = qrcode.make(url)
             qr.save(f"data/qrcode_{url}.png")
             return qr
@@ -66,7 +66,7 @@ class QRCodes:
         QR코드를 탐지합니다.
         """
         import cv2
-        from lib.error import VideoError
+        from error.error import VideoError
         cap = cv2.VideoCapture(0)
         # 비디오 캡처가 준비되었는지
         if not cap.isOpened():
