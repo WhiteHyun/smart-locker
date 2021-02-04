@@ -96,4 +96,4 @@ class QRCodes:
 if __name__ == "__main__":
     qr = QRCodes()
     result = qr.generateQR("Hello, World!")
-    print(f"{result if 'Successfully generated QRcode.' else 'Generate failed'}")
+    print(f"{'Successfully generated QRcode.' if result else 'Generate failed'}")
