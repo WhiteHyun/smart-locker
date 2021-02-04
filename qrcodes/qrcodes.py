@@ -5,18 +5,18 @@ class QRCodes:
     url 값을 가져와 QR코드를 생성할 수 있고, 이미지 값을 가져와 url로 추출할 수 있습니다.
     """
 
-    def generateQR(self, url: str):
+    def generateQR(self, url: str) -> bool:
         """
-        url 값을 통해 QRCode를 생성합니다.
+        url 해시값을 통해 QRCode를 생성합니다.
         만약 url이 없을 경우 Error를 뿜습니다 *^^*
 
         Args:
 
-        url (str): QRCode를 생성할 url값입니다.
+        url (str): QRCode를 생성할 url 해시값입니다.
 
         Example:
             >>> extractQRCode(url) # If Success
-            <class 'qrcode.image.pil.PilImage'>
+            True
 
             >>> extractQRCode(url) # Fail
             Value Error
@@ -30,7 +30,7 @@ class QRCodes:
             from error.error import QRCodeError
             qr = qrcode.make(url)
             qr.save(f"data/qrcode_{url}.png")
-            return qr
+            return True
         except QRCodeError as e:
             print(f"QRCode 생성 중 오류가 발생하였습니다. {e}")
             raise QRCodeError
@@ -61,7 +61,7 @@ class QRCodes:
 
         return decoded_list
 
-    def detectQR(self):
+    def detectQR(self) -> list:
         """
         QR코드를 탐지합니다.
         """
@@ -95,4 +95,5 @@ class QRCodes:
 
 if __name__ == "__main__":
     qr = QRCodes()
-    qr.generateQR("Hello, World!")
+    result = qr.generateQR("Hello, World!")
+    print(f"{result if 'Successfully generated QRcode.' else 'Generate failed'}")
