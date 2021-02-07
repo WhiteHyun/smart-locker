@@ -93,7 +93,8 @@ class QRCodes:
         return result
 
 
-if __name__ == "__main__":
+    
+    
+def testFunc(url):
     qr = QRCodes()
-    result = qr.generateQR("Hello, World!")
-    print(f"{'Successfully generated QRcode.' if result else 'Generate failed'}")
+    return qr.generateQR("Hello, World!")
