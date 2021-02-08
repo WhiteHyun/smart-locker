@@ -21,9 +21,12 @@ class QRCodes:
             >>> extractQRCode(url) # Fail
             Value Error
         """
-        if url is None:
+        if not url:
             print("URL 값이 입력되지 않았습니다!")
             raise ValueError
+        elif type(url) is not str:
+            print("문자열값이 아닙니다!")
+            raise TypeError
 
         try:
             import qrcode
@@ -93,8 +96,6 @@ class QRCodes:
         return result
 
 
-    
-    
 def testFunc(url):
     qr = QRCodes()
     return qr.generateQR("Hello, World!")
