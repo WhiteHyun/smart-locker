@@ -33,10 +33,11 @@ class QRCodes:
             from error.error import QRCodeError
             qr = qrcode.make(url)
             qr.save(f"data/qrcode_{url}.png")
-            return True
         except QRCodeError as e:
             print(f"QRCode 생성 중 오류가 발생하였습니다. {e}")
             raise QRCodeError
+        else:
+            return True
 
     def __scanQR(self, img) -> list:
         """
