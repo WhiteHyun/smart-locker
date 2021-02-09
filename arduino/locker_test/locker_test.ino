@@ -1,7 +1,7 @@
 #include <Stepper.h>
 
 const int DE = 500;
-rotate = 0;
+int rotate = 0;
 //IN1,2,3,4 = 8-11pin
 
 Stepper stepper(DE, 11, 9, 10, 8);
