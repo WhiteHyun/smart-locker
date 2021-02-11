@@ -41,22 +41,18 @@ void loop() {
     // 초음파 센서 거리 구분
     if (distance < 10) {
         // 문 여는 시도가 있을 경우
-        if (Serial.available() && Serial.read() == 'T') {
-            if (isOpen) {
-                stepper.step(DE);
-                isOpen = false;
-                delay(1000);
-            } else {
+        if (Serial.available() > 0 && Serial.read() == 'T') {
+            if (!isOpen) {
                 stepper.step(-DE);
                 isOpen = true;
                 delay(1000);
             }
-        }
-    } else {
-        if (isOpen) {
-            stepper.step(DE);
-            isOpen = false;
-            delay(1000);
+        } else {
+            if (isOpen) {
+                stepper.step(DE);
+                isOpen = false;
+                delay(1000);
+            }
         }
     }
 }
