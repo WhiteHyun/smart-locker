@@ -1,3 +1,12 @@
+# This module can be executed as module and script and by doctest.
+if __name__ == "__main__" or __name__ == "qrcodes":
+    from error.error import VideoError
+    from error.error import QRCodeError
+else:
+    from .error.error import VideoError
+    from .error.error import QRCodeError
+
+
 class QRCodes:
     """
     QR코드 생성과 추출에 관여하는 클래스입니다.
@@ -30,7 +39,6 @@ class QRCodes:
 
         try:
             import qrcode
-            from error.error import QRCodeError
             qr = qrcode.make(url)
             qr.save(f"data/qrcode_{url}.png")
         except QRCodeError as e:
@@ -70,7 +78,6 @@ class QRCodes:
         QR코드를 탐지합니다.
         """
         import cv2
-        from error.error import VideoError
         cap = cv2.VideoCapture(0)
         # 비디오 캡처가 준비되었는지
         if not cap.isOpened():
