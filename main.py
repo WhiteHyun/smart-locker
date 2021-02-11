@@ -12,6 +12,6 @@ while True:
     try:
         qr_lists = qr.detectQR()
         for qr_url, _ in qr_lists:
-            arduino.writelines(qr_url.encode())
+            arduino.write(f"{qr_url}\n".encode())
     except Exception:
         raise Exception
