@@ -41,7 +41,7 @@ void loop() {
     // 초음파 센서 거리 구분
     if (distance < 10) {
         // 문 여는 시도가 있을 경우
-        if (Serial.available() > 0 && Serial.read() == 'T') {
+        if (Serial.available() > 0 && Serial.read() == 84) {
             if (!isOpen) {
                 stepper.step(-DE);
                 isOpen = true;
