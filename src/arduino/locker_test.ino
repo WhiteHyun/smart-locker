@@ -45,7 +45,7 @@ void loop() {
             if (!isOpen) {
                 stepper.step(-DE);
                 isOpen = true;
-                delay(1000);
+                delay(10000);
             }
         } else {
             if (isOpen) {
