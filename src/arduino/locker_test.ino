@@ -43,13 +43,13 @@ void loop() {
         // 문 여는 시도가 있을 경우
         if (Serial.available() > 0 && Serial.read() == 84) {
             if (!isOpen) {
-                stepper.step(-DE);
+                stepper.step(DE);
                 isOpen = true;
                 delay(10000);
             }
         } else {
             if (isOpen) {
-                stepper.step(DE);
+                stepper.step(-DE);
                 isOpen = false;
                 delay(1000);
             }
