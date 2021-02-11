@@ -1,12 +1,13 @@
 #include <Stepper.h>
 
 const int DE = 500;
+String LOCKER_KEY = "Hello, World!";
 bool isOpen = false;
-//IN1,2,3,4 = 8-11pin
+
 // pin number may change.
 int echoPin = 12;
 int trigPin = 13;
-
+//IN1,2,3,4 = 8-11pin
 Stepper stepper(DE, 11, 9, 10, 8);
 
 void setup() {
@@ -37,11 +38,10 @@ void loop() {
     delay(500);
 
     /* step moter part */
-
     // 초음파 센서 거리 구분
     if (distance < 10) {
         // 문 여는 시도가 있을 경우
-        if (Serial.available() > 0 && Serial.read() == 84) {
+        if (Serial.available() > 0 && Serial.readStringUntil('\n').equals(LOCKER_KEY)) {
             if (!isOpen) {
                 stepper.step(DE);
                 isOpen = true;
