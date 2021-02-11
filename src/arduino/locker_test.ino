@@ -1,7 +1,7 @@
 #include <Stepper.h>
 
 const int DE = 500;
-int rotate = 0;
+bool isOpen = false;
 //IN1,2,3,4 = 8-11pin
 // pin number may change.
 int echoPin = 12;
@@ -19,40 +19,44 @@ void setup() {
 }
 
 void loop() {
-    float duration, distance;
+    unsigned long duration;
+    float distance;
 
-    // 초음파를 보낸다. 다 보내면 echo가 HIGH 상태로 대기하게 된다.
+    // trig핀에 10us만큼 신호가 들어가게 되면 그 다음에 8번의 초음파 발사된다.
+    // 초음파를 쏘기 위한 사전 신호!
     digitalWrite(trigPin, HIGH);
     delay(10);
     digitalWrite(trigPin, LOW);
 
-    // echoPin 이 HIGH를 유지한 시간을 저장 한다.
+    // echoPin이 HIGH를 유지한 시간을 저장 한다.
     duration = pulseIn(echoPin, HIGH);
-    // HIGH 였을 때 시간(초음파가 보냈다가 다시 들어온 시간)을 가지고 거리를 계산 한다.
-    distance = ((float)(340 * duration) / 10000) / 2;
 
-    Serial.print(distance);
-    Serial.println("cm");
-    // 수정한 값을 출력
+    // HIGH 였을 때 시간(초음파가 보냈다가 다시 들어온 시간)을 가지고 거리를 계산 한다.
+    distance = duration / 29.0 / 2.0;
+
     delay(500);
 
-    // step moter
-    if (Serial.available()) {
-        char buffer = Serial.read();
-        if (buffer == 'T') {
-            if (rotate) {
+    /* step moter part */
+
+    // 초음파 센서 거리 구분
+    if (distance < 10) {
+        // 문 여는 시도가 있을 경우
+        if (Serial.available() && Serial.read() == 'T') {
+            if (isOpen) {
                 stepper.step(DE);
-                rotate = 0;
+                isOpen = false;
                 delay(1000);
             } else {
                 stepper.step(-DE);
-                rotate = 1;
+                isOpen = true;
                 delay(1000);
             }
-        } else {
-            // code for test
-            Serial.print("read: ");
-            Serial.println(buffer);
+        }
+    } else {
+        if (isOpen) {
+            stepper.step(DE);
+            isOpen = false;
+            delay(1000);
         }
     }
 }
