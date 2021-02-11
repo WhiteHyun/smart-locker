@@ -10,8 +10,7 @@ time.sleep(5)
 
 while True:
     try:
-        do_rotate = "T" if input(
-            "If 1, True. If not, False\n>>") == '1' else "F"
+        do_rotate = "T" if len(input("문을 열고싶을 경우 아무거나 입력하세요.")) > 1 else "F"
         arduino.write(do_rotate.encode())
     except Exception:
         raise Exception
