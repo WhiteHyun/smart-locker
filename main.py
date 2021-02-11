@@ -1,6 +1,6 @@
 import time
 import serial
-from qrcodes.qrcodes import QRCodes
+from src.qrcodes.qrcodes import QRCodes
 
 PORT = "/dev/ttyACM0"   # for test by arduino uno
 
