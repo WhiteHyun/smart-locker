@@ -40,16 +40,19 @@ class QRCodes:
         try:
             import qrcode
             qr = qrcode.make(url)
-            qr.save(f"data/qrcode_{url}.png")
+            if __name__ == "__main__" or __name__ == "qrcodes":
+                qr.save(f"data/qrcode_{url}.png")
+            else:  # 실행 위치와 환경에 따라 변동 가능성 존재
+                qr.save(f"src/qrcodes/data/{url}.png")
         except QRCodeError as e:
             print(f"QRCode 생성 중 오류가 발생하였습니다. {e}")
             raise QRCodeError
         else:
             return True
 
-    def __scanQR(self, img) -> list:
+    def __readQR(self, img) -> list:
         """
-        받아온 흑백의 1차원 이미지(image)를 가지고 내부에 QR코드가 있는지에 대해 값을 리턴해주는 메서드입니다.
+        받아온 흑백의 1차원 이미지(image)를 가지고 QR코드를 읽어 값을 리턴해주는 메서드입니다.
 
         Args:
 
@@ -60,7 +63,7 @@ class QRCodes:
             list (url: str, qrtype: str): QR코드에 대한 url과 타입을 튜플로 받아 배열로 반환합니다.
 
         Example:
-            >>> __scanQR(img)
+            >>> __readQR(img)
             [("Hello World!", "QRCODE"), ("https://github.com/WhiteHyun", "QRCODE")]
         """
         import pyzbar.pyzbar as pyzbar
@@ -75,7 +78,8 @@ class QRCodes:
 
     def detectQR(self) -> list:
         """
-        QR코드를 탐지합니다.
+        캠 모듈을 사용하여 QR코드를 탐지합니다.
+        사용자의 QR코드를 읽어오려는 경우 해당 함수를 호출합니다.
         """
         import cv2
         cap = cv2.VideoCapture(0)
@@ -93,7 +97,7 @@ class QRCodes:
             # RGB 3채널로 되어있는 이미지 파일을 GRAY 1채널로 변경하여 저장
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-            result = self.__scanQR(gray)
+            result = self.__readQR(gray)
             if result:
                 break
             cv2.imshow('img', img)
