@@ -20,8 +20,21 @@ void setup() {
 }
 
 void loop() {
+    String url;
+    const float distance = getDistanceForMicroSonic();
+    delay(500);
+
+    if (Serial.available() > 0)
+        url = Serial.readStringUntil('\n');
+
+    interactLocker(distance, url);
+}
+
+/*
+ * 초음파 센서를 이용하여 거리 계산하고 그 값을 반환합니다.
+ */
+float getDistanceForMicroSonic() {
     unsigned long duration;
-    float distance;
 
     // trig핀에 10us만큼 신호가 들어가게 되면 그 다음에 8번의 초음파 발사된다.
     // 초음파를 쏘기 위한 사전 신호!
@@ -33,15 +46,23 @@ void loop() {
     duration = pulseIn(echoPin, HIGH);
 
     // HIGH 였을 때 시간(초음파가 보냈다가 다시 들어온 시간)을 가지고 거리를 계산 한다.
-    distance = duration / 29.0 / 2.0;
+    return duration / 29.0 / 2.0;
+}
 
-    delay(500);
-
-    /* step moter part */
-    // 초음파 센서 거리 구분
+/*
+ * 문과 상호작용하는 함수.
+ * 
+ * 
+ * Attributes:
+ *      distance (float): 문과 센서와의 거리
+ *      url (String): 함과 상호동작시키기 위해 라즈베리파이에서 받아온 값
+ * 
+ * Return:
+ *      bool: 성공적으로 수행되거나 실패했을 경우 리턴됨
+ */
+bool interactLocker(const float distance, const String url) {
     if (distance < 10) {
-        // 문 여는 시도가 있을 경우
-        if (Serial.available() > 0 && Serial.readStringUntil('\n').equals(LOCKER_KEY)) {
+        if (Serial.available() > 0 && url.equals(LOCKER_KEY)) {
             if (!isOpen) {
                 stepper.step(DE);
                 isOpen = true;
@@ -53,6 +74,11 @@ void loop() {
                 isOpen = false;
                 delay(1000);
             }
+        }
+    } else {
+        if (!isOpen) {
+            /* 절대 들어오면 안되는 루프 */
+            Serial.println("******************DANGEROUS******************");
         }
     }
 }
