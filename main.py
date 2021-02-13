@@ -1,7 +1,7 @@
 if __name__ == "__main__" or __name__ == "main":
     import time
     import serial
-    from src.qrcodes.qrcodes import QRCodes
+    from src.qrcodes import QRCodes
 
 PORT = "/dev/ttyACM0"   # for test by arduino uno
 

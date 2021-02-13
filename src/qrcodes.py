@@ -1,10 +1,8 @@
 # This module can be executed as module and script and by doctest.
 if __name__ == "__main__" or __name__ == "qrcodes":
-    from error.error import VideoError
-    from error.error import QRCodeError
+    from error import *
 else:
-    from .error.error import VideoError
-    from .error.error import QRCodeError
+    from .error import *
 
 
 class QRCodes:
@@ -41,9 +39,9 @@ class QRCodes:
             import qrcode
             qr = qrcode.make(url)
             if __name__ == "__main__" or __name__ == "qrcodes":
-                qr.save(f"data/qrcode_{url}.png")
+                qr.save(f"../data/qrcode_{url}.png")
             else:  # 실행 위치와 환경에 따라 변동 가능성 존재
-                qr.save(f"src/qrcodes/data/{url}.png")
+                qr.save(f"data/{url}.png")
         except QRCodeError as e:
             print(f"QRCode 생성 중 오류가 발생하였습니다. {e}")
             raise QRCodeError
