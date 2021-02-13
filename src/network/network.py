@@ -43,6 +43,7 @@ def sendDataToServer(command: str, server_address: str = 'localhost', server_por
 def receiveDataToClient(server_port: int = 12000) -> None:
     """
     **서버 전용** 함수
+
     Client에서 값을 받아옵니다. 해당 함수는 리눅스 서버에서 사용됩니다.
 
     Attribute:
