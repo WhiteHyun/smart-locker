@@ -95,13 +95,21 @@
 
 >>> network.sendDataToServer("a")
 "Received from (127.0.0.1), Message: 'a'"
-
 ```
 
 ## SQL
 
 - `pymysql` 라이브러리를 이용하여 작성되었습니다.
 - 연결할 DB와 상호작용하기위한 `cursor` 객체를 리턴합니다.
+
+```python
+>>> cursor, conn = connect_sql("admin", "1234", "127.0.0.1", "testdb")
+>>> print(cursor, conn)
+
+
+<pymysql.cursors.DictCursor object at 0x01C8E598> <pymysql.connections.Connection object at 0x01C8E658>
+
+```
 
 ## 동작 방식
 
