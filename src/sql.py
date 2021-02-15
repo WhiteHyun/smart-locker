@@ -29,6 +29,6 @@ def connect_sql(user: str, passwd: str, host: str, db: str, charset: str = "utf8
         cursor = connection.cursor(cursors.DictCursor)
     except Exception as e:
         print(f"SQL Error, {e}")
-        raise Exception
+        raise e
     else:
         return cursor, connection
