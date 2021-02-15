@@ -7,8 +7,7 @@ assignees: sungkyulh, WhiteHyun
 
 ---
 
-**기능 요청이 문제와 관련이 있습니까? 설명해 주세요.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 기존 사항에 대한 문제점 / 구현 사항
 
 ## 원하는 솔루션 설명
 A clear and concise description of what you want to happen.
