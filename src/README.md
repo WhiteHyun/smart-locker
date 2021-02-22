@@ -157,3 +157,7 @@ sequenceDiagram
 - [Generate QR code image with Python, Pillow, qrcode | note.nkmk.me](https://note.nkmk.me/en/python-pillow-qrcode/)
 
 - [해시(hash)란?](https://medium.com/@yeon22/crypto-%ED%95%B4%EC%8B%9C-hash-%EB%9E%80-6962be197523)
+
+- [소켓 프로그래밍](https://recipes4dev.tistory.com/153)
+
+- [pymysql 모듈 이해 및 실습](https://www.fun-coding.org/mysql_basic6.html)
