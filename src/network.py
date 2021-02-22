@@ -14,6 +14,12 @@ class Client():
         self.__serv_port = serv_port
         self.__client_socket = None
 
+    def __del__(self) -> None:
+        try:
+            self.close()
+        except Exception as e:
+            print(f"destructor, delete Error! {e}")
+
     def connect(self) -> None:
         """
         서버와 통신하기 위해 사용되는 함수입니다.
@@ -75,9 +81,15 @@ class Client():
                 raise ValueError
             else:
                 self.__client_socket.close()
+        except TypeError as e:
+            print("this socket is not created.")
+            raise e
+        except ValueError as e:
+            print("this socket already closed")
+            raise e
 
         except Exception as e:
-            print(f"Close Error, {e}")
+            print(f"Close Error. Dangerous! {e}")
 
 
 class Server():
