@@ -1,5 +1,12 @@
 from socket import *
 
+if __name__ == "__main__" or __name__ == "network":
+    from common import dict_to_dml
+    from sql import SQL
+else:
+    from .common import dict_to_dml
+    from .sql import SQL
+
 
 class Client():
     """
@@ -32,13 +39,13 @@ class Client():
             print(f"connect Error, {e}")
             self.close() if self.__client_socket is not None else None
 
-    def sendAndRecv(self, data: str, command_type: int) -> str:
+    def sendAndRecv(self, data: str) -> str:
         """
         서버와 통신하기 위해 사용되는 함수입니다.
         보내고자 하는 값을 서버에 전달하며 그 결과에 따른 값을 리턴받습니다.
 
         Attribute:
-            data (str): 서버에 보낼 데이터
+            data (str): 서버에 보낼 dml문
             command_type (int): 서버가 동작하는 방식
 
         Returns:
@@ -47,18 +54,11 @@ class Client():
         Example:
             >>> sendAndRecv("'1, '", Client.INSERT)
             True
-
-            >>> sendAndRecv("Amugeona", Client.SELECT)
         """
         try:
-            if command_type != self.INSERT and command_type != self.SELECT and command_type != self.UPDATE:
-                raise ValueError
             recv_msg = ""
-            self.__client_socket.send(f"{data}:{command_type}".encode())
-            recv_msg = self.__client_socket.recv(1024)
-        except ValueError as e:
-            print("command type이 잘못되었습니다!")
-            raise e
+            self.__client_socket.send(data.encode())  # send data
+            recv_msg = self.__client_socket.recv(1024)  # receive from server
         except Exception as e:
             print(
                 f"""Error! {e}
@@ -67,6 +67,16 @@ class Client():
                 """)
         finally:
             return recv_msg.decode() if recv_msg else recv_msg
+
+    def processUserData(self, data: str, command_type: int) -> str:
+        """
+        유저로부터 받아온 값을 처리합니다.
+
+        string으로 받아온 값을 dict로 바꾸어 dml로 바꿉니다.
+        """
+        from ast import literal_eval
+
+        sql = dict_to_dml(literal_eval(data), command_type)
 
     def close(self) -> None:
         """
@@ -101,6 +111,7 @@ class Server():
         self.__serv_port = serv_port
         self.__serv_socket = None
         self.__conn_socket = None
+        self.__sql = SQL("host", "1234", "localhost", "locker")  # sql 연결
         self.__init_server()
 
     def __del__(self) -> None:
@@ -125,33 +136,17 @@ class Server():
     def connect(self) -> None:
         """
         client와 통신할 때 사용하며
-        client로부터 받아온 데이터를 가지고 내부적으로 처리되어
-        client에게 다시 보내집니다.
+        client로부터 받아온 데이터를 가지고 처리한 후 결과값을 client에게 다시 보냅니다.
         """
         try:
             self.__conn_socket, addr = self.__serv_socket.accept()
-            sentence = self.__conn_socket.recv(1024).decode()
-            print(f"Received from ({addr[0]}), Message: '{sentence}'")
-
-            """
-            {data}:{type} 형식의 값을 받아옴
-
-
-
-            codes to communicate
-            """
-
-            self.__conn_socket.send("Hello, Client?".encode())
+            dml = self.__conn_socket.recv(1024).decode()
+            print(f"Received from ({addr[0]}), Message: '{dml}'")
+            result = self.__sql.process(dml)
+            self.__conn_socket.send(result.encode())
         except Exception as e:
             print(f"Error! {e}")
             self.close()
-
-    def __process(self):
-        """
-        클라이언트로 받아온 값을 처리합니다.
-
-
-        """
 
     def __close_conn_socket(self) -> None:
         """
