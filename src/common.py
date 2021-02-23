@@ -9,3 +9,13 @@ def encrypt(url: str) -> str:
     """
     from hashlib import sha256
     return sha256(url.encode()).hexdigest()
+
+
+def dict_to_dml(data: dict, command_type: int) -> str:
+    """
+    directory로 되어있는 str 값을
+    데이터 조작어(DML)로 변경해주는 함수입니다.
+
+    Example:
+        >>> dict_to_dml()
+    """
