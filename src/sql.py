@@ -36,25 +36,59 @@ class SQL:
             print(f"SQL Error, {e}")
             raise e
 
-    def process(self, sql: str):
+    def processDB(self, sql: str, type_csv=False):
         """
         sql문을 가지고 DB작업을 처리합니다.
 
+        Args:
+            sql (str): DML(데이터 조작어)문
+            type_csv (bool): select의 경우 데이터 형식을 csv로 받아올지에 대한 부울값
+
         Example:
-            >>> process("SELECT * FROM testTable")
+            >>> processDB("SELECT * FROM testTable")
             [{'name': 'sung-kyu'}, {'name': 'seung-hyeon'}]
+
+            >>> processDB("SELECT * FROM testTable", type_csv=True)
+            "name","age"
+            "sung-kyu",24
+            "seung-hyeon",23
         """
-        print(".............sql process codes..........")
         try:
             if sql[:6].upper() == "SELECT":
                 self.__cursor.execute(sql)
                 result = self.__cursor.fetchall()
+                if type_csv:
+                    result = self.__convert_to_csv(result)
                 return result
             else:
                 self.__cursor.execute(sql)
                 self.__conn.commit()
         except Exception as e:
             return e
+
+    def __convert_to_csv(self, data: list) -> str:
+        """
+        data로 받아온 값을 csv로 바꿔주는 함수
+
+        Example:
+            >>> __convert_to_csv([{'name': 'sung-kyu', 'age': 24}, {'name': 'seung-hyeon', 'age': 23}])
+            "name","age"
+            "sung-kyu",24
+            "seung-hyeon",23
+        """
+        try:
+            import csv
+            import io
+            output = io.StringIO()
+            w = csv.DictWriter(
+                output, fieldnames=data[0].keys(), quoting=csv.QUOTE_NONNUMERIC)
+            w.writeheader()
+            w.writerows(data)
+            csv_str = output.getvalue()
+        except Exception as e:
+            return e
+        else:
+            return csv_str
 
     def __del__(self):
         try:
