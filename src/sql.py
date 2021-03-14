@@ -19,7 +19,7 @@ class SQL:
         Args:
             user: user name
             passwd: 설정한 패스워드
-            host: DB가 존재하는 host
+            host: DB가 존재하는 host ip
             db: 연결할 데이터베이스 이름
             charset: 인코딩 설정
         """
@@ -39,8 +39,22 @@ class SQL:
     def process(self, sql: str):
         """
         sql문을 가지고 DB작업을 처리합니다.
+
+        Example:
+            >>> process("SELECT * FROM testTable")
+            [{'name': 'sung-kyu'}, {'name': 'seung-hyeon'}]
         """
         print(".............sql process codes..........")
+        try:
+            if sql[:6].upper() == "SELECT":
+                self.__cursor.execute(sql)
+                result = self.__cursor.fetchall()
+                return result
+            else:
+                self.__cursor.execute(sql)
+                self.__conn.commit()
+        except Exception as e:
+            return e
 
     def __del__(self):
         try:
