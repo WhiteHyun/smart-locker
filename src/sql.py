@@ -64,7 +64,7 @@ class SQL:
                 self.__cursor.execute(sql)
                 self.__conn.commit()
         except Exception as e:
-            return e
+            raise e
 
     def __convert_to_csv(self, data: list) -> str:
         """
@@ -86,7 +86,7 @@ class SQL:
             w.writerows(data)
             csv_str = output.getvalue()
         except Exception as e:
-            return e
+            raise e
         else:
             return csv_str
 
