@@ -1,11 +1,10 @@
-try:
-    import tkinter as tk                # python 3
-    from tkinter import font as tkfont  # python 3
+import tkinter as tk                # python 3
+from tkinter import font as tkfont  # python 3
+from tkinter import messagebox
+if __name__ == "__main__" or __name__ == "ui":
     from tkinter_custom_button import TkinterCustomButton
-    from tkinter import messagebox
-except ImportError:
-    import Tkinter as tk     # python 2
-    import tkFont as tkfont  # python 2
+else:
+    from .tkinter_custom_button import TkinterCustomButton
 
 
 class App(tk.Tk):
@@ -19,9 +18,9 @@ class App(tk.Tk):
         # 컨테이너는 여러 개의 프레임을 서로 쌓아올리는 프레임객체
         # 우리가 원하는 프레임을 다른 컨테이너보다 위로 올려 보여주면 됨!
         container = tk.Frame(self)
-        self.geometry(
-            f"{container.winfo_screenwidth()}x{container.winfo_screenheight()}+0+0")
-        super().attributes('-type', 'dock')
+        # self.geometry(
+        #     f"{container.winfo_screenwidth()}x{container.winfo_screenheight()}+0+0")
+        super().attributes('-type', 'splash')
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -94,10 +93,26 @@ class StartPage(tk.Frame):
                                       command=lambda: messagebox.showwarning(title="찾기 버튼",
                                                                              message="찾기 버튼 이벤트 발생")
                                       )
-        button1.pack()
-        button2.pack()
+        button3 = TkinterCustomButton(master=self,
+                                      bg_color=None,
+                                      fg_color="#2874A6",
+                                      hover_color="#5499C7",
+                                      text_font=None,
+                                      text="종료",
+                                      text_color="red",
+                                      corner_radius=10,
+                                      width=120,
+                                      height=45,
+                                      hover=True,
+                                      #   command=lambda: controller.show_frame("PageFind")
+                                      command=lambda: parent.destroy()
+                                      )
+        # button1.pack()
+        # button2.pack()
+        # button3.pack()
         button1.place(relx=0.33, rely=0.2, anchor=tk.CENTER)
         button2.place(relx=0.66, rely=0.2, anchor=tk.CENTER)
+        button3.place(relx=0.50, rely=0.3, anchor=tk.CENTER)
 
 
 class PageDelievery(tk.Frame):
