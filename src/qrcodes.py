@@ -52,7 +52,7 @@ def detectQR() -> list:
 
     Example:
         >>> detectQR()
-        [("Hello World!", "QRCODE"), ("https://github.com/WhiteHyun", "QRCODE")]
+        [("https://github.com/WhiteHyun", "QRCODE")]
     """
     import cv2
     import pyzbar.pyzbar as pyzbar
