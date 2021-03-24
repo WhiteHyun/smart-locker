@@ -2,9 +2,12 @@ import tkinter as tk                # python 3
 from tkinter import font as tkfont  # python 3
 from tkinter import messagebox
 if __name__ == "__main__" or __name__ == "ui":
-    from tkinter_custom_button import TkinterCustomButton
+    from custom.tkinter_custom_button import TkinterCustomButton
+    from event import *
+
 else:
-    from .tkinter_custom_button import TkinterCustomButton
+    from .custom.tkinter_custom_button import TkinterCustomButton
+    from .event import *
 
 
 class App(tk.Tk):
@@ -18,15 +21,15 @@ class App(tk.Tk):
         # 컨테이너는 여러 개의 프레임을 서로 쌓아올리는 프레임객체
         # 우리가 원하는 프레임을 다른 컨테이너보다 위로 올려 보여주면 됨!
         container = tk.Frame(self)
-        # self.geometry(
-        #     f"{container.winfo_screenwidth()}x{container.winfo_screenheight()}+0+0")
+        self.geometry(
+            f"{container.winfo_screenwidth()}x{container.winfo_screenheight()}+0+0")
         super().attributes('-type', 'splash')
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageDelievery, PageFind):
+        for F in (StartPage, DelieveryPage, FindPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -55,6 +58,9 @@ class App(tk.Tk):
 
 
 class StartPage(tk.Frame):
+    """
+    첫 페이지를 보여주는 프레임입니다.
+    """
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -74,7 +80,7 @@ class StartPage(tk.Frame):
                                       width=120,
                                       height=45,
                                       hover=True,
-                                      #   command=lambda: controller.show_frame("PageDelievery")
+                                      #   command=lambda: controller.show_frame("DelieveryPage")
                                       command=lambda: messagebox.showwarning(title="맡기기 버튼",
                                                                              message="맡기기 버튼 이벤트 발생")
                                       )
@@ -89,10 +95,8 @@ class StartPage(tk.Frame):
                                       width=120,
                                       height=45,
                                       hover=True,
-                                      #   command=lambda: controller.show_frame("PageFind")
-                                      command=lambda: messagebox.showwarning(title="찾기 버튼",
-                                                                             message="찾기 버튼 이벤트 발생")
-                                      )
+                                      #   command=lambda: controller.show_frame("FindPage")
+                                      command=detect_QR())
         button3 = TkinterCustomButton(master=self,
                                       bg_color=None,
                                       fg_color="#2874A6",
@@ -104,18 +108,15 @@ class StartPage(tk.Frame):
                                       width=120,
                                       height=45,
                                       hover=True,
-                                      #   command=lambda: controller.show_frame("PageFind")
+                                      #   command=lambda: controller.show_frame("FindPage")
                                       command=lambda: parent.destroy()
                                       )
-        # button1.pack()
-        # button2.pack()
-        # button3.pack()
         button1.place(relx=0.33, rely=0.2, anchor=tk.CENTER)
         button2.place(relx=0.66, rely=0.2, anchor=tk.CENTER)
         button3.place(relx=0.50, rely=0.3, anchor=tk.CENTER)
 
 
-class PageDelievery(tk.Frame):
+class DelieveryPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -128,7 +129,7 @@ class PageDelievery(tk.Frame):
         button.pack()
 
 
-class PageFind(tk.Frame):
+class FindPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
