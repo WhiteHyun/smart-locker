@@ -1,4 +1,3 @@
-# This module can be executed as module and script and by doctest.
 if __name__ == "__main__" or __name__ == "qrcodes":
     from error import *
 else:
@@ -8,17 +7,16 @@ else:
 def generateQR(url: str) -> bool:
     """
     url 해시값을 통해 QRCode를 생성합니다.
-    만약 url이 없을 경우 Error를 뿜습니다 *^^*
+    만약 url이 없을 경우 Error를 raise 합니다.
 
     Args:
-
-    url (str): QRCode를 생성할 url 해시값입니다.
+        url (str): QRCode를 생성할 url 해시값입니다.
 
     Example:
-        >>> extractQRCode(url) # If Success
+        >>> generateQR(url) # If Success
         True
 
-        >>> extractQRCode(url) # Fail
+        >>> generateQR(url) # Fail
         Value Error
     """
     if not url:
@@ -48,7 +46,7 @@ def detectQR() -> list:
     사용자의 QR코드를 읽어오려는 경우 해당 함수를 호출합니다.
 
     Returns:
-        list (url: str, qrtype: str): QR코드에 대한 url과 타입을 튜플로 받아 배열로 반환합니다.
+        (url: str, qrtype: str): QR코드에 대한 url과 타입을 튜플로 반환합니다.
 
     Example:
         >>> detectQR()
