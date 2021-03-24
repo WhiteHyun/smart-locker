@@ -96,7 +96,8 @@ class StartPage(tk.Frame):
                                       height=45,
                                       hover=True,
                                       #   command=lambda: controller.show_frame("FindPage")
-                                      command=detect_QR)
+                                      command=detect_QR
+                                      )
         button3 = TkinterCustomButton(master=self,
                                       bg_color=None,
                                       fg_color="#2874A6",
@@ -109,7 +110,7 @@ class StartPage(tk.Frame):
                                       height=45,
                                       hover=True,
                                       #   command=lambda: controller.show_frame("FindPage")
-                                      command=lambda: parent.destroy()
+                                      command=lambda: controller.destroy()
                                       )
         button1.place(relx=0.33, rely=0.2, anchor=tk.CENTER)
         button2.place(relx=0.66, rely=0.2, anchor=tk.CENTER)
