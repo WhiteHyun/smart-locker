@@ -96,7 +96,7 @@ class StartPage(tk.Frame):
                                       height=45,
                                       hover=True,
                                       #   command=lambda: controller.show_frame("FindPage")
-                                      command=find_delivery
+                                      command=ButtonEvent.find_delivery
                                       )
         button3 = TkinterCustomButton(master=self,
                                       bg_color=None,
