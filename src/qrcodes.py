@@ -76,6 +76,9 @@ def detectQR() -> list:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석
 
+        if len(decoded) > 1:
+            print("QRCODE가 2개 이상입니다!!!!!!!!!!!!")
+            continue
         for decode in decoded:
             qrcode_data = decode.data.decode("utf-8")  # 디코드된 값 또는 파일
             qrcode_type = decode.type   # QR타입인지 바코드타입인지 확인
@@ -86,4 +89,4 @@ def detectQR() -> list:
 
     cap.release()
     cv2.destroyAllWindows()
-    return decoded_list
+    return decoded_list[0]
