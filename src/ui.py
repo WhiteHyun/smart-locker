@@ -39,21 +39,7 @@ class App(tk.Tk):
             # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("StartPage")
-
-    def get_frame(self, page_name):
-        """
-        다른 창을 맨 앞으로 가져오게 하는 메서드
-
-        Args:
-            page_name (str): 불러올 page(frame)의 이름
-
-        Example:
-            >>> show_frame("StartPage")
-            # tkinter frame에서 StartPage Frame이 화면에 보여짐
-
-        """
-        return self.frames[page_name]
+        ButtonEvent.show(self.frames["StartPage"])
 
 
 class StartPage(tk.Frame):
@@ -80,7 +66,7 @@ class StartPage(tk.Frame):
                                                    height=45,
                                                    hover=True,
                                                    command=lambda: ButtonEvent.delivery(
-                                                       controller.get_frame("DeliveryPage"))
+                                                       controller.frames["DeliveryPage"])
                                                    )
         self.find_delivery_button = TkinterCustomButton(master=self,
                                                         bg_color=None,
@@ -93,8 +79,8 @@ class StartPage(tk.Frame):
                                                         width=120,
                                                         height=45,
                                                         hover=True,
-                                                        command=lambda: controller.show_frame(
-                                                            "FindPage")
+                                                        command=lambda: ButtonEvent.show(
+                                                            controller.frames["FindPage"])
                                                         )
         self.exit_button = TkinterCustomButton(master=self,
                                                bg_color=None,
@@ -135,11 +121,10 @@ class DeliveryPage(tk.Frame):
         play_image = ImageTk.PhotoImage(Image.open(
             "src/img/lockers.png").resize((60, 60)))
 
-        # TODO: 사물(택배)함 버튼 구현
-        self.buttons = []
+        self.lockers = {}
 
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: controller.show_frame("StartPage"))
+                           command=lambda: ButtonEvent.show(controller.frames["StartPage"]))
         button.pack()
 
 
@@ -152,7 +137,7 @@ class FindPage(tk.Frame):
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: controller.show_frame("StartPage"))
+                           command=lambda: ButtonEvent.show(controller.frames["StartPage"]))
         button.pack()
 
 
