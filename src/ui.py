@@ -39,7 +39,7 @@ class App(tk.Tk):
             # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
 
-        ButtonEvent.show(self.frames["StartPage"])
+        ButtonEvent.show_frame(self.frames["StartPage"])
 
 
 class StartPage(tk.Frame):
@@ -59,14 +59,15 @@ class StartPage(tk.Frame):
                                                    fg_color="#2874A6",
                                                    hover_color="#5499C7",
                                                    text_font=None,
-                                                   text="맡기기",
+                                                   text="동기화(임시 버튼)",
                                                    text_color="white",
                                                    corner_radius=10,
                                                    width=120,
                                                    height=45,
                                                    hover=True,
-                                                   command=lambda: ButtonEvent.delivery(
-                                                       controller.frames["DeliveryPage"])
+                                                   #    command=lambda: ButtonEvent.delivery(
+                                                   #        controller.frames["DeliveryPage"])
+                                                   command=lambda: ButtonEvent.sync_to_json()
                                                    )
         self.find_delivery_button = TkinterCustomButton(master=self,
                                                         bg_color=None,
@@ -79,7 +80,7 @@ class StartPage(tk.Frame):
                                                         width=120,
                                                         height=45,
                                                         hover=True,
-                                                        command=lambda: ButtonEvent.show(
+                                                        command=lambda: ButtonEvent.show_frame(
                                                             controller.frames["FindPage"])
                                                         )
         self.exit_button = TkinterCustomButton(master=self,
@@ -124,7 +125,7 @@ class DeliveryPage(tk.Frame):
         self.lockers = {}
 
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: ButtonEvent.show(controller.frames["StartPage"]))
+                           command=lambda: ButtonEvent.show_frame(controller.frames["StartPage"]))
         button.pack()
 
 
@@ -137,7 +138,7 @@ class FindPage(tk.Frame):
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: ButtonEvent.show(controller.frames["StartPage"]))
+                           command=lambda: ButtonEvent.show_frame(controller.frames["StartPage"]))
         button.pack()
 
 
