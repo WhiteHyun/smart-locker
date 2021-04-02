@@ -13,33 +13,35 @@ else:
 class App(tk.Tk):
 
     def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
+        # 폰트 지정
         self.title_font = tkfont.Font(
             family='Helvetica', size=18, weight="bold")
 
-        # 컨테이너는 여러 개의 프레임을 서로 쌓아올리는 프레임객체
-        # 우리가 원하는 프레임을 다른 컨테이너보다 위로 올려 보여주면 됨!
-        container = tk.Frame(self)
+        self.large_font = tkfont.Font(
+            family="MS Sans Serif", size=24, weight="bold")
+
+        # 화면 설정
         self.geometry(
-            f"{container.winfo_screenwidth()}x{container.winfo_screenheight()}+0+0")
+            f"{super().winfo_screenwidth()}x{super().winfo_screenheight()}+0+0")
         super().attributes('-type', 'splash')
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
 
-        self.frames = {}
-        for F in (StartPage, DeliveryPage, FindPage):
+        # 화면에 보여질 컨테이너 생성
+        self.container = tk.Frame()
+        self.container.pack(side="top", fill="both", expand=True)
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
+
+        # 필요한 정적 UI 생성
+        self.static_frames = {}
+
+        for F in (StartPage, DeliveryPage):
             page_name = F.__name__
-            frame = F(parent=container, controller=self)
-            self.frames[page_name] = frame
-
-            # put all of the pages in the same location;
-            # the one on the top of the stacking order
-            # will be the one that is visible.
+            frame = F(parent=self.container, controller=self)
+            self.static_frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-
-        ButtonEvent.show_frame(self.frames["StartPage"])
+        UIEvent.show_frame(self.static_frames["StartPage"])
 
 
 class StartPage(tk.Frame):
@@ -48,39 +50,38 @@ class StartPage(tk.Frame):
     """
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
         self.controller = controller
         label = tk.Label(self, text="택배보관함",
-                         font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
+                         font=controller.large_font)
+        label.pack(side="top", fill="x", pady=50)
 
         self.delivery_button = TkinterCustomButton(master=self,
                                                    bg_color=None,
                                                    fg_color="#2874A6",
                                                    hover_color="#5499C7",
-                                                   text_font=None,
-                                                   text="동기화(임시 버튼)",
+                                                   text_font=controller.large_font,
+                                                   text="맡기기",
                                                    text_color="white",
                                                    corner_radius=10,
-                                                   width=120,
-                                                   height=45,
+                                                   width=240,
+                                                   height=90,
                                                    hover=True,
-                                                   #    command=lambda: ButtonEvent.delivery(
-                                                   #        controller.frames["DeliveryPage"])
-                                                   command=lambda: ButtonEvent.sync_to_json()
+                                                   command=lambda: UIEvent.delivery(
+                                                       self.controller)
                                                    )
         self.find_delivery_button = TkinterCustomButton(master=self,
                                                         bg_color=None,
                                                         fg_color="#2874A6",
                                                         hover_color="#5499C7",
-                                                        text_font=None,
+                                                        text_font=controller.large_font,
                                                         text="찾기",
                                                         text_color="white",
                                                         corner_radius=10,
-                                                        width=120,
-                                                        height=45,
+                                                        width=240,
+                                                        height=90,
                                                         hover=True,
-                                                        command=lambda: ButtonEvent.show_frame(
+                                                        command=lambda: UIEvent.show_frame(
                                                             controller.frames["FindPage"])
                                                         )
         self.exit_button = TkinterCustomButton(master=self,
@@ -110,36 +111,45 @@ class DeliveryPage(tk.Frame):
     """
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
         self.controller = controller
+        self.lockers = {}
+
         label = tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
-        from PIL import Image, ImageTk
-
-        # TODO: 무조건 경로 수정해야함!!!
-        play_image = ImageTk.PhotoImage(Image.open(
-            "src/img/lockers.png").resize((60, 60)))
-
-        self.lockers = {}
-
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: ButtonEvent.show_frame(controller.frames["StartPage"]))
+                           command=lambda: UIEvent.show_frame(controller.static_frames["StartPage"]))
         button.pack()
+
+        button = tk.Button(self, text="destroy page",
+                           command=self.destroy)
+        button.pack()
+        frame1 = LockerFrame(
+            parent=self, controller=controller, relief="solid", bd=2)
+        frame1.pack(fill="both", expand=True)
 
 
 class FindPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
         self.controller = controller
         label = tk.Label(self, text="This is page 2",
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: ButtonEvent.show_frame(controller.frames["StartPage"]))
+                           command=lambda: UIEvent.show_frame(controller.static_frames["StartPage"]))
         button.pack()
+
+
+class LockerFrame(tk.Frame):
+
+    def __init__(self, parent, controller, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.controller = controller
+        UIEvent.show_locker()
 
 
 if __name__ == "__main__":
