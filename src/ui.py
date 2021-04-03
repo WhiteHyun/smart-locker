@@ -36,12 +36,30 @@ class App(tk.Tk):
         self.pages = {}
         for F in (StartPage, DeliveryPage, FindPage, LockerFrame, InformationPage):
             page_name = F.__name__
-            is_static = True if page_name == "StartPage" else False
-            self.pages[page_name] = {"isStatic": is_static, "class": F}
-            if is_static:
-                frame = F(parent=self.container, controller=self)
-                self.pages[page_name]["frame"] = frame
-        UIEvent.show_frame(self.pages["StartPage"])
+            self.pages[page_name] = F
+        self.show_frame("StartPage")
+
+    def show_frame(self, new_frame, frame=None, parent=None):
+        """
+        프레임(창)을 띄워줍니다.
+
+        Args:
+            new_frame_cls (str): 새롭게 보여줄 프레임 객체의 이름
+            frame (tk.Frame): 기존에 보여지고 있는 프레임
+            parent (tk.Frame): 새롭게 보여질 프레임의 부모프레임
+        """
+        try:
+            temp_frame = self.pages[new_frame](
+                parent=parent if parent is not None else self.container, controller=self)
+
+            temp_frame.grid(row=0, column=0, sticky="nsew")
+            temp_frame.tkraise()
+
+            # 기존 프레임 종료
+            if frame is not None:
+                frame.destroy()
+        except Exception as e:
+            raise e
 
 
 class StartPage(tk.Frame):
@@ -66,8 +84,8 @@ class StartPage(tk.Frame):
                   width=240,
                   height=90,
                   hover=True,
-                  command=lambda: UIEvent.show_frame(
-                      controller.pages["DeliveryPage"], controller=controller)
+                  command=lambda: controller.show_frame(
+                      "DeliveryPage", self)
                   ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
         SMLButton(master=self,
                   bg_color=None,
@@ -80,8 +98,8 @@ class StartPage(tk.Frame):
                   width=240,
                   height=90,
                   hover=True,
-                  command=lambda: UIEvent.show_frame(
-                      controller.frames["FindPage"], controller=controller)
+                  command=lambda: controller.show_frame(
+                      "FindPage", self)
                   ).place(relx=0.66, rely=0.2, anchor=tk.CENTER)
         SMLButton(master=self,
                   bg_color=None,
@@ -115,11 +133,23 @@ class DeliveryPage(tk.Frame):
         tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
                  font=controller.title_font).pack(side="top", fill="x", pady=10)
 
-        tk.Button(self, text="Go to the start page",
-                  command=lambda: UIEvent.show_frame(controller.pages["StartPage"], self, controller)).pack()
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color="#2874A6",
+                  border_color=None,
+                  hover_color="#5499C7",
+                  text_font=None,
+                  text="이전으로",
+                  text_color="white",
+                  corner_radius=10,
+                  border_width=1,
+                  width=100,
+                  height=100,
+                  hover=True,
+                  command=lambda: controller.show_frame(
+                      "StartPage", self)
+                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
 
-        tk.Button(self, text="destroy page",
-                  command=self.destroy).pack()
         LockerFrame(
             parent=self, controller=controller, relief="solid").pack(pady=20)
 
@@ -189,7 +219,7 @@ class LockerFrame(tk.Frame):
             f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
         }
         command_dict = {
-            f"{LockerFrame.STATE_WAIT}": lambda: UIEvent.show_frame(self.controller.pages["InformationPage"], self.parent, self.controller),
+            f"{LockerFrame.STATE_WAIT}": lambda: self.controller.show_frame("InformationPage", self.parent),
             f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
             f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
         }
@@ -234,8 +264,8 @@ class InformationPage(tk.Frame):
                                   width=100,
                                   height=100,
                                   hover=True,
-                                  command=lambda: UIEvent.show_frame(
-                                      controller.pages["DeliveryPage"], self, controller)
+                                  command=lambda: controller.show_frame(
+                                      "DeliveryPage", self)
                                   )
         row = 0
         col = 0
@@ -265,7 +295,7 @@ class InformationPage(tk.Frame):
         intro_label.pack()
         entry.pack(pady=10)
         number_frame.pack()
-        before_button.pack(side="bottom", anchor="w")
+        before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
 
 
 if __name__ == "__main__":

@@ -30,30 +30,6 @@ class UIEvent():
         return messagebox.showerror(title=title, message=message)
 
     @classmethod
-    def show_frame(cls, new_frame: dict, frame=None, controller=None, *args, **kwargs):
-        """
-        프레임(창)을 띄워줍니다.
-        """
-        try:
-            # 동적 UI인 경우
-            if not new_frame["isStatic"]:
-                if controller is None:  # 컨트롤러가 필요함
-                    raise TypeError
-                temp_frame = new_frame["class"](
-                    parent=controller.container, controller=controller)
-            else:   # 정적 UI인 경우
-                temp_frame = new_frame["frame"]
-
-            temp_frame.grid(row=0, column=0, sticky="nsew")
-            temp_frame.tkraise()
-
-            # 기존 프레임 종료
-            if frame is not None:
-                frame.destroy()
-        except Exception as e:
-            raise e
-
-    @classmethod
     def get_value_from_user_to_dialog(cls, title="dialog", message="dialog test"):
         return simpledialog.askstring(title=title, prompt=message)
 
