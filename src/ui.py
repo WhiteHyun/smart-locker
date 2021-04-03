@@ -117,7 +117,72 @@ class StartPage(tk.Frame):
                   command=lambda: controller.destroy()
                   ).place(relx=0.50, rely=0.3, anchor=tk.CENTER)
 
-        UIEvent.sync_to_json()
+        self.sync_to_json()
+
+    def sync_to_json(self):
+        """
+        함의 정보를 동기화하여 json파일을 수정합니다.
+        초기 파일을 실행할 때, 또는 관리자 페이지에서 사물함을 동기화할 때 사용됩니다.
+        """
+        try:
+            locker_manage_key = None
+            sql = SQL("root", "", "10.80.76.63", "SML")
+
+            # 사물함 관리 번호를 알지 못하는 경우 입력받게 함
+            import json
+            with open("data/information.json") as f:
+                file_read = f.readlines()
+                if len(file_read) == 0:
+                    manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
+                        "SELECT LCKMngKey FROM LCKInfo;")))
+
+                    while locker_manage_key is None or locker_manage_key not in manage_key_list:
+                        locker_manage_key = cls.get_value_from_user_to_dialog(
+                            "사물함 관리번호", "사물함 관리번호가 무엇인지 정확하게 기입하여주세요!")
+                else:
+                    json_object = json.loads("".join(file_read))
+                    locker_manage_key = json_object["LCKMngKey"]
+
+            # 본격적인 파싱 시작
+            locker_size = sql.processDB(
+                f"SELECT LCKSizeX, LCKSizeY FROM LCKInfo WHERE LCKMngKey='{locker_manage_key}'")[0]
+
+            result = sql.processDB(
+                f"SELECT c.CRRMngKey, CRRNo, PosX, PosY, Width, Height, UseStat FROM CRRInfo c INNER JOIN LCKStat l ON LCKMngKey='{locker_manage_key}' AND c.CRRMngKey=l.CRRMngKey;")
+            result = list(map(lambda dic: f"""
+        {{
+            "CRRMngKey": "{dic["CRRMngKey"]}",
+            "CRRNo": "{dic["CRRNo"]}",
+            "location": {{
+                "start": {{
+                    "row": {dic["PosY"]},
+                    "col": {dic["PosX"]}
+                }},
+                "width": {dic["Width"]},
+                "height": {dic["Height"]}
+            }},
+            "useState": "{dic["UseStat"]}"
+        }}""", result))
+
+            json_string = f"""{{
+    "LCKMngKey": "{locker_manage_key}",
+    "LCKSize": {{
+        "width": {locker_size["LCKSizeX"]},
+        "height": {locker_size["LCKSizeY"]}
+    }},
+    "CRRInfo": [
+        {",".join(result)}
+    ]
+}}"""
+            with open("data/information.json", "w") as f:
+                json.dump(json.loads(json_string), f, indent=2)
+
+        except json.decoder.JSONDecodeError as e:
+            UIEvent.show_error("에러!", "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
+            raise e
+
+        except Exception as e:
+            raise e
 
 
 class DeliveryPage(tk.Frame):
@@ -155,10 +220,44 @@ class DeliveryPage(tk.Frame):
 
 
 class FindPage(tk.Frame):
+    """
+    찾기 페이지입니다.
+    """
 
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color="#2874A6",
+                  hover_color="#5499C7",
+                  text_font=controller.large_font,
+                  text="QR코드로 찾기",
+                  text_color="white",
+                  corner_radius=10,
+                  width=240,
+                  height=90,
+                  hover=True,
+                  command=lambda: print()
+                  ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color="#2874A6",
+                  border_color=None,
+                  hover_color="#5499C7",
+                  text_font=None,
+                  text="이전으로",
+                  text_color="white",
+                  corner_radius=10,
+                  border_width=1,
+                  width=100,
+                  height=100,
+                  hover=True,
+                  command=lambda: controller.show_frame(
+                      "StartPage", self)
+                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
+        LockerFrame(
+            parent=self, controller=controller, page="FindPage", relief="solid").pack(pady=20)
 
 
 class LockerFrame(tk.Frame):
@@ -167,10 +266,20 @@ class LockerFrame(tk.Frame):
     STATE_USED = "U"
     STATE_BROKEN = "B"
 
-    def __init__(self, parent, controller, *args, **kwargs):
+    def __init__(self, parent, controller, page="DeliveryPage", *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.controller = controller
+        self.color_dict = {
+            f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71") if page == "DeliveryPage" else ("#A93226", "#CD6155"),
+            f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155") if page == "DeliveryPage" else ("#1E8449", "#2ECC71"),
+            f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
+        }
+        self.command_dict = {
+            f"{LockerFrame.STATE_WAIT}": lambda: self.controller.show_frame("InformationPage", self.parent) if page == "DiliveryPage" else lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
+            f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.") if page == "DiliveryPage" else lambda: self.controller.show_frame("InformationPage", self.parent),
+            f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
+        }
         self.show_locker()
 
     def show_locker(self):
@@ -213,30 +322,20 @@ class LockerFrame(tk.Frame):
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
-        color_dict = {
-            f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71"),
-            f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155"),
-            f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
-        }
-        command_dict = {
-            f"{LockerFrame.STATE_WAIT}": lambda: self.controller.show_frame("InformationPage", self.parent),
-            f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
-            f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
-        }
 
         SMLButton(master=self,
                   bg_color=None,
-                  fg_color=color_dict[json_data["useState"]][0],
+                  fg_color=self.color_dict[json_data["useState"]][0],
                   border_color=None,
-                  hover_color=color_dict[json_data["useState"]][1],
+                  hover_color=self.color_dict[json_data["useState"]][1],
                   image=play_image,
                   corner_radius=10,
                   border_width=1,
                   width=100 if width == 1 else 100*width,
                   height=100 if height == 1 else 100*height,
                   hover=True,
-                  command=command_dict[json_data["useState"]]).grid(row=location["start"]["row"],
-                                                                    column=location["start"]["col"], rowspan=height, columnspan=width)
+                  command=self.command_dict[json_data["useState"]]).grid(row=location["start"]["row"],
+                                                                         column=location["start"]["col"], rowspan=height, columnspan=width)
 
 
 class InformationPage(tk.Frame):
