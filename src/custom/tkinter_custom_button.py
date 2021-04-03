@@ -2,7 +2,7 @@ import tkinter
 import sys
 
 
-class TkinterCustomButton(tkinter.Frame):
+class SMLButton(tkinter.Frame):
     """ tkinter custom button with border, rounded corners and hover effect
 
         Arguments:  master= where to place button

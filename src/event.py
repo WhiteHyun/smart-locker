@@ -3,10 +3,10 @@ from tkinter import TclError, simpledialog
 from tkinter import messagebox
 if __name__ == "__main__" or __name__ == "event":
     from sql import SQL
-    from custom.tkinter_custom_button import TkinterCustomButton
+    from custom.tkinter_custom_button import SMLButton
 else:
     from .sql import SQL
-    from .custom.tkinter_custom_button import TkinterCustomButton
+    from .custom.tkinter_custom_button import SMLButton
 
 
 class UIEvent():
@@ -30,7 +30,7 @@ class UIEvent():
         return messagebox.showerror(title=title, message=message)
 
     @classmethod
-    def show_frame(cls, new_frame: dict, frame=None, controller=None):
+    def show_frame(cls, new_frame: dict, frame=None, controller=None, *args, **kwargs):
         """
         프레임(창)을 띄워줍니다.
         """
