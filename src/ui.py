@@ -39,7 +39,7 @@ class App(tk.Tk):
             self.pages[page_name] = F
         self.show_frame("StartPage")
 
-    def show_frame(self, new_frame, frame=None, parent=None):
+    def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None):
         """
         프레임(창)을 띄워줍니다.
 
@@ -49,8 +49,12 @@ class App(tk.Tk):
             parent (tk.Frame): 새롭게 보여질 프레임의 부모프레임
         """
         try:
-            temp_frame = self.pages[new_frame](
-                parent=parent if parent is not None else self.container, controller=self)
+            if CRRMngKey is None:
+                temp_frame = self.pages[new_frame](
+                    parent=parent if parent is not None else self.container, controller=self)
+            else:
+                temp_frame = self.pages[new_frame](
+                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey)
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
@@ -137,7 +141,7 @@ class StartPage(tk.Frame):
                         "SELECT LCKMngKey FROM LCKInfo;")))
 
                     while locker_manage_key is None or locker_manage_key not in manage_key_list:
-                        locker_manage_key = cls.get_value_from_user_to_dialog(
+                        locker_manage_key = UIEvent.get_value_from_user_to_dialog(
                             "사물함 관리번호", "사물함 관리번호가 무엇인지 정확하게 기입하여주세요!")
                 else:
                     json_object = json.loads("".join(file_read))
@@ -268,21 +272,24 @@ class LockerFrame(tk.Frame):
 
     def __init__(self, parent, controller, page="DeliveryPage", *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+
         self.parent = parent
         self.controller = controller
+        self.page = page
+
         self.color_dict = {
             f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71") if page == "DeliveryPage" else ("#A93226", "#CD6155"),
             f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155") if page == "DeliveryPage" else ("#1E8449", "#2ECC71"),
             f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
         }
         self.command_dict = {
-            f"{LockerFrame.STATE_WAIT}": lambda: self.controller.show_frame("InformationPage", self.parent) if page == "DiliveryPage" else lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
-            f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.") if page == "DiliveryPage" else lambda: self.controller.show_frame("InformationPage", self.parent),
+            f"{LockerFrame.STATE_WAIT}": lambda CRRMngKey: self.controller.show_frame("InformationPage", self.parent, CRRMngKey=CRRMngKey) if page == "DeliveryPage" else lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
+            f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.") if page == "DeliveryPage" else lambda CRRMngKey: self.controller.show_frame("InformationPage", self.parent, CRRMngKey=CRRMngKey),
             f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
         }
-        self.show_locker()
+        self.__show_locker()
 
-    def show_locker(self):
+    def __show_locker(self):
         """
         json을 참조하여 사물함을 보여줍니다.
         grid 형태로 나타내어지기 때문에 frame에 pack으로 표시되어있는 상태에서는 사용될 수 없습니다.
@@ -334,18 +341,19 @@ class LockerFrame(tk.Frame):
                   width=100 if width == 1 else 100*width,
                   height=100 if height == 1 else 100*height,
                   hover=True,
-                  command=self.command_dict[json_data["useState"]]).grid(row=location["start"]["row"],
-                                                                         column=location["start"]["col"], rowspan=height, columnspan=width)
+                  command=self.command_dict[json_data["useState"]] if json_data["useState"] == LockerFrame.STATE_BROKEN or (json_data["useState"] == LockerFrame.STATE_USED and self.page == "DeliveryPage") or (json_data["useState"] == LockerFrame.STATE_WAIT and self.page == "FindPage") else lambda: self.command_dict[json_data["useState"]](json_data["CRRMngKey"])).grid(row=location["start"]["row"],
+                                                                                                                                                                                                                                                                                                                                                                                  column=location["start"]["col"], rowspan=height, columnspan=width)
 
 
 class InformationPage(tk.Frame):
     """
-    사물함을 클릭했을 때 정보를 입력할 프레임입니다.
+    함을 클릭했을 때 사용자 정보를 입력할 프레임입니다.
     """
 
-    def __init__(self, parent, controller, *args, **kwargs):
+    def __init__(self, parent, controller, CRRMngKey, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.controller = controller
+        self.CRRMngKey = CRRMngKey
         self.index = 0
         intro_label = tk.Label(
             self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font)
@@ -372,6 +380,7 @@ class InformationPage(tk.Frame):
         button_name_list = ["1", "2", "3", "4", "5",
                             "6", "7", "8", "9", "«", "0", "확인"]
 
+        # 밑에 함수는 Entry에 입력갱신을 위해 만들어진 함수입니다.
         def insert_text(button_num, entry):
             entry.insert(self.index, button_num)
             self.index += 1
@@ -379,6 +388,19 @@ class InformationPage(tk.Frame):
         def delete_text(entry):
             entry.delete(self.index-1)
             self.index = self.index-1 if self.index > 0 else 0
+
+        def verify_phone_number(phone_number, **kwargs):
+            """
+            휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
+            """
+            if len(phone_number) != 11 or phone_number[:3] != "010":
+                return
+            phone_string = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
+            user_check = UIEvent.show_question(
+                "번호 확인", f"{phone_string}가 맞습니까?")
+            if user_check == "yes":
+                self.process(phone_number, **kwargs)
+
         for i in button_name_list:
             SMLButton(master=number_frame,
                       bg_color=None,
@@ -394,7 +416,7 @@ class InformationPage(tk.Frame):
                       height=100,
                       hover=True,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else print(entry.get())
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else verify_phone_number(entry.get(), **kwargs)
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
@@ -403,6 +425,26 @@ class InformationPage(tk.Frame):
         entry.pack(pady=10)
         number_frame.pack()
         before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
+
+    def process(self, phone_number):
+        """
+        함 정보와 유저정보, 현재 시간을 통해 해시 암호화 하여 qr코드를 생성후 유저에게 보냅니다.
+        그리고 데이터베이스에 해당 내용을 저장합니다.
+        """
+        from datetime import datetime
+        from encrypt import encrypt
+        from qrcodes import generateQR
+        DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
+        value = self.CRRMngKey+phone_number+datetime.now().strftime(DATE_FORMAT)
+        hash_qr = encrypt(value)
+        generateQR(hash_qr)
+
+        # 여기서부터 데이터베이스 저장 시작
+
+        # info_sql = SQL("root", "", "10.80.76.63", "SML")
+
+        # result = info_sql.processDB(
+        #     f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';")
 
 
 if __name__ == "__main__":
