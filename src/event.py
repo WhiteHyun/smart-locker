@@ -30,21 +30,27 @@ class UIEvent():
         return messagebox.showerror(title=title, message=message)
 
     @classmethod
-    def show_frame(cls, frame, controller):
+    def show_frame(cls, new_frame: dict, frame=None, controller=None):
         """
         프레임(창)을 띄워줍니다.
         """
         try:
-            if not frame["isStatic"]:
-                temp_frame = frame["class"](
+            # 동적 UI인 경우
+            if not new_frame["isStatic"]:
+                if controller is None:  # 컨트롤러가 필요함
+                    raise TypeError
+                temp_frame = new_frame["class"](
                     parent=controller.container, controller=controller)
-            else:
-                temp_frame = frame["frame"]
+            else:   # 정적 UI인 경우
+                temp_frame = new_frame["frame"]
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
-        except TclError as e:
-            print(f"{frame}이 존재하지 않습니다! frame을 생성한 후 이 함수를 실행시키세요.")
+
+            # 기존 프레임 종료
+            if frame is not None:
+                frame.destroy()
+        except Exception as e:
             raise e
 
     @classmethod
