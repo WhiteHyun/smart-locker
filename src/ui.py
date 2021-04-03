@@ -247,6 +247,7 @@ class InformationPage(tk.Frame):
     def __init__(self, parent, controller, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.controller = controller
+        self.index = 0
         intro_label = tk.Label(
             self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font)
         entry = tk.Entry(self)
@@ -270,15 +271,22 @@ class InformationPage(tk.Frame):
         row = 0
         col = 0
         button_name_list = ["1", "2", "3", "4", "5",
-                            "6", "7", "8", "9", "취소", "0", "확인"]
+                            "6", "7", "8", "9", "«", "0", "확인"]
 
+        def insert_text(button_num, entry):
+            entry.insert(self.index, button_num)
+            self.index += 1
+
+        def delete_text(entry):
+            entry.delete(self.index-1)
+            self.index = self.index-1 if self.index > 0 else 0
         for i in button_name_list:
             SMLButton(master=number_frame,
                       bg_color=None,
                       fg_color="#2874A6",
                       border_color=None,
                       hover_color="#5499C7",
-                      text_font=None,
+                      text_font=controller.large_font,
                       text=i,
                       text_color="white",
                       corner_radius=10,
@@ -286,8 +294,8 @@ class InformationPage(tk.Frame):
                       width=100,
                       height=100,
                       hover=True,
-                      command=lambda i=i: UIEvent.show_error(
-                          message=f"{i} 버튼 이벤트 발생")
+                      command=lambda button_num=i, entry=entry: insert_text(
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else print(entry.get())
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
