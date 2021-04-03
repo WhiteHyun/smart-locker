@@ -34,14 +34,14 @@ class App(tk.Tk):
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, LockerFrame):
+        for F in (StartPage, DeliveryPage, FindPage, LockerFrame, InformationFrame):
             page_name = F.__name__
-            static = True if page_name == "StartPage" else False
-            self.pages[page_name] = {"isStatic": static, "class": F}
-            if self.pages[page_name]["isStatic"] == True:
+            is_static = True if page_name == "StartPage" else False
+            self.pages[page_name] = {"isStatic": is_static, "class": F}
+            if is_static:
                 frame = F(parent=self.container, controller=self)
                 self.pages[page_name]["frame"] = frame
-        UIEvent.show_frame(self.pages["StartPage"], self)
+        UIEvent.show_frame(self.pages["StartPage"])
 
 
 class StartPage(tk.Frame):
@@ -68,7 +68,7 @@ class StartPage(tk.Frame):
                                                    height=90,
                                                    hover=True,
                                                    command=lambda: UIEvent.show_frame(
-                                                       controller.pages["DeliveryPage"], controller)
+                                                       controller.pages["DeliveryPage"], controller=controller)
                                                    )
         self.find_delivery_button = TkinterCustomButton(master=self,
                                                         bg_color=None,
@@ -82,9 +82,8 @@ class StartPage(tk.Frame):
                                                         height=90,
                                                         hover=True,
                                                         command=lambda: UIEvent.show_frame(
-                                                            controller.frames["FindPage"])
+                                                            controller.frames["FindPage"], controller=controller)
                                                         )
-
         self.exit_button = TkinterCustomButton(master=self,
                                                bg_color=None,
                                                fg_color="#922B21",
@@ -123,7 +122,7 @@ class DeliveryPage(tk.Frame):
         label.pack(side="top", fill="x", pady=10)
 
         button = tk.Button(self, text="Go to the start page",
-                           command=lambda: UIEvent.show_frame(controller.pages["StartPage"]))
+                           command=lambda: UIEvent.show_frame(controller.pages["StartPage"], self, controller))
         button.pack()
 
         button = tk.Button(self, text="destroy page",
@@ -170,22 +169,24 @@ class LockerFrame(tk.Frame):
                 locker_list = sorted(
                     json_object["CRRInfo"], key=lambda dic: dic["location"]["start"]["row"])
                 for json_data in locker_list:
-                    self.__make_button(json_data)
+                    self.__make_locker_button(json_data)
         except Exception as e:
             print(e)
             raise e
 
-    def __make_button(self, json_data):
+    def __make_locker_button(self, json_data):
         """
         json 데이터를 가지고 버튼을 생성하여 나타냅니다.
-        버튼은 두 가지 버튼으로 만들어집니다.
+        버튼은 세 가지 버튼으로 만들어집니다.
+
+        사물(택배)함이 고장났을 경우
+            회색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 발생합니다.
 
         사물(택배)함이 사용중일 경우
-            빨간색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 뜹니다.
+            빨간색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 발생합니다.
 
         사물(택배)함이 미사용중일 경우
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
-
         """
         from PIL import Image, ImageTk
 
@@ -196,50 +197,95 @@ class LockerFrame(tk.Frame):
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
-        if json_data["useState"] == LockerFrame.STATE_WAIT:
-            button = TkinterCustomButton(master=self,
-                                         bg_color=None,
-                                         fg_color="#1E8449",
-                                         border_color=None,
-                                         hover_color="#2ECC71",
-                                         image=play_image,
-                                         corner_radius=10,
-                                         border_width=1,
-                                         width=100 if width == 1 else 100*width,
-                                         height=100 if height == 1 else 100*height,
-                                         hover=True,
-                                         command=UIEvent.show_warning)
-        elif json_data["useState"] == LockerFrame.STATE_USED:
-            button = TkinterCustomButton(master=self,
-                                         bg_color=None,
-                                         fg_color="#A93226",
-                                         border_color=None,
-                                         hover_color="#CD6155",
-                                         image=play_image,
-                                         corner_radius=10,
-                                         border_width=1,
-                                         width=100 if width == 1 else 100*width,
-                                         height=100 if height == 1 else 100*height,
-                                         hover=True,
-                                         command=lambda: UIEvent.show_error(title="오류!", message="사용 중입니다."))
-        else:
-            button = TkinterCustomButton(master=self,
-                                         bg_color=None,
-                                         fg_color="#7C7877",
-                                         border_color=None,
-                                         hover_color="#F0E5DE",
-                                         image=play_image,
-                                         corner_radius=10,
-                                         border_width=0,
-                                         width=100 if width == 1 else 100*width,
-                                         height=100 if height == 1 else 100*height,
-                                         hover=True,
-                                         command=lambda: UIEvent.show_error(title="고장!", message="사용할 수 없습니다."))
+        color_dict = {
+            f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71"),
+            f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155"),
+            f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
+        }
+        command_dict = {
+            f"{LockerFrame.STATE_WAIT}": lambda: UIEvent.show_frame(self.controller.pages["InformationFrame"], self, self.controller),
+            f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
+            f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
+        }
+
+        button = TkinterCustomButton(master=self,
+                                     bg_color=None,
+                                     fg_color=color_dict[json_data["useState"]][0],
+                                     border_color=None,
+                                     hover_color=color_dict[json_data["useState"]][1],
+                                     image=play_image,
+                                     corner_radius=10,
+                                     border_width=1,
+                                     width=100 if width == 1 else 100*width,
+                                     height=100 if height == 1 else 100*height,
+                                     hover=True,
+                                     command=command_dict[json_data["useState"]])
+
         button.grid(row=location["start"]["row"],
                     column=location["start"]["col"], rowspan=height, columnspan=width)
+
+
+class InformationFrame(tk.Frame):
+    """
+    사물함을 클릭했을 때 정보를 입력할 프레임입니다.
+    """
+
+    def __init__(self, parent, controller, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.controller = controller
+        intro_label = tk.Label(
+            self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font)
+        entry = tk.Entry(self)
+        number_frame = tk.Frame(self)
+        before_button = TkinterCustomButton(master=self,
+                                            bg_color=None,
+                                            fg_color="#2874A6",
+                                            border_color=None,
+                                            hover_color="#5499C7",
+                                            text_font=None,
+                                            text="이전으로",
+                                            text_color="white",
+                                            corner_radius=10,
+                                            border_width=1,
+                                            width=100,
+                                            height=100,
+                                            hover=True,
+                                            command=lambda: UIEvent.show_error(
+                                                message="이전으로 돌아가기")
+                                            )
+        row = 0
+        col = 0
+        # ===================================
+        button_name_list = ["1", "2", "3", "4", "5",
+                            "6", "7", "8", "9", "취소", "0", "확인"]
+        for i in button_name_list:
+            text = f"{i} 버튼 이벤트 발생"
+            button = TkinterCustomButton(master=number_frame,
+                                         bg_color=None,
+                                         fg_color="#2874A6",
+                                         border_color=None,
+                                         hover_color="#5499C7",
+                                         text_font=None,
+                                         text=i,
+                                         text_color="white",
+                                         corner_radius=10,
+                                         border_width=1,
+                                         width=100,
+                                         height=100,
+                                         hover=True,
+                                         command=lambda: UIEvent.show_error(
+                                             message=text)
+                                         )
+        # ===================================
+            button.grid(row=row, column=col)
+            row = row+1 if col == 2 else row
+            col = 0 if col == 2 else col+1
+        intro_label.pack()
+        entry.pack()
+        number_frame.pack()
+        before_button.pack()
 
 
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-    # LockerFrame.show_locker()
