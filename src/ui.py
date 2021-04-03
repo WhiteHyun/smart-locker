@@ -34,7 +34,7 @@ class App(tk.Tk):
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, LockerFrame, InformationFrame):
+        for F in (StartPage, DeliveryPage, FindPage, LockerFrame, InformationPage):
             page_name = F.__name__
             is_static = True if page_name == "StartPage" else False
             self.pages[page_name] = {"isStatic": is_static, "class": F}
@@ -52,56 +52,52 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        label = tk.Label(self, text="택배보관함",
-                         font=controller.large_font)
-        label.pack(side="top", fill="x", pady=50)
+        tk.Label(self, text="택배보관함",
+                 font=controller.large_font).pack(side="top", fill="x", pady=50)
 
-        self.delivery_button = SMLButton(master=self,
-                                         bg_color=None,
-                                         fg_color="#2874A6",
-                                         hover_color="#5499C7",
-                                         text_font=controller.large_font,
-                                         text="맡기기",
-                                         text_color="white",
-                                         corner_radius=10,
-                                         width=240,
-                                         height=90,
-                                         hover=True,
-                                         command=lambda: UIEvent.show_frame(
-                                             controller.pages["DeliveryPage"], controller=controller)
-                                         )
-        self.find_delivery_button = SMLButton(master=self,
-                                              bg_color=None,
-                                              fg_color="#2874A6",
-                                              hover_color="#5499C7",
-                                              text_font=controller.large_font,
-                                              text="찾기",
-                                              text_color="white",
-                                              corner_radius=10,
-                                              width=240,
-                                              height=90,
-                                              hover=True,
-                                              command=lambda: UIEvent.show_frame(
-                                                  controller.frames["FindPage"], controller=controller)
-                                              )
-        self.exit_button = SMLButton(master=self,
-                                     bg_color=None,
-                                     fg_color="#922B21",
-                                     border_color="white",
-                                     hover_color="#CD6155",
-                                     text_font=None,
-                                     text="tkinter 종료",
-                                     text_color="white",
-                                     corner_radius=10,
-                                     border_width=2,
-                                     width=150,
-                                     height=45,
-                                     hover=True,
-                                     command=lambda: controller.destroy()
-                                     )
-        self.delivery_button.place(relx=0.33, rely=0.2, anchor=tk.CENTER)
-        self.find_delivery_button.place(relx=0.66, rely=0.2, anchor=tk.CENTER)
-        self.exit_button.place(relx=0.50, rely=0.3, anchor=tk.CENTER)
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color="#2874A6",
+                  hover_color="#5499C7",
+                  text_font=controller.large_font,
+                  text="맡기기",
+                  text_color="white",
+                  corner_radius=10,
+                  width=240,
+                  height=90,
+                  hover=True,
+                  command=lambda: UIEvent.show_frame(
+                      controller.pages["DeliveryPage"], controller=controller)
+                  ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color="#2874A6",
+                  hover_color="#5499C7",
+                  text_font=controller.large_font,
+                  text="찾기",
+                  text_color="white",
+                  corner_radius=10,
+                  width=240,
+                  height=90,
+                  hover=True,
+                  command=lambda: UIEvent.show_frame(
+                      controller.frames["FindPage"], controller=controller)
+                  ).place(relx=0.66, rely=0.2, anchor=tk.CENTER)
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color="#922B21",
+                  border_color="white",
+                  hover_color="#CD6155",
+                  text_font=None,
+                  text="tkinter 종료",
+                  text_color="white",
+                  corner_radius=10,
+                  border_width=2,
+                  width=150,
+                  height=45,
+                  hover=True,
+                  command=lambda: controller.destroy()
+                  ).place(relx=0.50, rely=0.3, anchor=tk.CENTER)
 
         UIEvent.sync_to_json()
 
@@ -115,22 +111,17 @@ class DeliveryPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.lockers = {}
 
-        label = tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
-                         font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
+        tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
+                 font=controller.title_font).pack(side="top", fill="x", pady=10)
 
-        button = tk.Button(self, text="Go to the start page",
-                           command=lambda: UIEvent.show_frame(controller.pages["StartPage"], self, controller))
-        button.pack()
+        tk.Button(self, text="Go to the start page",
+                  command=lambda: UIEvent.show_frame(controller.pages["StartPage"], self, controller)).pack()
 
-        button = tk.Button(self, text="destroy page",
-                           command=self.destroy)
-        button.pack()
-        frame = LockerFrame(
-            parent=self, controller=controller, relief="solid")
-        frame.pack(pady=20)
+        tk.Button(self, text="destroy page",
+                  command=self.destroy).pack()
+        LockerFrame(
+            parent=self, controller=controller, relief="solid").pack(pady=20)
 
 
 class FindPage(tk.Frame):
@@ -138,12 +129,6 @@ class FindPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        label = tk.Label(self, text="This is page 2",
-                         font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Go to the start page",
-                           command=lambda: UIEvent.show_frame(controller.static_frames["StartPage"]))
-        button.pack()
 
 
 class LockerFrame(tk.Frame):
@@ -204,29 +189,27 @@ class LockerFrame(tk.Frame):
             f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
         }
         command_dict = {
-            f"{LockerFrame.STATE_WAIT}": lambda: UIEvent.show_frame(self.controller.pages["InformationFrame"], self.parent, self.controller),
+            f"{LockerFrame.STATE_WAIT}": lambda: UIEvent.show_frame(self.controller.pages["InformationPage"], self.parent, self.controller),
             f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
             f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
         }
 
-        button = SMLButton(master=self,
-                           bg_color=None,
-                           fg_color=color_dict[json_data["useState"]][0],
-                           border_color=None,
-                           hover_color=color_dict[json_data["useState"]][1],
-                           image=play_image,
-                           corner_radius=10,
-                           border_width=1,
-                           width=100 if width == 1 else 100*width,
-                           height=100 if height == 1 else 100*height,
-                           hover=True,
-                           command=command_dict[json_data["useState"]])
-
-        button.grid(row=location["start"]["row"],
-                    column=location["start"]["col"], rowspan=height, columnspan=width)
+        SMLButton(master=self,
+                  bg_color=None,
+                  fg_color=color_dict[json_data["useState"]][0],
+                  border_color=None,
+                  hover_color=color_dict[json_data["useState"]][1],
+                  image=play_image,
+                  corner_radius=10,
+                  border_width=1,
+                  width=100 if width == 1 else 100*width,
+                  height=100 if height == 1 else 100*height,
+                  hover=True,
+                  command=command_dict[json_data["useState"]]).grid(row=location["start"]["row"],
+                                                                    column=location["start"]["col"], rowspan=height, columnspan=width)
 
 
-class InformationFrame(tk.Frame):
+class InformationPage(tk.Frame):
     """
     사물함을 클릭했을 때 정보를 입력할 프레임입니다.
     """
@@ -260,24 +243,22 @@ class InformationFrame(tk.Frame):
                             "6", "7", "8", "9", "취소", "0", "확인"]
 
         for i in button_name_list:
-            text = f"{i} 버튼 이벤트 발생"
-            button = SMLButton(master=number_frame,
-                               bg_color=None,
-                               fg_color="#2874A6",
-                               border_color=None,
-                               hover_color="#5499C7",
-                               text_font=None,
-                               text=i,
-                               text_color="white",
-                               corner_radius=10,
-                               border_width=1,
-                               width=100,
-                               height=100,
-                               hover=True,
-                               command=lambda i=i: UIEvent.show_error(
-                                   message=f"{i} 버튼 이벤트 발생")
-                               )
-            button.grid(row=row, column=col)
+            SMLButton(master=number_frame,
+                      bg_color=None,
+                      fg_color="#2874A6",
+                      border_color=None,
+                      hover_color="#5499C7",
+                      text_font=None,
+                      text=i,
+                      text_color="white",
+                      corner_radius=10,
+                      border_width=1,
+                      width=100,
+                      height=100,
+                      hover=True,
+                      command=lambda i=i: UIEvent.show_error(
+                          message=f"{i} 버튼 이벤트 발생")
+                      ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
 
