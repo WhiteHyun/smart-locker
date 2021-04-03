@@ -34,6 +34,13 @@ class UIEvent():
         return simpledialog.askstring(title=title, prompt=message)
 
     @classmethod
+    def show_question(cls, title="버튼", message="버튼 이벤트 발생"):
+        """
+        새 창으로 질문 이벤트 창을 발생시킵니다.
+        """
+        return messagebox.askquestion(title=title, message=message)
+
+    @classmethod
     def __delivery_process(cls, frame):
         """
         택배 보관 처리 함수입니다. 택배보관 가능한 사물함을 누를 시 발생하는 함수입니다.
