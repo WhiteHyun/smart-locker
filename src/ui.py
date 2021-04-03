@@ -273,8 +273,8 @@ class InformationFrame(tk.Frame):
                                          width=100,
                                          height=100,
                                          hover=True,
-                                         command=lambda: UIEvent.show_error(
-                                             message=text)
+                                         command=lambda i=i: UIEvent.show_error(
+                                             message=f"{i} 버튼 이벤트 발생")
                                          )
         # ===================================
             button.grid(row=row, column=col)
