@@ -128,9 +128,9 @@ class DeliveryPage(tk.Frame):
         button = tk.Button(self, text="destroy page",
                            command=self.destroy)
         button.pack()
-        frame1 = LockerFrame(
-            parent=self, controller=controller, relief="solid", bd=2)
-        frame1.pack(fill="both", expand=True)
+        frame = LockerFrame(
+            parent=self, controller=controller, relief="solid")
+        frame.pack(pady=20)
 
 
 class FindPage(tk.Frame):
@@ -154,6 +154,7 @@ class LockerFrame(tk.Frame):
 
     def __init__(self, parent, controller, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.parent = parent
         self.controller = controller
         self.show_locker()
 
@@ -203,7 +204,7 @@ class LockerFrame(tk.Frame):
             f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
         }
         command_dict = {
-            f"{LockerFrame.STATE_WAIT}": lambda: UIEvent.show_frame(self.controller.pages["InformationFrame"], self, self.controller),
+            f"{LockerFrame.STATE_WAIT}": lambda: UIEvent.show_frame(self.controller.pages["InformationFrame"], self.parent, self.controller),
             f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
             f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
         }
@@ -250,14 +251,14 @@ class InformationFrame(tk.Frame):
                                   width=100,
                                   height=100,
                                   hover=True,
-                                  command=lambda: UIEvent.show_error(
-                                      message="이전으로 돌아가기")
+                                  command=lambda: UIEvent.show_frame(
+                                      controller.pages["DeliveryPage"], self, controller)
                                   )
         row = 0
         col = 0
-        # ===================================
         button_name_list = ["1", "2", "3", "4", "5",
                             "6", "7", "8", "9", "취소", "0", "확인"]
+
         for i in button_name_list:
             text = f"{i} 버튼 이벤트 발생"
             button = SMLButton(master=number_frame,
@@ -276,14 +277,14 @@ class InformationFrame(tk.Frame):
                                command=lambda i=i: UIEvent.show_error(
                                    message=f"{i} 버튼 이벤트 발생")
                                )
-        # ===================================
             button.grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
+
         intro_label.pack()
-        entry.pack()
+        entry.pack(pady=10)
         number_frame.pack()
-        before_button.pack()
+        before_button.pack(side="bottom", anchor="w")
 
 
 if __name__ == "__main__":
