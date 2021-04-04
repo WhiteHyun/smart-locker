@@ -423,7 +423,10 @@ class InformationPage(tk.Frame):
                 "번호 확인", f"{phone_format_number}가 맞습니까?"
             )
             if user_check == "yes":
-                self.__process(phone_number, **kwargs)
+                if page == "DeliveryPage":
+                    self.__process_delivery(phone_number)
+                elif page == "FindPage":
+                    self.__find_delivery()
 
         for i in button_name_list:
             SMLButton(master=number_frame,
@@ -450,7 +453,7 @@ class InformationPage(tk.Frame):
         number_frame.pack()
         before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
 
-    def __process(self, phone_number):
+    def __process_delivery(self, phone_number):
         """
         함 정보와 유저정보, 현재 시간을 통해 해시 암호화 하여 qr코드를 생성후 유저에게 보냅니다.
         그리고 데이터베이스에 해당 내용을 저장합니다.
@@ -463,6 +466,8 @@ class InformationPage(tk.Frame):
         hash_qr = encrypt(hash_value)
         generateQR(hash_qr)
 
+        # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
+
         # 여기서부터 데이터베이스 저장 시작
         sql = SQL("root", "", "10.80.76.63", "SML")
 
@@ -472,6 +477,11 @@ class InformationPage(tk.Frame):
 
         # TODO: #16 CoolSMS를 통해 sms를 보냄
         # 전화번호 문자내용 qr경로
+
+    def __find_delivery(self):
+        """
+        택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
+        """
 
 
 if __name__ == "__main__":
