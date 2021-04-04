@@ -2,11 +2,11 @@ import tkinter as tk                # python 3
 from tkinter import font as tkfont  # python 3
 from tkinter import messagebox
 if __name__ == "__main__" or __name__ == "ui":
-    from custom.tkinter_custom_button import SMLButton
+    from custom.button import SMLButton
     from event import *
 
 else:
-    from .custom.tkinter_custom_button import SMLButton
+    from .custom.button import SMLButton
     from .event import *
 
 
