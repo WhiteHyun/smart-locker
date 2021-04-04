@@ -40,7 +40,7 @@ class App(tk.Tk):
             self.pages[page_name] = F
         self.show_frame("StartPage")
 
-    def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None):
+    def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None, page=None):
         """
         프레임(창)을 띄워줍니다.
 
@@ -50,13 +50,13 @@ class App(tk.Tk):
             parent (tk.Frame): 새롭게 보여질 프레임의 부모프레임
         """
         try:
-            if CRRMngKey is None:
+            if CRRMngKey is None or page is None:
                 temp_frame = self.pages[new_frame](
                     parent=parent if parent is not None else self.container, controller=self
                 )
             else:
                 temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey
+                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey, page=page
                 )
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
@@ -289,16 +289,10 @@ class LockerFrame(tk.Frame):
         self.parent = parent
         self.controller = controller
         self.page = page
-
         self.color_dict = {
             f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71") if page == "DeliveryPage" else ("#A93226", "#CD6155"),
             f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155") if page == "DeliveryPage" else ("#1E8449", "#2ECC71"),
             f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
-        }
-        self.command_dict = {
-            f"{LockerFrame.STATE_WAIT}": lambda CRRMngKey: self.controller.show_frame("InformationPage", self.parent, CRRMngKey=CRRMngKey) if page == "DeliveryPage" else lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다."),
-            f"{LockerFrame.STATE_USED}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.") if page == "DeliveryPage" else lambda CRRMngKey: self.controller.show_frame("InformationPage", self.parent, CRRMngKey=CRRMngKey),
-            f"{LockerFrame.STATE_BROKEN}": lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
         }
         self.__show_locker()
 
@@ -340,11 +334,22 @@ class LockerFrame(tk.Frame):
         play_image = ImageTk.PhotoImage(Image.open(
             "src/img/lockers.png"
         ).resize((60, 60)))
-
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
+        state = json_data["useState"]
 
+        def decide_function():
+            """
+            함이 어디 페이지에 위치해있으며 상태값이 어떤지에 따라 그에 걸맞게 함수를 지정해줍니다
+            """
+            # useState == 'U' when FindPage, useState == 'W' when DeliveryPage
+            if state == LockerFrame.STATE_USED and self.page == "FindPage" or state == LockerFrame.STATE_WAIT and self.page == "DeliveryPage":
+                return lambda CRRMngKey=json_data["CRRMngKey"]: self.controller.show_frame("InformationPage", self.parent, CRRMngKey=CRRMngKey, page=self.page)
+
+            # useState == 'B' or 'U' when deliveryPage, 'W' when FindPage
+            else:
+                return lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
         SMLButton(master=self,
                   bg_color=None,
                   fg_color=self.color_dict[json_data["useState"]][0],
@@ -356,8 +361,9 @@ class LockerFrame(tk.Frame):
                   width=100 if width == 1 else 100*width,
                   height=100 if height == 1 else 100*height,
                   hover=True,
-                  command=self.command_dict[json_data["useState"]] if json_data["useState"] == LockerFrame.STATE_BROKEN or (json_data["useState"] == LockerFrame.STATE_USED and self.page == "DeliveryPage") or (json_data["useState"] == LockerFrame.STATE_WAIT and self.page == "FindPage") else lambda: self.command_dict[json_data["useState"]](json_data["CRRMngKey"])).grid(row=location["start"]["row"],
-                                                                                                                                                                                                                                                                                                                                                                                  column=location["start"]["col"], rowspan=height, columnspan=width)
+                  command=decide_function()
+                  ).grid(row=location["start"]["row"],
+                         column=location["start"]["col"], rowspan=height, columnspan=width)
 
 
 class InformationPage(tk.Frame):
@@ -365,7 +371,7 @@ class InformationPage(tk.Frame):
     함을 클릭했을 때 사용자 정보를 입력할 프레임입니다.
     """
 
-    def __init__(self, parent, controller, CRRMngKey, *args, **kwargs):
+    def __init__(self, parent, controller, CRRMngKey, page, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.controller = controller
         self.CRRMngKey = CRRMngKey
@@ -389,7 +395,7 @@ class InformationPage(tk.Frame):
                                   height=100,
                                   hover=True,
                                   command=lambda: controller.show_frame(
-                                      "DeliveryPage", self
+                                      page, self
                                   )
                                   )
         row = 0
@@ -464,7 +470,7 @@ class InformationPage(tk.Frame):
             f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';"
         )
 
-        # TODO: CoolSMS를 통해 sms를 보냄
+        # TODO: #16 CoolSMS를 통해 sms를 보냄
         # 전화번호 문자내용 qr경로
 
 
