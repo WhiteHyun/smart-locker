@@ -32,7 +32,7 @@ class UIEvent():
         """
         새 창으로 질문 이벤트 창을 발생시킵니다.
         """
-        return messagebox.askquestion(title=title, message=message)
+        return messagebox.askquestion(title=title, message=message).focus_force()
 
     @classmethod
     def __delivery_process(cls, frame):
