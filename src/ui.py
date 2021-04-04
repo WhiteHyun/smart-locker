@@ -1,13 +1,16 @@
 import tkinter as tk                # python 3
 from tkinter import font as tkfont  # python 3
 from tkinter import messagebox
+
 if __name__ == "__main__" or __name__ == "ui":
     from custom.button import SMLButton
     from event import *
+    from sms import SMS
 
 else:
     from .custom.button import SMLButton
     from .event import *
+    from .sms import SMS
 
 
 class App(tk.Tk):
@@ -475,6 +478,10 @@ class InformationPage(tk.Frame):
             f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';"
         )
 
+        # FIXME: 경로 수정해야함
+        nSMS = SMS(to= phone_number,text="임시",imagePath=f"data/{hash_qr}.png")
+        if not nSMS.sendMessage():
+            UIEvent.show_error(message="문자전송에 실패 하였습니다.")
         # TODO: #16 CoolSMS를 통해 sms를 보냄
         # 전화번호 문자내용 qr경로
 
