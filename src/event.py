@@ -3,17 +3,11 @@ from tkinter import TclError, simpledialog
 from tkinter import messagebox
 if __name__ == "__main__" or __name__ == "event":
     from sql import SQL
-    from custom.tkinter_custom_button import SMLButton
 else:
     from .sql import SQL
-    from .custom.tkinter_custom_button import SMLButton
 
 
 class UIEvent():
-
-    DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
-    relx = 0.22  # 함 이미지 위치 지정값 중 x
-    rely = 0.2  # 함 이미지 위치 지정값 중 y
 
     @classmethod
     def show_warning(cls, title="버튼", message="버튼 이벤트 발생"):
@@ -79,7 +73,3 @@ class UIEvent():
             f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';")
 
         print(result)
-
-
-if __name__ == "__main__":
-    UIEvent.sync_to_json()

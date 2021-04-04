@@ -23,7 +23,8 @@ class App(tk.Tk):
 
         # 화면 설정
         self.geometry(
-            f"{super().winfo_screenwidth()}x{super().winfo_screenheight()}+0+0")
+            f"{super().winfo_screenwidth()}x{super().winfo_screenheight()}+0+0"
+        )
         super().attributes('-type', 'splash')
 
         # 화면에 보여질 컨테이너 생성
@@ -51,10 +52,12 @@ class App(tk.Tk):
         try:
             if CRRMngKey is None:
                 temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self)
+                    parent=parent if parent is not None else self.container, controller=self
+                )
             else:
                 temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey)
+                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey
+                )
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
@@ -75,7 +78,8 @@ class StartPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         tk.Label(self, text="택배보관함",
-                 font=controller.large_font).pack(side="top", fill="x", pady=50)
+                 font=controller.large_font
+                 ).pack(side="top", fill="x", pady=50)
 
         SMLButton(master=self,
                   bg_color=None,
@@ -89,7 +93,8 @@ class StartPage(tk.Frame):
                   height=90,
                   hover=True,
                   command=lambda: controller.show_frame(
-                      "DeliveryPage", self)
+                      "DeliveryPage", self
+                  )
                   ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
         SMLButton(master=self,
                   bg_color=None,
@@ -103,7 +108,8 @@ class StartPage(tk.Frame):
                   height=90,
                   hover=True,
                   command=lambda: controller.show_frame(
-                      "FindPage", self)
+                      "FindPage", self
+                  )
                   ).place(relx=0.66, rely=0.2, anchor=tk.CENTER)
         SMLButton(master=self,
                   bg_color=None,
@@ -138,21 +144,25 @@ class StartPage(tk.Frame):
                 file_read = f.readlines()
                 if len(file_read) == 0:
                     manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
-                        "SELECT LCKMngKey FROM LCKInfo;")))
+                        "SELECT LCKMngKey FROM LCKInfo;"
+                    )))
 
                     while locker_manage_key is None or locker_manage_key not in manage_key_list:
                         locker_manage_key = UIEvent.get_value_from_user_to_dialog(
-                            "사물함 관리번호", "사물함 관리번호가 무엇인지 정확하게 기입하여주세요!")
+                            "사물함 관리번호", "사물함 관리번호가 무엇인지 정확하게 기입하여주세요!"
+                        )
                 else:
                     json_object = json.loads("".join(file_read))
                     locker_manage_key = json_object["LCKMngKey"]
 
             # 본격적인 파싱 시작
             locker_size = sql.processDB(
-                f"SELECT LCKSizeX, LCKSizeY FROM LCKInfo WHERE LCKMngKey='{locker_manage_key}'")[0]
+                f"SELECT LCKSizeX, LCKSizeY FROM LCKInfo WHERE LCKMngKey='{locker_manage_key}'"
+            )[0]
 
             result = sql.processDB(
-                f"SELECT c.CRRMngKey, CRRNo, PosX, PosY, Width, Height, UseStat FROM CRRInfo c INNER JOIN LCKStat l ON LCKMngKey='{locker_manage_key}' AND c.CRRMngKey=l.CRRMngKey;")
+                f"SELECT c.CRRMngKey, CRRNo, PosX, PosY, Width, Height, UseStat FROM CRRInfo c INNER JOIN LCKStat l ON LCKMngKey='{locker_manage_key}' AND c.CRRMngKey=l.CRRMngKey;"
+            )
             result = list(map(lambda dic: f"""
         {{
             "CRRMngKey": "{dic["CRRMngKey"]}",
@@ -200,7 +210,8 @@ class DeliveryPage(tk.Frame):
         self.controller = controller
 
         tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
-                 font=controller.title_font).pack(side="top", fill="x", pady=10)
+                 font=controller.title_font
+                 ).pack(side="top", fill="x", pady=10)
 
         SMLButton(master=self,
                   bg_color=None,
@@ -216,7 +227,8 @@ class DeliveryPage(tk.Frame):
                   height=100,
                   hover=True,
                   command=lambda: controller.show_frame(
-                      "StartPage", self)
+                      "StartPage", self
+                  )
                   ).pack(side="bottom", anchor="w", padx=20, pady=20)
 
         LockerFrame(
@@ -258,7 +270,8 @@ class FindPage(tk.Frame):
                   height=100,
                   hover=True,
                   command=lambda: controller.show_frame(
-                      "StartPage", self)
+                      "StartPage", self
+                  )
                   ).pack(side="bottom", anchor="w", padx=20, pady=20)
         LockerFrame(
             parent=self, controller=controller, page="FindPage", relief="solid").pack(pady=20)
@@ -299,7 +312,8 @@ class LockerFrame(tk.Frame):
                 import json
                 json_object = json.load(f)
                 locker_list = sorted(
-                    json_object["CRRInfo"], key=lambda dic: dic["location"]["start"]["row"])
+                    json_object["CRRInfo"], key=lambda dic: dic["location"]["start"]["row"]
+                )
                 for json_data in locker_list:
                     self.__make_locker_button(json_data)
         except Exception as e:
@@ -324,7 +338,8 @@ class LockerFrame(tk.Frame):
 
         # FIXME: 무조건 경로 수정해야함!!!
         play_image = ImageTk.PhotoImage(Image.open(
-            "src/img/lockers.png").resize((60, 60)))
+            "src/img/lockers.png"
+        ).resize((60, 60)))
 
         location = json_data["location"]
         width = location["width"]
@@ -356,7 +371,8 @@ class InformationPage(tk.Frame):
         self.CRRMngKey = CRRMngKey
         self.index = 0
         intro_label = tk.Label(
-            self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font)
+            self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font
+        )
         entry = tk.Entry(self)
         number_frame = tk.Frame(self)
         before_button = SMLButton(master=self,
@@ -373,7 +389,8 @@ class InformationPage(tk.Frame):
                                   height=100,
                                   hover=True,
                                   command=lambda: controller.show_frame(
-                                      "DeliveryPage", self)
+                                      "DeliveryPage", self
+                                  )
                                   )
         row = 0
         col = 0
@@ -389,17 +406,18 @@ class InformationPage(tk.Frame):
             entry.delete(self.index-1)
             self.index = self.index-1 if self.index > 0 else 0
 
-        def verify_phone_number(phone_number, **kwargs):
+        def verify_phone_number(phone_number):
             """
             휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
             """
             if len(phone_number) != 11 or phone_number[:3] != "010":
                 return
-            phone_string = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
+            phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
             user_check = UIEvent.show_question(
-                "번호 확인", f"{phone_string}가 맞습니까?")
+                "번호 확인", f"{phone_format_number}가 맞습니까?"
+            )
             if user_check == "yes":
-                self.process(phone_number, **kwargs)
+                self.__process(phone_number, **kwargs)
 
         for i in button_name_list:
             SMLButton(master=number_frame,
@@ -416,7 +434,7 @@ class InformationPage(tk.Frame):
                       height=100,
                       hover=True,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else verify_phone_number(entry.get(), **kwargs)
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else verify_phone_number(entry.get())
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
@@ -426,7 +444,7 @@ class InformationPage(tk.Frame):
         number_frame.pack()
         before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
 
-    def process(self, phone_number):
+    def __process(self, phone_number):
         """
         함 정보와 유저정보, 현재 시간을 통해 해시 암호화 하여 qr코드를 생성후 유저에게 보냅니다.
         그리고 데이터베이스에 해당 내용을 저장합니다.
@@ -435,16 +453,19 @@ class InformationPage(tk.Frame):
         from encrypt import encrypt
         from qrcodes import generateQR
         DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
-        value = self.CRRMngKey+phone_number+datetime.now().strftime(DATE_FORMAT)
-        hash_qr = encrypt(value)
+        hash_value = self.CRRMngKey+phone_number+datetime.now().strftime(DATE_FORMAT)
+        hash_qr = encrypt(hash_value)
         generateQR(hash_qr)
 
         # 여기서부터 데이터베이스 저장 시작
+        sql = SQL("root", "", "10.80.76.63", "SML")
 
-        # info_sql = SQL("root", "", "10.80.76.63", "SML")
+        result = sql.processDB(
+            f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';"
+        )
 
-        # result = info_sql.processDB(
-        #     f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';")
+        # TODO: CoolSMS를 통해 sms를 보냄
+        # 전화번호 문자내용 qr경로
 
 
 if __name__ == "__main__":
