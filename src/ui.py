@@ -197,7 +197,10 @@ class StartPage(tk.Frame):
         except json.decoder.JSONDecodeError as e:
             UIEvent.show_error("에러!", "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
             raise e
-
+        except FileNotFoundError as e:
+            with open("data/information.json", "w") as f:
+                f.write("")
+                self.sync_to_json()
         except Exception as e:
             raise e
 
@@ -258,7 +261,7 @@ class FindPage(tk.Frame):
                   height=90,
                   hover=True,
                   command=lambda: print()
-                  ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
+                  ).pack()
         SMLButton(master=self,
                   bg_color=None,
                   fg_color="#2874A6",
@@ -479,7 +482,7 @@ class InformationPage(tk.Frame):
         )
 
         # FIXME: 경로 수정해야함
-        nSMS = SMS(to= phone_number,text="임시",imagePath=f"data/{hash_qr}.png")
+        nSMS = SMS(to=phone_number, text="임시", imagePath=f"data/{hash_qr}.png")
         if not nSMS.sendMessage():
             UIEvent.show_error(message="문자전송에 실패 하였습니다.")
         # TODO: #16 CoolSMS를 통해 sms를 보냄
