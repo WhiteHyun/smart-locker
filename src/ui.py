@@ -468,21 +468,30 @@ class InformationPage(tk.Frame):
         from encrypt import encrypt
         from qrcodes import generateQR
         DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
-        hash_value = self.CRRMngKey+phone_number+datetime.now().strftime(DATE_FORMAT)
-        hash_qr = encrypt(hash_value)
-        generateQR(hash_qr)
+        time = datetime.now().strftime(DATE_FORMAT)
+        value = self.CRRMngKey+phone_number+time
+        hash_value = encrypt(value)
+        generateQR(hash_value)
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
 
         # 여기서부터 데이터베이스 저장 시작
         sql = SQL("root", "", "10.80.76.63", "SML")
 
-        result = sql.processDB(
-            f"SELECT * FROM LCKStat WHERE HashKey='{hash_qr}';"
-        )
+        # 저장하려는 함의 정보가 존재할 때
+        # TODO: USRMngKey값이 phone_number로 현재는 대체중이며 나중에 바꿔야함!
+        if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
+            sql.processDB(
+                f"UPDATE LCKStat SET USRMngKey='{phone_number}', AddDt='{time}', HashKey='{hash_value}', UseStat='{LockerFrame.STATE_USED}' WHERE CRRMngKey='{self.CRRMngKey}';"
+            )
+        else:
+            sql.processDB(
+                f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{phone_number}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
+            )
 
         # FIXME: 경로 수정해야함
-        nSMS = SMS(to=phone_number, text="임시", imagePath=f"data/{hash_qr}.png")
+        nSMS = SMS(to=phone_number, text="임시",
+                   imagePath=f"data/{hash_value}.png")
         if not nSMS.sendMessage():
             UIEvent.show_error(message="문자전송에 실패 하였습니다.")
         # TODO: #16 CoolSMS를 통해 sms를 보냄
