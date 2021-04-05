@@ -46,11 +46,11 @@ def detectQR() -> list:
     사용자의 QR코드를 읽어오려는 경우 해당 함수를 호출합니다.
 
     Returns:
-        (url: str, qrtype: str): QR코드에 대한 url과 타입을 튜플로 반환합니다.
+        value (str): 인식한 QR코드를 decode한 결과값입니다.
 
     Example:
         >>> detectQR()
-        [("https://github.com/WhiteHyun", "QRCODE")]
+        "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
     """
     import cv2
     import pyzbar.pyzbar as pyzbar
