@@ -7,23 +7,26 @@ else:
 def generateQR(url: str) -> bool:
     """
     url 해시값을 통해 QRCode를 생성합니다.
-    만약 url이 없을 경우 Error를 raise 합니다.
 
     Args:
         url (str): QRCode를 생성할 url 해시값입니다.
+
+    Return:
+        bool: 성공하면 True, 실패할 시 False를 리턴합니다.
 
     Example:
         >>> generateQR(url) # If Success
         True
 
         >>> generateQR(url) # Fail
-        Value Error
+        False
     """
+
+    result = False
+
     if not url:
-        print("URL 값이 입력되지 않았습니다!")
         raise ValueError
     elif type(url) is not str:
-        print("문자열값이 아닙니다!")
         raise TypeError
 
     try:
@@ -31,13 +34,19 @@ def generateQR(url: str) -> bool:
         qr = qrcode.make(url)
         if __name__ == "__main__":
             qr.save(f"../data/qrcode_{url}.png")
-        else:  # 실행 위치와 환경에 따라 변동 가능성 존재
+        else:
+            # FIXME: 실행 위치와 환경에 따라 변동 가능성 존재
             qr.save(f"data/{url}.png")
+    except ValueError as e:
+        print("URL 값이 입력되지 않았습니다!")
+    except TypeError as e:
+        print("문자열값이 아닙니다!")
     except QRCodeError as e:
         print(f"QRCode 생성 중 오류가 발생하였습니다. {e}")
-        raise QRCodeError
     else:
-        return True
+        result = True
+    finally:
+        return result
 
 
 def detectQR() -> str:
