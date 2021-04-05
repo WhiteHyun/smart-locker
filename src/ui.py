@@ -260,7 +260,7 @@ class FindPage(tk.Frame):
                   width=240,
                   height=90,
                   hover=True,
-                  command=lambda: print()
+                  command=self.__open_door_by_qrcode
                   ).pack()
         SMLButton(master=self,
                   bg_color=None,
@@ -281,6 +281,34 @@ class FindPage(tk.Frame):
                   ).pack(side="bottom", anchor="w", padx=20, pady=20)
         LockerFrame(
             parent=self, controller=controller, page="FindPage", relief="solid").pack(pady=20)
+
+    def __open_door_by_qrcode(self):
+        """
+        QR코드를 통해 문을 열게 해주는 함수입니다.
+        """
+        if __name__ == "__main__" or __name__ == "ui":
+            from qrcodes import detectQR
+        else:
+            from .qrcodes import detectQR
+        try:
+            result_data = detectQR()[0]
+            sql = SQL("root", "", "10.80.76.63", "SML")
+            result = sql.processDB(
+                f"SELECT * FROM LCKStat WHERE HashKey='{result_data}';"
+            )
+            if not result:
+                raise ValueError
+            # TODO: #19 result 값을 가지고 함의 문을 열어줌
+            # TODO: 문이 닫히고 나서 센서값을 가져와 물건을 잘 찾아갔다고 판단되는 경우 데이터베이스 갱신 후 기존화면으로 이동
+
+            # 데이터베이스 갱신
+            sql.processDB(
+                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE CRRMngKey='{result_data}';"
+            )
+        except ValueError as e:
+            UIEvent.show_error("오류!", "존재하지 않는 QR코드입니다.")
+        except Exception as e:
+            raise e
 
 
 class LockerFrame(tk.Frame):
@@ -490,12 +518,17 @@ class InformationPage(tk.Frame):
             )
 
         # FIXME: 경로 수정해야함
-        nSMS = SMS(to=phone_number, text="임시",
-                   imagePath=f"data/{hash_value}.png")
+        nSMS = SMS(
+            to=phone_number,
+            text="""
+                QR코드가 발급되었습니다!! 🎉
+                택배를 찾을 때 표시에 따라 '찾기->QR코드로 찾기'를 누른 후
+                QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
+                항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
+                """,
+            imagePath=f"data/{hash_value}.png")
         if not nSMS.sendMessage():
             UIEvent.show_error(message="문자전송에 실패 하였습니다.")
-        # TODO: #16 CoolSMS를 통해 sms를 보냄
-        # 전화번호 문자내용 qr경로
 
     def __find_delivery(self):
         """
