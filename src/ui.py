@@ -538,6 +538,14 @@ class InformationPage(tk.Frame):
         if not nSMS.sendMessage():
             showerror(message="문자전송에 실패 하였습니다.")
 
+        # 완료 메시지 표시
+        top = tk.Toplevel()
+        tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
+        top.after(7000, top.destroy)
+
+        # 일반화면으로 이동
+        self.controller.show_frame("StartPage", self)
+
     def __find_delivery(self):
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
