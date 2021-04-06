@@ -84,7 +84,7 @@ def detectQR() -> str:
         decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석
 
         # QR코드가 2개 이상이거나 QRCODE로 인식하지 않은 경우
-        if len(decoded) > 1 or "QRCODE" != decoded[0].type:
+        if len(decoded) > 1 or (decoded and "QRCODE" != decoded[0].type):
             continue
         # QR코드 값이 하나 들어온 경우
         if decoded:
