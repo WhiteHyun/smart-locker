@@ -1,6 +1,5 @@
-import tkinter as tk                # python 3
-from tkinter import font as tkfont  # python 3
-from tkinter import messagebox
+import tkinter as tk
+from tkinter import font as tkfont
 
 if __name__ == "__main__" or __name__ == "ui":
     from custom.button import SMLButton
