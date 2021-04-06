@@ -1,15 +1,19 @@
 import tkinter as tk
 from tkinter import font as tkfont
+from tkinter.messagebox import showerror, askquestion
+from tkinter.simpledialog import askstring
 
 if __name__ == "__main__" or __name__ == "ui":
     from custom.button import SMLButton
     from event import *
     from sms import SMS
+    from sql import SQL
 
 else:
     from .custom.button import SMLButton
     from .event import *
     from .sms import SMS
+    from .sql import SQL
 
 
 class App(tk.Tk):
@@ -150,7 +154,7 @@ class StartPage(tk.Frame):
                     )))
 
                     while locker_manage_key is None or locker_manage_key not in manage_key_list:
-                        locker_manage_key = UIEvent.get_value_from_user_to_dialog(
+                        locker_manage_key = askstring(
                             "사물함 관리번호", "사물함 관리번호가 무엇인지 정확하게 기입하여주세요!"
                         )
                 else:
@@ -194,7 +198,7 @@ class StartPage(tk.Frame):
                 json.dump(json.loads(json_string), f, indent=2)
 
         except json.decoder.JSONDecodeError as e:
-            UIEvent.show_error("에러!", "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
+            showerror("에러!", "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
             raise e
         except FileNotFoundError as e:
             with open("data/information.json", "w") as f:
@@ -290,7 +294,7 @@ class FindPage(tk.Frame):
         else:
             from .qrcodes import detectQR
         try:
-            result_data = detectQR()[0]
+            result_data = detectQR()
             sql = SQL("root", "", "10.80.76.63", "SML")
             result = sql.processDB(
                 f"SELECT * FROM LCKStat WHERE HashKey='{result_data}';"
@@ -305,7 +309,7 @@ class FindPage(tk.Frame):
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE CRRMngKey='{result_data}';"
             )
         except ValueError as e:
-            UIEvent.show_error("오류!", "존재하지 않는 QR코드입니다.")
+            showerror("오류!", "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
 
@@ -363,9 +367,8 @@ class LockerFrame(tk.Frame):
         """
         from PIL import Image, ImageTk
 
-        # FIXME: 무조건 경로 수정해야함!!!
         play_image = ImageTk.PhotoImage(Image.open(
-            "src/img/lockers.png"
+            "img/lockers.png" if __name__ == "__main__" or __name__ == "ui" else "src/img/lockers.png"
         ).resize((60, 60)))
         location = json_data["location"]
         width = location["width"]
@@ -382,7 +385,7 @@ class LockerFrame(tk.Frame):
 
             # useState == 'B' or 'U' when deliveryPage, 'W' when FindPage
             else:
-                return lambda: UIEvent.show_error("오류!", "해당 함을 사용할 수 없습니다.")
+                return lambda: showerror("오류!", "해당 함을 사용할 수 없습니다.")
         SMLButton(master=self,
                   bg_color=None,
                   fg_color=self.color_dict[json_data["useState"]][0],
@@ -452,7 +455,7 @@ class InformationPage(tk.Frame):
             if len(phone_number) != 11 or phone_number[:3] != "010":
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
-            user_check = UIEvent.show_question(
+            user_check = askquestion(
                 "번호 확인", f"{phone_format_number}가 맞습니까?"
             )
             if user_check == "yes":
@@ -492,13 +495,18 @@ class InformationPage(tk.Frame):
         그리고 데이터베이스에 해당 내용을 저장합니다.
         """
         from datetime import datetime
+        from time import sleep
         from encrypt import encrypt
         from qrcodes import generateQR
         DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
         time = datetime.now().strftime(DATE_FORMAT)
         value = self.CRRMngKey+phone_number+time
         hash_value = encrypt(value)
-        generateQR(hash_value)
+        # QR코드 생성 실패시 다시 시도
+        if not generateQR(hash_value):
+            showerror("에러!", "qr코드 생성에 실패하였습니다.")
+            sleep(2)
+            self.__process_delivery(phone_number)
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
 
@@ -516,7 +524,6 @@ class InformationPage(tk.Frame):
                 f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{phone_number}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
             )
 
-        # FIXME: 경로 수정해야함
         nSMS = SMS(
             to=phone_number,
             text="""
@@ -525,9 +532,9 @@ class InformationPage(tk.Frame):
                 QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
                 항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
                 """,
-            imagePath=f"data/{hash_value}.png")
+            imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
         if not nSMS.sendMessage():
-            UIEvent.show_error(message="문자전송에 실패 하였습니다.")
+            showerror(message="문자전송에 실패 하였습니다.")
 
     def __find_delivery(self):
         """

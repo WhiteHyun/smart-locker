@@ -32,10 +32,9 @@ def generateQR(url: str) -> bool:
     try:
         import qrcode
         qr = qrcode.make(url)
-        if __name__ == "__main__":
+        if __name__ == "__main__" or __name__ == "qrcodes":
             qr.save(f"../data/qrcode_{url}.png")
         else:
-            # FIXME: 실행 위치와 환경에 따라 변동 가능성 존재
             qr.save(f"data/{url}.png")
     except ValueError as e:
         print("URL 값이 입력되지 않았습니다!")
@@ -94,3 +93,6 @@ def detectQR() -> str:
     cap.release()
     cv2.destroyAllWindows()
     return qrcode_data
+
+
+print(__name__)
