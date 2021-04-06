@@ -5,13 +5,11 @@ from tkinter.simpledialog import askstring
 
 if __name__ == "__main__" or __name__ == "ui":
     from custom.button import SMLButton
-    from event import *
     from sms import SMS
     from sql import SQL
 
 else:
     from .custom.button import SMLButton
-    from .event import *
     from .sms import SMS
     from .sql import SQL
 
