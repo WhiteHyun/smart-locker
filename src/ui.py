@@ -538,8 +538,3 @@ class InformationPage(tk.Frame):
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
-
-
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
