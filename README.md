@@ -2,6 +2,10 @@
 
 INU 20-21 캡스톤 디자인, Smart Locker
 
+## git-flow
+
+- [링크](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)
+
 ## 구현 사항
 
 ### 아두이노
@@ -22,13 +26,9 @@ INU 20-21 캡스톤 디자인, Smart Locker
   - [아두이노 코드](./src/locker_test.ino)
   - [라즈베리파이 코드](./main.py)
 
-#### 통신
-
-- [x] [서버와 연결](./src/network)
-
 ### 응용프로그램
 
-- [ ] C# 윈도우 폼으로 메인 화면 구현
+- [ ] 파이썬 tkinter로 메인 화면 구현
 
 ### 서버
 
