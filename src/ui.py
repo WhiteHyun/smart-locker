@@ -465,10 +465,11 @@ class InformationPage(tk.Frame):
                 "번호 확인", f"{phone_format_number}가 맞습니까?"
             )
             if user_check == "yes":
+                user_key = self.make_user_key(phone_number)
                 if page == "DeliveryPage":
-                    self.__process_delivery(phone_number)
+                    self.__process_delivery(user_key, phone_number)
                 elif page == "FindPage":
-                    self.__find_delivery(phone_number)
+                    self.__find_delivery(user_key)
 
         for i in button_name_list:
             SMLButton(master=number_frame,
@@ -495,7 +496,7 @@ class InformationPage(tk.Frame):
         number_frame.pack()
         before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
 
-    def __process_delivery(self, phone_number):
+    def __process_delivery(self, user_key, phone_number):
         """
         함 정보와 유저정보, 현재 시간을 통해 해시 암호화 하여 qr코드를 생성후 유저에게 보냅니다.
         그리고 데이터베이스에 해당 내용을 저장합니다.
@@ -510,13 +511,13 @@ class InformationPage(tk.Frame):
             from .qrcodes import generateQR
         DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
         time = datetime.now().strftime(DATE_FORMAT)
-        value = self.CRRMngKey+phone_number+time
+        value = self.CRRMngKey+user_key+time
         hash_value = encrypt(value)
         # QR코드 생성 실패시 다시 시도
         if not generateQR(hash_value):
             showerror("에러!", "qr코드 생성에 실패하였습니다.")
             sleep(2)
-            self.__process_delivery(phone_number)
+            self.__process_delivery(user_key)
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
 
@@ -524,14 +525,13 @@ class InformationPage(tk.Frame):
         sql = SQL("root", "", "10.80.76.63", "SML")
 
         # 저장하려는 함의 정보가 존재할 때
-        # TODO: USRMngKey값이 phone_number로 현재는 대체중이며 나중에 바꿔야함!
         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
             sql.processDB(
-                f"UPDATE LCKStat SET USRMngKey='{phone_number}', AddDt='{time}', HashKey='{hash_value}', UseStat='{LockerFrame.STATE_USED}' WHERE CRRMngKey='{self.CRRMngKey}';"
+                f"UPDATE LCKStat SET USRMngKey='{user_key}', AddDt='{time}', HashKey='{hash_value}', UseStat='{LockerFrame.STATE_USED}' WHERE CRRMngKey='{self.CRRMngKey}';"
             )
         else:
             sql.processDB(
-                f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{phone_number}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
+                f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{user_key}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
             )
 
         nSMS = SMS(
@@ -554,7 +554,7 @@ class InformationPage(tk.Frame):
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
 
-    def __find_delivery(self, phone_number):
+    def __find_delivery(self, user_key):
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
@@ -565,7 +565,7 @@ class InformationPage(tk.Frame):
         # TODO: USRMngKey값이 phone_number로 현재는 대체중이며 나중에 바꿔야함!
         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
             sql.processDB(
-                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{phone_number}';"
+                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
             )
         # 완료 메시지 표시
         top = tk.Toplevel()
@@ -574,3 +574,24 @@ class InformationPage(tk.Frame):
 
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
+
+    def make_user_key(self, phone_number: str):
+        """
+        휴대폰 번호를 받아 유저를 생성하여 데이터베이스에 저장한 후 관리번호를 리턴합니다.
+        만약 이미 존재하는 경우 존재하는 관리번호를 리턴합니다.
+        """
+        sql = SQL("root", "", "10.80.76.63", "SML")
+        result = sql.processDB(
+            f"SELECT USRMngKey FROM USRInfo WHERE USRTellNo='{phone_number}';")
+
+        # 해당 유저가 등록되지 않은 경우
+        if not result:
+            recent_user_key = sql.processDB(
+                "SELECT USRMngKey FROM USRInfo ORDER BY USRMngKey DESC LIMIT 1;")[0]["UsrMngKey"]
+            user_key = recent_user_key[:-1] + str(int(recent_user_key[-1])+1)
+            # FIXME: USRDis를 강제적으로 A로 만듦. 후에 수정 필요!
+            sql.processDB(
+                f"INSERT INTO USRInfo(USRMngKey, USRTellNo, USRDis) values('{user_key}', '{phone_number}', 'A');")
+            return user_key
+        else:
+            return result[0]["UsrMngKey"]
