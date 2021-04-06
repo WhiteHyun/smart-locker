@@ -304,7 +304,7 @@ class FindPage(tk.Frame):
 
             # 데이터베이스 갱신
             sql.processDB(
-                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE CRRMngKey='{result_data}';"
+                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE HashKey='{result_data}';"
             )
 
             # 완료 메시지 표시
