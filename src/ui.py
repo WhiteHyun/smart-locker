@@ -306,6 +306,14 @@ class FindPage(tk.Frame):
             sql.processDB(
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE CRRMngKey='{result_data}';"
             )
+
+            # 완료 메시지 표시
+            top = tk.Toplevel()
+            tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
+            top.after(7000, top.destroy)
+
+            # 기존 화면으로 이동
+            self.controller.show_frame("StartPage", self)
         except ValueError as e:
             showerror("오류!", "존재하지 않는 QR코드입니다.")
         except Exception as e:
@@ -460,7 +468,7 @@ class InformationPage(tk.Frame):
                 if page == "DeliveryPage":
                     self.__process_delivery(phone_number)
                 elif page == "FindPage":
-                    self.__find_delivery()
+                    self.__find_delivery(phone_number)
 
         for i in button_name_list:
             SMLButton(master=number_frame,
@@ -546,7 +554,23 @@ class InformationPage(tk.Frame):
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
 
-    def __find_delivery(self):
+    def __find_delivery(self, phone_number):
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
+        # TODO: #17 택배함이 열리고 택배함에 물건을 가져가고 문을 닫는 등의 확인절차 필요
+
+        sql = SQL("root", "", "10.80.76.63", "SML")
+
+        # TODO: USRMngKey값이 phone_number로 현재는 대체중이며 나중에 바꿔야함!
+        if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
+            sql.processDB(
+                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{phone_number}';"
+            )
+        # 완료 메시지 표시
+        top = tk.Toplevel()
+        tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
+        top.after(7000, top.destroy)
+
+        # 일반화면으로 이동
+        self.controller.show_frame("StartPage", self)
