@@ -494,8 +494,12 @@ class InformationPage(tk.Frame):
         """
         from datetime import datetime
         from time import sleep
-        from encrypt import encrypt
-        from qrcodes import generateQR
+        if __name__ == "__main__" or __name__ == "ui":
+            from encrypt import encrypt
+            from qrcodes import generateQR
+        else:
+            from .encrypt import encrypt
+            from .qrcodes import generateQR
         DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
         time = datetime.now().strftime(DATE_FORMAT)
         value = self.CRRMngKey+phone_number+time
