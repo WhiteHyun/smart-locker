@@ -69,7 +69,7 @@ class App(tk.Tk):
 
             # 기존 프레임 종료
             if frame is not None:
-                if frame.__name__ == "FindPage":
+                if str(frame) == "FindPage":
                     frame.label.after_cancel(frame.escape)
                 frame.destroy()
         except Exception as e:
@@ -282,6 +282,9 @@ class FindPage(tk.Frame):
         self.label = tk.Label()
         self.label.pack(pady=10)
         self.__open_door_by_qrcode()
+
+    def __str__(self) -> str:
+        return "FindPage"
 
     def __open_door_by_qrcode(self):
         """
