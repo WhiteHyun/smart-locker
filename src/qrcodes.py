@@ -60,9 +60,14 @@ def detectQR() -> str:
         >>> detectQR()
         "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
     """
+    # import tkinter as tk
+    # from PIL import Image, ImageTk
     import cv2
     import pyzbar.pyzbar as pyzbar
     cap = cv2.VideoCapture(0)
+    # top = tk.Toplevel()
+    # label = tk.Label(top)
+    # label.pack(padx=30, pady=30)
 
     # 비디오 캡처가 준비되었는지
     if not cap.isOpened():
@@ -76,7 +81,7 @@ def detectQR() -> str:
             print("camera read failed")
             raise VideoError
 
-        cv2.imshow('img', img)
+        cv2.imshow("qrcode", img)
         cv2.waitKey(1)
 
         # RGB 3채널로 되어있는 이미지 파일을 GRAY 1채널로 변경하여 저장
@@ -91,7 +96,8 @@ def detectQR() -> str:
             qrcode_data = decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
             break
     cap.release()
-    cv2.destroyAllWindows()
+    cap.destroyWindow("qrcode")
+    # top.destroy()
     return qrcode_data
 
 
