@@ -69,8 +69,8 @@ def detectQR() -> str:
     start_time = time()
     cap = cv2.VideoCapture(0)
     top = tk.Toplevel()
-    canvas = tk.Canvas(top, width=608, height=480)
-    canvas.pack()
+    label = tk.Label(top)
+    label.pack(padx=30, pady=30)
 
     # 비디오 캡처가 준비되었는지
     if not cap.isOpened():
@@ -84,8 +84,9 @@ def detectQR() -> str:
             print("camera read failed")
             raise VideoError
         img_tk = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        canvas.create_image(0, 0, image=ImageTk.PhotoImage(
-            image=Image.fromarray(img_tk)), anchor=tk.NW)
+        frame = ImageTk.PhotoImage(image=Image.fromarray(img_tk))
+        label.config(image=frame)
+        label.image = frame
 
         # RGB 3채널로 되어있는 이미지 파일을 GRAY 1채널로 변경하여 저장
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
