@@ -274,8 +274,8 @@ class FindPage(tk.Frame):
             parent=self, controller=controller, page="FindPage", relief="solid")
         locker_frame.pack(pady=20)
         locker_frame.bind(
-            "<Button-1>", lambda: self.label.after_cancel(self.escape))
-        button.bind("<Button-1>", lambda: self.label.after_cancel(self.escape))
+            "<Button-1>", self.callback)
+        button.bind("<Button-1>", self.callback)
 
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
 
@@ -283,6 +283,10 @@ class FindPage(tk.Frame):
         self.label = tk.Label()
         self.label.pack(pady=10)
         self.__open_door_by_qrcode()
+
+    def callback(self, event):
+        self.label.after_cancel(self.escape)
+        print(f"{self.escape} 멈춤!!!")
 
     def __open_door_by_qrcode(self):
         """
@@ -311,7 +315,8 @@ class FindPage(tk.Frame):
             self.label.configure(image=img)
             self.label.image = img
             if result_data is None:
-                self.escape = self.label.after(100, self.__open_door_by_qrcode)
+                self.escape = self.label.after(300, self.__open_door_by_qrcode)
+                print(self.escape)
                 return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
