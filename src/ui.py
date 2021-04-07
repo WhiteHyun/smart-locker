@@ -274,6 +274,7 @@ class FindPage(tk.Frame):
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
         self.label = tk.Label()
         self.label.pack(pady=20)
+        self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
         """
