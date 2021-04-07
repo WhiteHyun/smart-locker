@@ -252,28 +252,36 @@ class FindPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
-        SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  border_color=None,
-                  hover_color="#5499C7",
-                  text_font=None,
-                  text="이전으로",
-                  text_color="white",
-                  corner_radius=10,
-                  border_width=1,
-                  width=100,
-                  height=100,
-                  hover=True,
-                  command=lambda: controller.show_frame(
-                      "StartPage", self
-                  )
-                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
-        LockerFrame(
-            parent=self, controller=controller, page="FindPage", relief="solid").pack(pady=50)
+        button = SMLButton(master=self,
+                           bg_color=None,
+                           fg_color="#2874A6",
+                           border_color=None,
+                           hover_color="#5499C7",
+                           text_font=None,
+                           text="이전으로",
+                           text_color="white",
+                           corner_radius=10,
+                           border_width=1,
+                           width=100,
+                           height=100,
+                           hover=True,
+                           command=lambda: controller.show_frame(
+                               "StartPage", self
+                           )
+                           )
+        button.pack(side="bottom", anchor="w", padx=20, pady=20)
+        locker_frame = LockerFrame(
+            parent=self, controller=controller, page="FindPage", relief="solid")
+        locker_frame.pack(pady=20)
+        locker_frame.bind(
+            "<Button-1>", lambda: self.label.after_cancel(self.escape))
+        button.bind("<Button-1>", lambda: self.label.after_cancel(self.escape))
+
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
+
+        self.escape = ""
         self.label = tk.Label()
-        self.label.pack(pady=20)
+        self.label.pack(pady=10)
         self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
@@ -303,7 +311,7 @@ class FindPage(tk.Frame):
             self.label.configure(image=img)
             self.label.image = img
             if result_data is None:
-                self.label.after(1, self.__open_door_by_qrcode)
+                self.escape = self.label.after(100, self.__open_door_by_qrcode)
                 return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
