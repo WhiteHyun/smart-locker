@@ -278,8 +278,10 @@ class FindPage(tk.Frame):
         # after 함수를 종료시키기 위한 탈출 id
         self.escape = ""
         # 캠을 보여줄 label 객체
-        self.label = tk.Label(width=400, height=400)
+        self.label = tk.Label(width=300, height=250)
         self.label.pack(side="bottom", anchor="e", padx=20, pady=20)
+        self.label.place(x=controller.winfo_screenwidth()/2-150,
+                         y=controller.winfo_screenheight()/2+100)
         self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
@@ -303,6 +305,7 @@ class FindPage(tk.Frame):
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
             # 받아오지 못한 경우 단순 리턴
 
+            img = cv2.resize(img, (300, 250))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(img)
