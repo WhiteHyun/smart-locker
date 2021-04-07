@@ -296,15 +296,15 @@ class FindPage(tk.Frame):
             # 흑백이미지로 변환하여 qr 디코드
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
             # 받아오지 못한 경우 단순 리턴
-            if result_data is None:
-                self.label.after(1, self.__open_door_by_qrcode)
-                return
 
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(img)
             self.label.configure(image=img)
             self.label.image = img
+            if result_data is None:
+                self.label.after(1, self.__open_door_by_qrcode)
+                return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
             result = sql.processDB(
@@ -324,7 +324,8 @@ class FindPage(tk.Frame):
             top = tk.Toplevel()
             tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
             top.after(7000, top.destroy)
-
+            # 카메라 모듈 사용 해제
+            self.camera.release()
             # 기존 화면으로 이동
             self.controller.show_frame("StartPage", self)
         except ValueError as e:
