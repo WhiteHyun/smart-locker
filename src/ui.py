@@ -343,6 +343,7 @@ class FindPage(tk.Frame):
         super().destroy()
         self.label.after_cancel(self.escape)
         self.camera.release()
+        self.label.destroy()
 
 
 class LockerFrame(tk.Frame):
