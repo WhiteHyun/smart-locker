@@ -69,6 +69,8 @@ class App(tk.Tk):
 
             # 기존 프레임 종료
             if frame is not None:
+                if frame.__name__ == "FindPage":
+                    frame.label.after_cancel(frame.escape)
                 frame.destroy()
         except Exception as e:
             raise e
@@ -273,9 +275,6 @@ class FindPage(tk.Frame):
         locker_frame = LockerFrame(
             parent=self, controller=controller, page="FindPage", relief="solid")
         locker_frame.pack(pady=20)
-        locker_frame.bind(
-            "<Button-1>", self.callback)
-        button.bind("<Button-1>", self.callback)
 
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
 
@@ -283,10 +282,6 @@ class FindPage(tk.Frame):
         self.label = tk.Label()
         self.label.pack(pady=10)
         self.__open_door_by_qrcode()
-
-    def callback(self, event):
-        self.label.after_cancel(self.escape)
-        print(f"{self.escape} 멈춤!!!")
 
     def __open_door_by_qrcode(self):
         """
