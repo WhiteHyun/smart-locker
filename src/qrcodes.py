@@ -96,6 +96,6 @@ def detectQR() -> str:
             qrcode_data = decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
             break
     cap.release()
-    cap.destroyWindow("qrcode")
+    cv2.destroyWindow("qrcode")
     # top.destroy()
     return qrcode_data
