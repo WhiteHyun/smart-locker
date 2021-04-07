@@ -99,6 +99,3 @@ def detectQR() -> str:
     cap.destroyWindow("qrcode")
     # top.destroy()
     return qrcode_data
-
-
-print(__name__)
