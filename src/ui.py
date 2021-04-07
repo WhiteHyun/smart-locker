@@ -274,7 +274,6 @@ class FindPage(tk.Frame):
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
         self.label = tk.Label()
         self.label.pack(pady=20)
-        self.label.after(1, self.__open_door_by_qrcode)
 
     def __open_door_by_qrcode(self):
         """
@@ -297,6 +296,7 @@ class FindPage(tk.Frame):
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
             # 받아오지 못한 경우 단순 리턴
             if result_data is None:
+                self.label.after(1, self.__open_door_by_qrcode)
                 return
 
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
