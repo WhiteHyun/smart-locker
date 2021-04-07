@@ -69,8 +69,6 @@ class App(tk.Tk):
 
             # 기존 프레임 종료
             if frame is not None:
-                if str(frame) == "FindPage":
-                    frame.label.after_cancel(frame.escape)
                 frame.destroy()
         except Exception as e:
             raise e
@@ -283,9 +281,6 @@ class FindPage(tk.Frame):
         self.label.pack(pady=10)
         self.__open_door_by_qrcode()
 
-    def __str__(self) -> str:
-        return "FindPage"
-
     def __open_door_by_qrcode(self):
         """
         QR코드를 통해 문을 열게 해주는 함수입니다.
@@ -343,6 +338,11 @@ class FindPage(tk.Frame):
             showerror("오류!", "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
+
+    def destroy(self) -> None:
+        super().destroy()
+        self.label.after_cancel(self.escape)
+        self.camera.release()
 
 
 class LockerFrame(tk.Frame):
