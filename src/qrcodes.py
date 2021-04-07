@@ -1,7 +1,9 @@
-if __name__ == "__main__" or __name__ == "qrcodes":
-    from error import *
-else:
-    from .error import *
+class QRCodeError(Exception):
+    pass
+
+
+class VideoError(Exception):
+    pass
 
 
 def generateQR(url: str) -> bool:
@@ -48,72 +50,27 @@ def generateQR(url: str) -> bool:
         return result
 
 
-def camera(vid, label):
-    from PIL import Image, ImageTk
-    import cv2
-
-    ret, img = vid.read()  # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
-
-    if not ret:  # 카메라 캡처에 실패할 경우
-        print("camera read failed")
-        raise VideoError
-
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = Image.fromarray(img)
-    img = ImageTk.PhotoImage(img)
-    label.configure(image=img)
-    label.image = img
-    label.after(1, lambda: camera(vid, label))
-
-
-def detectQR() -> str:
+def detectQR(gray_image) -> str:
     """
-    캠 모듈을 사용하여 QR코드를 탐지합니다.
+    이미지를 이용해 QR코드를 탐지합니다.
     사용자의 QR코드를 읽어오려는 경우 해당 함수를 호출합니다.
 
+    Args:
+        img (nd.array): 비디오로 가져온 이미지 프레임 객체입니다.
     Returns:
         value (str): 인식한 QR코드를 decode한 결과값입니다.
 
     Example:
-        >>> detectQR()
+        >>> detectQR(img)
         "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
     """
-    import tkinter as tk
-    from time import time
-    import cv2
+
     import pyzbar.pyzbar as pyzbar
+    decoded = pyzbar.decode(gray_image)  # 바코드 또는 QR코드를 찾고 해석
 
-    start_time = time()
-    cap = cv2.VideoCapture(0)
-    top = tk.Toplevel()
-    label = tk.Label(top)
-    label.pack(padx=30, pady=30)
-
-    # 비디오 캡처가 준비되었는지
-    if not cap.isOpened():
-        print("camera open failed")
-        raise VideoError
-    camera(cap, label)
-    while True:
-        ret, img = cap.read()  # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
-
-        if not ret:  # 카메라 캡처에 실패할 경우
-            print("camera read failed")
-            raise VideoError
-
-        # RGB 3채널로 되어있는 이미지 파일을 GRAY 1채널로 변경하여 저장
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        decoded = pyzbar.decode(gray)  # 바코드 또는 QR코드를 찾고 해석
-
-        # QR코드가 2개 이상이거나 QRCODE로 인식하지 않은 경우
-        if len(decoded) > 1 or (decoded and "QRCODE" != decoded[0].type):
-            continue
-        # QR코드 값이 하나 들어온 경우
-        if decoded:
-            qrcode_data = decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
-            break
-        if time()-start_time > 30:
-            return
-    cap.release()
-    top.destroy()
-    return qrcode_data
+    # QR코드가 2개 이상이거나 QRCODE로 인식하지 않은 경우
+    if len(decoded) > 1 or (decoded and "QRCODE" != decoded[0].type):
+        return
+    # QR코드 값이 하나 들어온 경우
+    if decoded:
+        return decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
