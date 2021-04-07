@@ -293,6 +293,10 @@ class FindPage(tk.Frame):
             from .qrcodes import detectQR
         try:
             result_data = detectQR()
+
+            # 받아오지 못한 경우 단순 리턴
+            if result_data is None:
+                return
             sql = SQL("root", "", "10.80.76.63", "SML")
             result = sql.processDB(
                 f"SELECT * FROM LCKStat WHERE HashKey='{result_data}';"

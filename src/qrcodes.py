@@ -62,8 +62,11 @@ def detectQR() -> str:
     """
     # import tkinter as tk
     # from PIL import Image, ImageTk
+    from time import time
     import cv2
     import pyzbar.pyzbar as pyzbar
+
+    start_time = time()
     cap = cv2.VideoCapture(0)
     # top = tk.Toplevel()
     # label = tk.Label(top)
@@ -95,6 +98,8 @@ def detectQR() -> str:
         if decoded:
             qrcode_data = decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
             break
+        if time()-start_time > 30:
+            return
     cap.release()
     cv2.destroyWindow("qrcode")
     # top.destroy()
