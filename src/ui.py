@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import font as tkfont
 from tkinter.messagebox import showerror, askquestion
 from tkinter.simpledialog import askstring
-
+from PIL import Image, ImageTk
+import cv2
 if __name__ == "__main__" or __name__ == "ui":
     from custom.button import SMLButton
     from sms import SMS
@@ -250,19 +251,12 @@ class FindPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  hover_color="#5499C7",
-                  text_font=controller.large_font,
-                  text="QR코드로 찾기",
-                  text_color="white",
-                  corner_radius=10,
-                  width=240,
-                  height=90,
-                  hover=True,
-                  command=self.__open_door_by_qrcode
-                  ).pack()
+        self.camera = cv2.VideoCapture(0)
+
+        locker_frame = LockerFrame(
+            parent=self, controller=controller, page="FindPage", relief="solid")
+        locker_frame.pack(pady=20)
+        tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
         SMLButton(master=self,
                   bg_color=None,
                   fg_color="#2874A6",
@@ -280,19 +274,47 @@ class FindPage(tk.Frame):
                       "StartPage", self
                   )
                   ).pack(side="bottom", anchor="w", padx=20, pady=20)
-        LockerFrame(
-            parent=self, controller=controller, page="FindPage", relief="solid").pack(pady=20)
+
+        # after 함수를 종료시키기 위한 탈출 id
+        self.escape = ""
+        # 캠을 보여줄 label 객체
+        self.label = tk.Label(width=300, height=250)
+        self.label.pack(side="bottom", anchor="e", padx=20, pady=20)
+        self.label.place(x=controller.winfo_screenwidth()/2-150,
+                         y=controller.winfo_screenheight()/2+100)
+        self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
         """
         QR코드를 통해 문을 열게 해주는 함수입니다.
         """
+
         if __name__ == "__main__" or __name__ == "ui":
-            from qrcodes import detectQR
+            from qrcodes import detectQR, VideoError
         else:
-            from .qrcodes import detectQR
+            from .qrcodes import detectQR, VideoError
         try:
-            result_data = detectQR()
+
+            # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
+            ret, img = self.camera.read()
+            if not ret:  # 카메라 캡처에 실패할 경우
+                print("camera read failed")
+                raise VideoError
+
+            # 흑백이미지로 변환하여 qr 디코드
+            result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
+            # 받아오지 못한 경우 단순 리턴
+
+            img = cv2.resize(img, (300, 250))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(img)
+            img = ImageTk.PhotoImage(img)
+            self.label.configure(image=img)
+            self.label.image = img
+            if result_data is None:
+                self.escape = self.label.after(1, self.__open_door_by_qrcode)
+                return
+
             sql = SQL("root", "", "10.80.76.63", "SML")
             result = sql.processDB(
                 f"SELECT * FROM LCKStat WHERE HashKey='{result_data}';"
@@ -311,13 +333,20 @@ class FindPage(tk.Frame):
             top = tk.Toplevel()
             tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
             top.after(7000, top.destroy)
-
+            # 카메라 모듈 사용 해제
+            self.camera.release()
             # 기존 화면으로 이동
             self.controller.show_frame("StartPage", self)
         except ValueError as e:
             showerror("오류!", "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
+
+    def destroy(self) -> None:
+        super().destroy()
+        self.label.after_cancel(self.escape)
+        self.camera.release()
+        self.label.destroy()
 
 
 class LockerFrame(tk.Frame):
@@ -371,7 +400,6 @@ class LockerFrame(tk.Frame):
         사물(택배)함이 미사용중일 경우
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
-        from PIL import Image, ImageTk
 
         play_image = ImageTk.PhotoImage(Image.open(
             "img/lockers.png" if __name__ == "__main__" or __name__ == "ui" else "src/img/lockers.png"
