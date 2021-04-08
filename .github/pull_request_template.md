@@ -1,8 +1,8 @@
 ---
 name: Pull request
 about: Pull request to merge progress
-title: ""
-labels:
+title: "[PR]"
+labels: enhancement
 assignees: sungkyulh, WhiteHyun
 ---
 
