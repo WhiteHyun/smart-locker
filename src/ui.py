@@ -7,7 +7,6 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.start_page import StartPage
 
 else:
-    from .custom.button import SMLButton
     from .utils.util import *
     from .page.find_page import FindPage
     from .page.delivery_page import DeliveryPage
