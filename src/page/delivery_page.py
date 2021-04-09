@@ -19,7 +19,7 @@ class DeliveryPage(tk.Frame):
         self.controller = controller
 
         tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
-                 font=controller.title_font
+                 font=controller.medium_font
                  ).pack(side="top", fill="x", pady=10)
 
         SMLButton(master=self,

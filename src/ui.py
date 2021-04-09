@@ -22,6 +22,8 @@ class App(tk.Tk):
 
         # 폰트 지정
         self.title_font = tkfont.Font(
+            family="MS Sans Serif", size=28, weight="bold")
+        self.medium_font = tkfont.Font(
             family='Helvetica', size=18, weight="bold")
         self.large_font = tkfont.Font(
             family="MS Sans Serif", size=24, weight="bold")
