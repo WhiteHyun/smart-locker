@@ -38,7 +38,6 @@ class LockerFrame(tk.Frame):
                 for json_data in locker_list:
                     self.__make_locker_button(json_data)
         except Exception as e:
-            print(e)
             raise e
 
     def __make_locker_button(self, json_data):
@@ -49,10 +48,9 @@ class LockerFrame(tk.Frame):
         사물(택배)함이 고장났을 경우
             회색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 발생합니다.
 
-        사물(택배)함이 사용중일 경우
+        사물(택배)함이 고장나지 않은 경우
+        - 페이지에 따라 다르게 보여집니다.
             빨간색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 발생합니다.
-
-        사물(택배)함이 미사용중일 경우
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
 
@@ -76,12 +74,9 @@ class LockerFrame(tk.Frame):
             else:
                 return lambda: showerror("오류!", "해당 함을 사용할 수 없습니다.")
         SMLButton(master=self,
-                  bg_color=None,
                   fg_color=self.color_dict[json_data["useState"]][0],
-                  border_color=None,
                   hover_color=self.color_dict[json_data["useState"]][1],
                   image=play_image,
-                  corner_radius=10,
                   border_width=1,
                   width=100 if width == 1 else 100*width,
                   height=100 if height == 1 else 100*height,
