@@ -30,7 +30,7 @@ class StartPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
-                  ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
+                  ).place(relx=0.33, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   bg_color=None,
                   fg_color="#2874A6",
@@ -45,7 +45,7 @@ class StartPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
-                  ).place(relx=0.66, rely=0.2, anchor=tk.CENTER)
+                  ).place(relx=0.66, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   bg_color=None,
                   fg_color="#922B21",
@@ -60,7 +60,7 @@ class StartPage(tk.Frame):
                   height=45,
                   hover=True,
                   command=lambda: controller.destroy()
-                  ).place(relx=0.50, rely=0.3, anchor=tk.CENTER)
+                  ).place(relx=0.50, rely=0.7, anchor=tk.CENTER)
 
         self.sync_to_json()
 
