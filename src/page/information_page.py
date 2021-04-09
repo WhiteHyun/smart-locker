@@ -1,8 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
 from utils.sql import SQL
+from utils.util import *
 
 if __name__ == "__main__" or __name__ == "information_page":
     from locker_frame import LockerFrame
@@ -26,14 +26,7 @@ class InformationPage(tk.Frame):
         entry = tk.Entry(self)
         number_frame = tk.Frame(self)
         before_button = SMLButton(master=self,
-                                  bg_color=None,
-                                  fg_color="#2874A6",
-                                  border_color=None,
-                                  hover_color="#5499C7",
-                                  text_font=None,
                                   text="이전으로",
-                                  text_color="white",
-                                  corner_radius=10,
                                   border_width=1,
                                   width=100,
                                   height=100,
@@ -75,14 +68,8 @@ class InformationPage(tk.Frame):
 
         for i in button_name_list:
             SMLButton(master=number_frame,
-                      bg_color=None,
-                      fg_color="#2874A6",
-                      border_color=None,
-                      hover_color="#5499C7",
                       text_font=controller.large_font,
                       text=i,
-                      text_color="white",
-                      corner_radius=10,
                       border_width=1,
                       width=100,
                       height=100,
@@ -109,15 +96,14 @@ class InformationPage(tk.Frame):
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
 
-        DATE_FORMAT = "%Y-%m-%d %H:%M:%S"   # datetime 포맷값
-        time = datetime.now().strftime(DATE_FORMAT)
+        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime 포맷값
         value = self.CRRMngKey+user_key+time
         hash_value = encrypt(value)
         # QR코드 생성 실패시 다시 시도
         if not generateQR(hash_value):
             showerror("에러!", "qr코드 생성에 실패하였습니다.")
             sleep(2)
-            self.__process_delivery(user_key)
+            self.__process_delivery(user_key, phone_number)
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
 
@@ -167,10 +153,9 @@ class InformationPage(tk.Frame):
             sql.processDB(
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
             )
-        # 완료 메시지 표시
-        top = tk.Toplevel()
-        tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
-        top.after(7000, top.destroy)
+
+        # 완료메시지 표시
+        success_message(self.controller)
 
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
@@ -194,4 +179,4 @@ class InformationPage(tk.Frame):
                 f"INSERT INTO USRInfo(USRMngKey, USRTellNo, USRDis) values('{user_key}', '{phone_number}', 'A');")
             return user_key
         else:
-            return result[0]["UsrMngKey"]
+            return result[0]["USRMngKey"]
