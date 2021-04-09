@@ -14,7 +14,7 @@ class StartPage(tk.Frame):
         self.controller = controller
         tk.Label(self, text="택배보관함",
                  font=controller.large_font
-                 ).pack(side="top", fill="x", pady=50)
+                 ).place(relx=0.5, rely=0.4, anchor=tk.CENTER)
 
         SMLButton(master=self,
                   bg_color=None,
