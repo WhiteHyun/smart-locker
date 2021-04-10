@@ -15,9 +15,6 @@ class StartPage(tk.Frame):
         background_image = ImageTk.PhotoImage(Image.open(
             "../img/background6.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background6.png"
         ).resize((controller.width, controller.height)))
-        # label = tk.Label(self, image=background_image)
-        # label.image = background_image
-        # label.place(x=0,y=0, relwidth=1, relheight=1)
 
         canvas = tk.Canvas(self, width=controller.width, height=controller.height)
         canvas.pack(fill="both", expand=True)
