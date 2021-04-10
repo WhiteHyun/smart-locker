@@ -32,7 +32,7 @@ class SMLButton(tkinter.Frame):
                  height=40,
                  corner_radius=30,
                  text_font=None,
-                 text_color="white",
+                 text_color="black",
                  text="CustomButton",
                  hover=True,
                  image=None,
