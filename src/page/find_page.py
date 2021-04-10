@@ -26,7 +26,7 @@ class FindPage(tk.Frame):
         self.label.place(x=controller.width/2-150,
                          y=10)
 
-        tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(
+        tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font).pack(
             pady=(controller.height/3, 0))
 
         locker_frame = LockerFrame(
