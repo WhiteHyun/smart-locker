@@ -33,7 +33,7 @@ class InformationPage(tk.Frame):
         self.controller = controller
         self.CRRMngKey = CRRMngKey
         self.index = 0
-        entry = tk.Entry(self, width=50, font=controller.medium_font)
+        entry = tk.Entry(self, font=controller.medium_font)
         number_frame = tk.Frame(self)
         SMLButton(master=self,
                   text="이전으로",
