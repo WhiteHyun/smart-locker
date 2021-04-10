@@ -29,8 +29,8 @@ class StartPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="맡기기",
-                  width=400,
-                  height=300,
+                  width=controller.width/4.2,
+                  height=controller.height/3.5,
                   text_color="black",
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
@@ -39,8 +39,8 @@ class StartPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="찾기",
-                  width=400,
-                  height=300,
+                  width=controller.width/4.2,
+                  height=controller.height/3.5,
                   text_color="black",
                   command=lambda: controller.show_frame(
                       "FindPage", self
