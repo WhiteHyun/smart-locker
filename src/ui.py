@@ -35,13 +35,13 @@ class App(tk.Tk):
 
         # 폰트 지정
         self.title_font = tkfont.Font(
-            family="MS Sans Serif", size=self.width*self.height//29400, weight="bold")
+            family="Malgun Gothic", size=self.width*self.height//29400, weight="bold")
         self.medium_font = tkfont.Font(
-            family='Helvetica', size=self.width*self.height//98000, weight="bold")
+            family='Malgun Gothic', size=self.width*self.height//98000, weight="bold")
         self.xlarge_font = tkfont.Font(
-            family="MS Sans Serif", size=self.width*self.height//35280, weight="bold")
+            family="Malgun Gothic", size=self.width*self.height//35280, weight="bold")
         self.large_font = tkfont.Font(
-            family="MS Sans Serif", size=self.width*self.height//73500, weight="bold")
+            family="Malgun Gothic", size=self.width*self.height//73500, weight="bold")
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
