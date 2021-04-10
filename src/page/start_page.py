@@ -10,11 +10,14 @@ class StartPage(tk.Frame):
     """
 
     def __init__(self, parent, controller):
-        super().__init__(parent, background="#C3B2B4")
+        play_image = ImageTk.PhotoImage(Image.open(
+            "../img/background.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background.png"
+        ).resize((controller.winfo_screenwidth(), controller.winfo_screenheight())))
+        super().__init__(parent, background=play_image)
         self.controller = controller
         tk.Label(self, text="택배보관함",
                  font=controller.title_font,
-                 background="#C3B2B4"
+                 background=None
                  ).pack(side="top", fill="x", pady=120)
 
         SMLButton(master=self,
@@ -37,7 +40,6 @@ class StartPage(tk.Frame):
                   ).place(relx=0.66, rely=0.4, anchor=tk.CENTER)
         SMLButton(master=self,
                   fg_color="#922B21",
-                  border_color="white",
                   hover_color="#CD6155",
                   text="tkinter 종료",
                   border_width=2,
