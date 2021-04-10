@@ -80,6 +80,7 @@ class LockerFrame(tk.Frame):
                   hover_color=self.color_dict[json_data["useState"]][1],
                   image=play_image,
                   border_width=1,
+                  corner_radius=10,
                   width=100 if width == 1 else 100*width,
                   height=100 if height == 1 else 100*height,
                   command=decide_function()
