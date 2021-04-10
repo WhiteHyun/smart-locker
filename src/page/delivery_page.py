@@ -19,9 +19,21 @@ class DeliveryPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        tk.Label(self, text="택배를 넣을 함을 선택해주세요.",
-                 font=controller.medium_font
-                 ).pack(side="top", fill="x", pady=10)
+        background_image = ImageTk.PhotoImage(Image.open(
+            "../img/background6.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/background6.png"
+        ).resize((controller.width, controller.height)))
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_image(0, 0, image=background_image, anchor="nw")
+        canvas.image = background_image
+        canvas.create_text(controller.width/2, controller.height *
+                           1/10, text="택배를 넣을 함을 선택해주세요.", font=controller.medium_font)
+
+        LockerFrame(
+            parent=self, controller=controller, relief="solid").place(x=controller.width/2, y=controller.height/2, relwidth=1, relheight=1)
 
         SMLButton(master=self,
                   text="이전으로",
@@ -32,5 +44,3 @@ class DeliveryPage(tk.Frame):
                       "StartPage", self
                   )
                   ).place(x=20, y=controller.height-170)
-        LockerFrame(
-            parent=self, controller=controller, relief="solid").pack(pady=20)

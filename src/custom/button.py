@@ -22,7 +22,7 @@ class SMLButton(tkinter.Frame):
                     image= PIL.PhotoImage, standard is None"""
 
     def __init__(self,
-                 bg_color=None,
+                 bg_color="#dfdfdf",
                  fg_color="#F6F6F6",
                  hover_color="#FFFFFF",
                  border_color=None,

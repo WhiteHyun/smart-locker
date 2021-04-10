@@ -17,6 +17,17 @@ class InformationPage(tk.Frame):
 
     def __init__(self, parent, controller, CRRMngKey, page, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        background_image = ImageTk.PhotoImage(Image.open(
+            "../img/background6.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background6.png"
+        ).resize((controller.width, controller.height)))
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_image(0, 0, image=background_image, anchor="nw")
+        canvas.image = background_image
+
         self.controller = controller
         self.CRRMngKey = CRRMngKey
         self.index = 0

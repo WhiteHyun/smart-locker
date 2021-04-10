@@ -23,7 +23,7 @@ class FindPage(tk.Frame):
         self.escape = ""
 
         background_image = ImageTk.PhotoImage(Image.open(
-            "../img/findpage.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/findpage.png"
+            "../img/background6.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/background6.png"
         ).resize((controller.width, controller.height)))
 
         canvas = tk.Canvas(self, width=controller.width,
