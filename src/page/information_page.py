@@ -26,18 +26,10 @@ class InformationPage(tk.Frame):
         entry = tk.Entry(self)
         number_frame = tk.Frame(self)
         before_button = SMLButton(master=self,
-                                  bg_color=None,
-                                  fg_color="#2874A6",
-                                  border_color=None,
-                                  hover_color="#5499C7",
-                                  text_font=None,
                                   text="이전으로",
-                                  text_color="white",
-                                  corner_radius=10,
                                   border_width=1,
                                   width=100,
                                   height=100,
-                                  hover=True,
                                   command=lambda: controller.show_frame(
                                       page, self
                                   )
@@ -75,18 +67,11 @@ class InformationPage(tk.Frame):
 
         for i in button_name_list:
             SMLButton(master=number_frame,
-                      bg_color=None,
-                      fg_color="#2874A6",
-                      border_color=None,
-                      hover_color="#5499C7",
                       text_font=controller.large_font,
                       text=i,
-                      text_color="white",
-                      corner_radius=10,
                       border_width=1,
                       width=100,
                       height=100,
-                      hover=True,
                       command=lambda button_num=i, entry=entry: insert_text(
                           button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else verify_phone_number(entry.get())
                       ).grid(row=row, column=col)

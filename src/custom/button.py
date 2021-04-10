@@ -23,8 +23,8 @@ class SMLButton(tkinter.Frame):
 
     def __init__(self,
                  bg_color=None,
-                 fg_color="#2874A6",
-                 hover_color="#5499C7",
+                 fg_color="#8BC4C1",
+                 hover_color="#AAD4DA",
                  border_color=None,
                  border_width=0,
                  command=None,

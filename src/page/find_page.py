@@ -25,18 +25,10 @@ class FindPage(tk.Frame):
         locker_frame.pack(pady=20)
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  border_color=None,
-                  hover_color="#5499C7",
-                  text_font=None,
                   text="이전으로",
-                  text_color="white",
-                  corner_radius=10,
                   border_width=1,
                   width=100,
                   height=100,
-                  hover=True,
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )

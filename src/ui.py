@@ -35,7 +35,7 @@ class App(tk.Tk):
         super().attributes('-type', 'splash')
 
         # 화면에 보여질 컨테이너 생성
-        self.container = tk.Frame()
+        self.container = tk.Frame(background="#C3B2B4")
         self.container.pack(side="top", fill="both", expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)

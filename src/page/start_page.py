@@ -17,48 +17,31 @@ class StartPage(tk.Frame):
                  ).pack(side="top", fill="x", pady=120)
 
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  hover_color="#5499C7",
                   text_font=controller.large_font,
                   text="맡기기",
-                  text_color="white",
-                  corner_radius=10,
                   width=240,
                   height=90,
-                  hover=True,
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
                   ).place(relx=0.33, rely=0.4, anchor=tk.CENTER)
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  hover_color="#5499C7",
                   text_font=controller.large_font,
                   text="찾기",
-                  text_color="white",
-                  corner_radius=10,
                   width=240,
                   height=90,
-                  hover=True,
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
                   ).place(relx=0.66, rely=0.4, anchor=tk.CENTER)
         SMLButton(master=self,
-                  bg_color=None,
                   fg_color="#922B21",
                   border_color="white",
                   hover_color="#CD6155",
-                  text_font=None,
                   text="tkinter 종료",
-                  text_color="white",
-                  corner_radius=10,
                   border_width=2,
                   width=150,
                   height=45,
-                  hover=True,
                   command=lambda: controller.destroy()
                   ).place(relx=0.50, rely=0.6, anchor=tk.CENTER)
 

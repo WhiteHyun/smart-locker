@@ -76,16 +76,12 @@ class LockerFrame(tk.Frame):
             else:
                 return lambda: showerror("오류!", "해당 함을 사용할 수 없습니다.")
         SMLButton(master=self,
-                  bg_color=None,
                   fg_color=self.color_dict[json_data["useState"]][0],
-                  border_color=None,
                   hover_color=self.color_dict[json_data["useState"]][1],
                   image=play_image,
-                  corner_radius=10,
                   border_width=1,
                   width=100 if width == 1 else 100*width,
                   height=100 if height == 1 else 100*height,
-                  hover=True,
                   command=decide_function()
                   ).grid(row=location["start"]["row"],
                          column=location["start"]["col"], rowspan=height, columnspan=width)

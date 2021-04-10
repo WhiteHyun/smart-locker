@@ -23,18 +23,10 @@ class DeliveryPage(tk.Frame):
                  ).pack(side="top", fill="x", pady=10)
 
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  border_color=None,
-                  hover_color="#5499C7",
-                  text_font=None,
                   text="이전으로",
-                  text_color="white",
-                  corner_radius=10,
                   border_width=1,
                   width=100,
                   height=100,
-                  hover=True,
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )
