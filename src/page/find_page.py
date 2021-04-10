@@ -19,10 +19,14 @@ class FindPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
+        # after 함수를 종료시키기 위한 탈출 id
+        self.escape = ""
+        # 캠을 보여줄 label 객체
+        self.label = tk.Label(width=300, height=250)
+        self.label.pack(pady=50)
+        # self.label.place(x=controller.winfo_screenwidth()/2-150,
+        #                  y=controller.winfo_screenheight()/2+100)
 
-        locker_frame = LockerFrame(
-            parent=self, controller=controller, page="FindPage", relief="solid")
-        locker_frame.pack(pady=20)
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
         SMLButton(master=self,
                   text="이전으로",
@@ -34,13 +38,9 @@ class FindPage(tk.Frame):
                   )
                   ).pack(side="bottom", anchor="w", padx=20, pady=20)
 
-        # after 함수를 종료시키기 위한 탈출 id
-        self.escape = ""
-        # 캠을 보여줄 label 객체
-        self.label = tk.Label(width=300, height=250)
-        self.label.pack(side="bottom", anchor="e", padx=20, pady=20)
-        self.label.place(x=controller.winfo_screenwidth()/2-150,
-                         y=controller.winfo_screenheight()/2+100)
+        locker_frame = LockerFrame(
+            parent=self, controller=controller, page="FindPage", relief="solid")
+        locker_frame.pack(pady=20)
         self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
