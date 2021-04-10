@@ -1,8 +1,8 @@
+from utils.util import *
 import os
 import sys
 import cv2
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
 
 if __name__ == "__main__" or __name__ == "find_page":
     from locker_frame import LockerFrame
@@ -32,14 +32,14 @@ class FindPage(tk.Frame):
 
         canvas.create_image(0, 0, image=background_image, anchor="nw")
         canvas.image = background_image
-        canvas.create_text(controller.width/2, controller.height/3,
+        canvas.create_text(controller.width/2, controller.height*0.36,
                            text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
         # 캠을 보여줄 label 객체
         self.label = tk.Label(width=300, height=250)
         self.label.place(x=controller.width/2-150, y=10)
 
         LockerFrame(parent=self, controller=controller, page="FindPage", relief="solid").place(
-            x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
+            x=controller.width/2, y=controller.height*0.66, anchor=tk.CENTER)
 
         SMLButton(master=self,
                   text="이전으로",

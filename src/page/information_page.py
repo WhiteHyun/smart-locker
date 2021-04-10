@@ -1,8 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.sql import SQL
 from utils.util import *
+from utils.sql import SQL
 
 if __name__ == "__main__" or __name__ == "information_page":
     from locker_frame import LockerFrame
@@ -33,7 +33,7 @@ class InformationPage(tk.Frame):
         self.controller = controller
         self.CRRMngKey = CRRMngKey
         self.index = 0
-        entry = tk.Entry(self)
+        entry = tk.Entry(self, width=50, font=controller.medium_font)
         number_frame = tk.Frame(self)
         SMLButton(master=self,
                   text="이전으로",
