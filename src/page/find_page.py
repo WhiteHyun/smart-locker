@@ -27,7 +27,7 @@ class FindPage(tk.Frame):
                          y=10)
 
         tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=(controller.height/3, 0))
-        
+
         locker_frame = LockerFrame(
             parent=self, controller=controller, page="FindPage", relief="solid")
         locker_frame.pack(pady=20)
@@ -40,7 +40,7 @@ class FindPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )
-                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
+                  ).place(x=20,y=controller.height-120)
 
         self.__open_door_by_qrcode()
 
