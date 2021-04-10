@@ -13,7 +13,7 @@ class StartPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         background_image = ImageTk.PhotoImage(Image.open(
-            "../img/background5.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background5.png"
+            "../img/background6.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background6.png"
         ).resize((controller.width, controller.height)))
         # label = tk.Label(self, image=background_image)
         # label.image = background_image
