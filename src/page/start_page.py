@@ -10,7 +10,7 @@ class StartPage(tk.Frame):
     """
 
     def __init__(self, parent, controller):
-        super().__init__(parent)
+        super().__init__(parent, background="#C3B2B4")
         self.controller = controller
         tk.Label(self, text="택배보관함",
                  font=controller.title_font
