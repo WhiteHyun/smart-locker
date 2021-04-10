@@ -25,15 +25,15 @@ class InformationPage(tk.Frame):
         )
         entry = tk.Entry(self)
         number_frame = tk.Frame(self)
-        before_button = SMLButton(master=self,
-                                  text="이전으로",
-                                  border_width=1,
-                                  width=100,
-                                  height=100,
-                                  command=lambda: controller.show_frame(
-                                      page, self
-                                  )
-                                  )
+        SMLButton(master=self,
+                  text="이전으로",
+                  border_width=1,
+                  width=100,
+                  height=100,
+                  command=lambda: controller.show_frame(
+                      page, self
+                  )
+                  ).place(x=20, y=controller.height-170)
         row = 0
         col = 0
         button_name_list = ["1", "2", "3", "4", "5",
@@ -81,7 +81,6 @@ class InformationPage(tk.Frame):
         intro_label.pack()
         entry.pack(pady=10)
         number_frame.pack()
-        before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
 
     def __process_delivery(self, user_key, phone_number):
         """

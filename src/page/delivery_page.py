@@ -1,12 +1,13 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 from utils.util import *
+
 if __name__ == "__main__" or __name__ == "delivery_page":
     from locker_frame import LockerFrame
 else:
     from .locker_frame import LockerFrame
+
 
 class DeliveryPage(tk.Frame):
     """
@@ -30,7 +31,6 @@ class DeliveryPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )
-                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
-
+                  ).place(x=20, y=controller.height-170)
         LockerFrame(
             parent=self, controller=controller, relief="solid").pack(pady=20)
