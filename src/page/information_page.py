@@ -28,12 +28,12 @@ class InformationPage(tk.Frame):
         canvas.create_image(0, 0, image=background_image, anchor="nw")
         canvas.image = background_image
         canvas.create_text(controller.width/2, controller.height/10,
-                           text="휴대폰 번호를 입력해주세요.", font=controller.large_font)
+                           text="휴대폰 번호를 입력해주세요.", font=controller.xlarge_font)
 
         self.controller = controller
         self.CRRMngKey = CRRMngKey
         self.index = 0
-        entry = tk.Entry(self, font=controller.medium_font)
+        entry = tk.Entry(self, font=controller.large_font)
         number_frame = tk.Frame(self)
         SMLButton(master=self,
                   text="이전으로",
@@ -47,7 +47,7 @@ class InformationPage(tk.Frame):
         row = 0
         col = 0
         button_name_list = ["1", "2", "3", "4", "5",
-                            "6", "7", "8", "9", "«", "0", "확인"]
+                            "6", "7", "8", "9", "<<", "0", "확인"]
 
         # 밑에 함수는 Entry에 입력갱신을 위해 만들어진 함수입니다.
         def insert_text(button_num, entry):
@@ -77,13 +77,13 @@ class InformationPage(tk.Frame):
 
         for i in button_name_list:
             SMLButton(master=number_frame,
-                      text_font=controller.large_font,
+                      text_font=controller.xlarge_font,
                       text=i,
                       border_width=1,
                       width=100,
                       height=100,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else verify_phone_number(entry.get())
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else verify_phone_number(entry.get())
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
