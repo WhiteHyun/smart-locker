@@ -77,7 +77,7 @@ class InformationPage(tk.Frame):
 
         for i in button_name_list:
             SMLButton(master=number_frame,
-                      text_font=controller.xlarge_font,
+                      text_font=controller.large_font,
                       text=i,
                       border_width=1,
                       width=100,

@@ -30,7 +30,7 @@ class DeliveryPage(tk.Frame):
         canvas.create_image(0, 0, image=background_image, anchor="nw")
         canvas.image = background_image
         canvas.create_text(controller.width/2, controller.height *
-                           1/10, text="택배를 넣을 함을 선택해주세요.", font=controller.medium_font)
+                           1/10, text="택배를 넣을 함을 선택해주세요.", font=controller.large_font)
 
         LockerFrame(
             parent=self, controller=controller, relief="solid").place(x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
