@@ -32,17 +32,14 @@ class FindPage(tk.Frame):
 
         canvas.create_image(0, 0, image=background_image, anchor="nw")
         canvas.image = background_image
-
+        canvas.create_text(controller.width/2, controller.height/3,
+                           text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
         # 캠을 보여줄 label 객체
         self.label = tk.Label(width=300, height=250)
         self.label.place(x=controller.width/2-150, y=10)
 
-        tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font).pack(
-            pady=(controller.height/3, 0))
-
-        locker_frame = LockerFrame(
-            parent=self, controller=controller, page="FindPage", relief="solid")
-        locker_frame.pack(pady=20)
+        LockerFrame(parent=self, controller=controller, page="FindPage", relief="solid").place(
+            x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
 
         SMLButton(master=self,
                   text="이전으로",

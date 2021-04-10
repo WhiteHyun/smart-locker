@@ -1,8 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
 from utils.sql import SQL
+from utils.util import *
 
 if __name__ == "__main__" or __name__ == "information_page":
     from locker_frame import LockerFrame
@@ -27,13 +27,12 @@ class InformationPage(tk.Frame):
 
         canvas.create_image(0, 0, image=background_image, anchor="nw")
         canvas.image = background_image
+        canvas.create_text(controller.width/2, controller.height/10,
+                           text="휴대폰 번호를 입력해주세요.", font=controller.large_font)
 
         self.controller = controller
         self.CRRMngKey = CRRMngKey
         self.index = 0
-        intro_label = tk.Label(
-            self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font
-        )
         entry = tk.Entry(self)
         number_frame = tk.Frame(self)
         SMLButton(master=self,
@@ -89,9 +88,10 @@ class InformationPage(tk.Frame):
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
 
-        intro_label.pack()
-        entry.pack(pady=10)
-        number_frame.pack()
+        entry.place(x=controller.width/2,
+                    y=controller.height*2/10, anchor=tk.CENTER)
+        number_frame.place(x=controller.width/2,
+                           y=controller.height/2, anchor=tk.CENTER)
 
     def __process_delivery(self, user_key, phone_number):
         """
