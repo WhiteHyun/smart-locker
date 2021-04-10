@@ -22,23 +22,25 @@ class App(tk.Tk):
 
         # 폰트 지정
         self.title_font = tkfont.Font(
-            family="MS Sans Serif", size=28, weight="bold")
+            family="MS Sans Serif", size=62, weight="bold")
         self.medium_font = tkfont.Font(
             family='Helvetica', size=18, weight="bold")
+        self.xlarge_font = tkfont.Font(
+            family="MS Sans Serif", size=50, weight="bold")
         self.large_font = tkfont.Font(
             family="MS Sans Serif", size=24, weight="bold")
-
         # 화면 설정
         self.geometry(
             f"{super().winfo_screenwidth()}x{super().winfo_screenheight()}+0+0"
         )
         super().attributes('-type', 'splash')
-
         # 화면에 보여질 컨테이너 생성
-        self.container = tk.Frame(background="#C3B2B4")
+        self.container = tk.Frame()
         self.container.pack(side="top", fill="both", expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
+        self.width = self.container.winfo_screenwidth()
+        self.height = self.container.winfo_screenheight()
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}

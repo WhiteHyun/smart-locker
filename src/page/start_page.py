@@ -10,43 +10,42 @@ class StartPage(tk.Frame):
     """
 
     def __init__(self, parent, controller):
-        play_image = ImageTk.PhotoImage(Image.open(
-            "../img/background.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background.png"
-        ).resize((controller.winfo_screenwidth(), controller.winfo_screenheight())))
-        super().__init__(parent, background=play_image)
+        super().__init__(parent)
         self.controller = controller
-        tk.Label(self, text="택배보관함",
-                 font=controller.title_font,
-                 background=None
-                 ).pack(side="top", fill="x", pady=120)
+        background_image = ImageTk.PhotoImage(Image.open(
+            "../img/background3.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background3.png"
+        ).resize((controller.width, controller.height)))
+        # label = tk.Label(self, image=background_image)
+        # label.image = background_image
+        # label.place(x=0,y=0, relwidth=1, relheight=1)
+
+        canvas = tk.Canvas(self, width=controller.width, height=controller.height)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_image(0, 0, image=background_image, anchor="nw")
+        canvas.image = background_image
+        canvas.create_text(controller.width/2, controller.height*1/7, text="택배보관함", font=controller.title_font)
 
         SMLButton(master=self,
-                  text_font=controller.large_font,
+                  text_font=controller.xlarge_font,
                   text="맡기기",
-                  width=240,
-                  height=90,
+                  width=400,
+                  height=300,
+                  text_color="black",
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
-                  ).place(relx=0.33, rely=0.4, anchor=tk.CENTER)
+                  ).place(relx=0.33, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
-                  text_font=controller.large_font,
+                  text_font=controller.xlarge_font,
                   text="찾기",
-                  width=240,
-                  height=90,
+                  width=400,
+                  height=300,
+                  text_color="black",
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
-                  ).place(relx=0.66, rely=0.4, anchor=tk.CENTER)
-        SMLButton(master=self,
-                  fg_color="#922B21",
-                  hover_color="#CD6155",
-                  text="tkinter 종료",
-                  border_width=2,
-                  width=150,
-                  height=45,
-                  command=lambda: controller.destroy()
-                  ).place(relx=0.50, rely=0.6, anchor=tk.CENTER)
+                  ).place(relx=0.66, rely=0.5, anchor=tk.CENTER)
 
         self.sync_to_json()
 
