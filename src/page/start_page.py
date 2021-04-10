@@ -13,7 +13,7 @@ class StartPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         background_image = ImageTk.PhotoImage(Image.open(
-            "../img/background3.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background3.png"
+            "../img/background5.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background5.png"
         ).resize((controller.width, controller.height)))
         # label = tk.Label(self, image=background_image)
         # label.image = background_image
@@ -29,23 +29,23 @@ class StartPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="맡기기",
-                  width=controller.width/4.2,
-                  height=controller.height/3.5,
+                  width=controller.width/5,
+                  height=controller.width/5,
                   text_color="black",
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
-                  ).place(relx=0.33, rely=0.5, anchor=tk.CENTER)
+                  ).place(relx=0.33, rely=0.53, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="찾기",
-                  width=controller.width/4.2,
-                  height=controller.height/3.5,
+                  width=controller.width/5,
+                  height=controller.width/5,
                   text_color="black",
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
-                  ).place(relx=0.66, rely=0.5, anchor=tk.CENTER)
+                  ).place(relx=0.66, rely=0.53, anchor=tk.CENTER)
 
         self.sync_to_json()
 

@@ -20,15 +20,6 @@ class App(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # 폰트 지정
-        self.title_font = tkfont.Font(
-            family="MS Sans Serif", size=62, weight="bold")
-        self.medium_font = tkfont.Font(
-            family='Helvetica', size=18, weight="bold")
-        self.xlarge_font = tkfont.Font(
-            family="MS Sans Serif", size=50, weight="bold")
-        self.large_font = tkfont.Font(
-            family="MS Sans Serif", size=24, weight="bold")
         # 화면 설정
         self.geometry(
             f"{super().winfo_screenwidth()}x{super().winfo_screenheight()}+0+0"
@@ -41,6 +32,16 @@ class App(tk.Tk):
         self.container.grid_columnconfigure(0, weight=1)
         self.width = self.container.winfo_screenwidth()
         self.height = self.container.winfo_screenheight()
+
+        # 폰트 지정
+        self.title_font = tkfont.Font(
+            family="MS Sans Serif", size=self.width*self.height//29400, weight="bold")
+        self.medium_font = tkfont.Font(
+            family='Helvetica', size=self.width*self.height//98000, weight="bold")
+        self.xlarge_font = tkfont.Font(
+            family="MS Sans Serif", size=self.width*self.height//35280, weight="bold")
+        self.large_font = tkfont.Font(
+            family="MS Sans Serif", size=self.width*self.height//73500, weight="bold")
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
