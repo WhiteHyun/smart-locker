@@ -35,7 +35,7 @@ class StartPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
-                  ).place(relx=0.33, rely=0.53, anchor=tk.CENTER)
+                  ).place(relx=0.33, rely=0.52, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="찾기",
@@ -45,7 +45,7 @@ class StartPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
-                  ).place(relx=0.66, rely=0.53, anchor=tk.CENTER)
+                  ).place(relx=0.66, rely=0.52, anchor=tk.CENTER)
 
         self.sync_to_json()
 
