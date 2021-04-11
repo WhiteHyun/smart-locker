@@ -12,23 +12,28 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        background_image = ImageTk.PhotoImage(Image.open(
-            "../img/background6.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background6.png"
-        ).resize((controller.width, controller.height)))
 
-        canvas = tk.Canvas(self, width=controller.width, height=controller.height)
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height)
         canvas.pack(fill="both", expand=True)
 
-        canvas.create_image(0, 0, image=background_image, anchor="nw")
-        canvas.image = background_image
-        canvas.create_text(controller.width/2, controller.height*1/7, text="택배보관함", font=controller.title_font)
+        canvas.create_text(controller.width/2, controller.height*1/7,
+                           text="택배 보관함", font=controller.title_font, fill="#385ab7")
+
+        man_img = ImageTk.PhotoImage(Image.open(
+            "../img/delivery-man.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/delivery-man.png"
+        ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
+
+        box_img = ImageTk.PhotoImage(Image.open(
+            "../img/delivery-box.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/delivery-box.png"
+        ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
 
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="맡기기",
+                  image=man_img,
                   width=controller.width/5,
-                  height=controller.width/5,
-                  text_color="black",
+                  height=controller.height/3,
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
@@ -36,9 +41,9 @@ class StartPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
                   text="찾기",
+                  image=box_img,
                   width=controller.width/5,
-                  height=controller.width/5,
-                  text_color="black",
+                  height=controller.height/3,
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
