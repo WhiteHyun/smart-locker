@@ -15,20 +15,19 @@ class InformationPage(tk.Frame):
     함을 클릭했을 때 사용자 정보를 입력할 프레임입니다.
     """
 
-    def __init__(self, parent, controller, CRRMngKey, page, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-        background_image = ImageTk.PhotoImage(Image.open(
-            "../img/background6.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/background6.png"
-        ).resize((controller.width, controller.height)))
+    def __init__(self, parent, controller, CRRMngKey, page, bg):
+        super().__init__(parent)
+
+        previous_arrow_img = ImageTk.PhotoImage(Image.open(
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
+        ).resize((int(100/1.618), int(100/1.618))))
 
         canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height)
+                           height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
 
-        canvas.create_image(0, 0, image=background_image, anchor="nw")
-        canvas.image = background_image
         canvas.create_text(controller.width/2, controller.height/10,
-                           text="휴대폰 번호를 입력해주세요.", font=controller.xlarge_font)
+                           text="휴대폰 번호를 입력해주세요.", font=controller.title_font, fill="#385ab7")
 
         self.controller = controller
         self.CRRMngKey = CRRMngKey
@@ -40,6 +39,7 @@ class InformationPage(tk.Frame):
                   border_width=1,
                   width=100,
                   height=100,
+                  image=previous_arrow_img,
                   command=lambda: controller.show_frame(
                       page, self
                   )

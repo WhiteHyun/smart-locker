@@ -3,7 +3,6 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.find_page import FindPage
     from page.delivery_page import DeliveryPage
     from page.information_page import InformationPage
-    from page.locker_frame import LockerFrame
     from page.start_page import StartPage
 
 else:
@@ -11,7 +10,6 @@ else:
     from .page.find_page import FindPage
     from .page.delivery_page import DeliveryPage
     from .page.information_page import InformationPage
-    from .page.locker_frame import LockerFrame
     from .page.start_page import StartPage
 
 
@@ -45,7 +43,7 @@ class App(tk.Tk):
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, LockerFrame, InformationPage):
+        for F in (StartPage, DeliveryPage, FindPage, InformationPage):
             page_name = F.__name__
             self.pages[page_name] = F
         self.show_frame("StartPage")
@@ -64,11 +62,11 @@ class App(tk.Tk):
         try:
             if CRRMngKey is None or page is None:
                 temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self
+                    parent=parent if parent is not None else self.container, controller=self, bg="white"
                 )
             else:
                 temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey, page=page
+                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey, page=page, bg="white"
                 )
 
             temp_frame.grid(row=0, column=0, sticky="nsew")

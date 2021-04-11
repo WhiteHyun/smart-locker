@@ -1,8 +1,8 @@
-from utils.util import *
 import os
 import sys
 import cv2
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from utils.util import *
 
 if __name__ == "__main__" or __name__ == "find_page":
     from locker_frame import LockerFrame
@@ -15,23 +15,21 @@ class FindPage(tk.Frame):
     찾기 페이지입니다.
     """
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, bg):
         super().__init__(parent)
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
         # after 함수를 종료시키기 위한 탈출 id
         self.escape = ""
 
-        background_image = ImageTk.PhotoImage(Image.open(
-            "../img/background6.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/background6.png"
-        ).resize((controller.width, controller.height)))
+        previous_arrow_img = ImageTk.PhotoImage(Image.open(
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/previous.png"
+        ).resize((int(100/1.618), int(100/1.618))))
 
         canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height)
+                           height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
 
-        canvas.create_image(0, 0, image=background_image, anchor="nw")
-        canvas.image = background_image
         canvas.create_text(controller.width/2, controller.height*0.36,
                            text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
         # 캠을 보여줄 label 객체
@@ -46,6 +44,7 @@ class FindPage(tk.Frame):
                   border_width=1,
                   width=100,
                   height=100,
+                  image=previous_arrow_img,
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )

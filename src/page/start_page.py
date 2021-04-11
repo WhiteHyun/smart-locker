@@ -9,12 +9,12 @@ class StartPage(tk.Frame):
     첫 페이지를 보여주는 프레임입니다.
     """
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, bg):
         super().__init__(parent)
         self.controller = controller
 
         canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height)
+                           height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
 
         canvas.create_text(controller.width/2, controller.height*1/7,
