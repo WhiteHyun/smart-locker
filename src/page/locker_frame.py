@@ -63,6 +63,7 @@ class LockerFrame(tk.Frame):
         width = location["width"]
         height = location["height"]
         state = json_data["useState"]
+        locker_number = json_data["CRRNo"]
 
         def decide_function():
             """
@@ -81,6 +82,7 @@ class LockerFrame(tk.Frame):
                   image=locker_image,
                   border_width=1,
                   corner_radius=10,
+                  text=locker_number,
                   width=100*width,
                   height=100*height,
                   command=decide_function()
