@@ -11,16 +11,16 @@ class LockerFrame(tk.Frame):
     STATE_BROKEN = "B"
 
     def __init__(self, parent, controller, page="DeliveryPage", *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, border="#385ab7", *args, **kwargs)
 
         self.parent = parent
         self.controller = controller
         self.page = page
 
         self.color_dict = {
-            f"{LockerFrame.STATE_WAIT}": "locker_green.png" if page == "DeliveryPage" else "locker_red.png",
-            f"{LockerFrame.STATE_USED}": "locker_red.png" if page == "DeliveryPage" else "locker_green.png",
-            f"{LockerFrame.STATE_BROKEN}": "locker_gray.png"
+            f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71") if page == "DeliveryPage" else ("#A93226", "#CD6155"),
+            f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155") if page == "DeliveryPage" else ("#1E8449", "#2ECC71"),
+            f"{LockerFrame.STATE_BROKEN}": ("#7C7877", "#7C7877")
         }
         self.__show_locker()
 
@@ -56,7 +56,7 @@ class LockerFrame(tk.Frame):
         """
 
         locker_image = ImageTk.PhotoImage(Image.open(
-            f"../img/{self.color_dict[json_data['useState']]}" if __name__ == "__main__" or __name__ == "locker_frame" else f"src/img/{self.color_dict[json_data['useState']]}"
+            "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
         ).resize((60, 60)))
         location = json_data["location"]
         width = location["width"]
@@ -75,9 +75,8 @@ class LockerFrame(tk.Frame):
             else:
                 return lambda: showerror("오류!", "해당 함을 사용할 수 없습니다.")
         SMLButton(master=self,
-                  fg_color="#FFFFFF",
-                  hover_color="#E9E3E3",
-                  border_color="#385ab7",
+                  fg_color=self.color_dict[json_data["useState"]][0],
+                  hover_color=self.color_dict[json_data["useState"]][1],
                   image=locker_image,
                   border_width=1,
                   corner_radius=10,
