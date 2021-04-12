@@ -42,4 +42,4 @@ class DeliveryPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )
-                  ).place(x=20, y=20)
+                  ).place(x=20, y=20, anchor="w")
