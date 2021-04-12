@@ -43,7 +43,7 @@ class InformationPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       page, self
                   )
-                  ).place(x=20, y=controller.height-170)
+                  ).place(x=20, y=20)
 
         row = 0
         col = 0
