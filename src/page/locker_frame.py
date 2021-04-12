@@ -11,7 +11,8 @@ class LockerFrame(tk.Frame):
     STATE_BROKEN = "B"
 
     def __init__(self, parent, controller, page="DeliveryPage", *args, **kwargs):
-        super().__init__(parent, border="#385ab7", *args, **kwargs)
+        super().__init__(parent, highlightthickness=5, highlightbackground="#385ab7",
+                         highlightcolor="#385ab7", *args, **kwargs)
 
         self.parent = parent
         self.controller = controller
