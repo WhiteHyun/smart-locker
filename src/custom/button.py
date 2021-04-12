@@ -221,7 +221,7 @@ class SMLButton(tkinter.Frame):
                                                 fg=self.text_color)
 
                 self.text_label.place(
-                    x=int(self.width)>>1, y=int(self.height*0.35)+self.height//60, anchor=tkinter.CENTER)
+                    x=int(self.width)>>1, y=int(self.height*0.35)+int(self.image.height()), anchor=tkinter.CENTER)
 
                 self.image_label.place(x=int(self.width)>>1,
                                        y=int(self.height*0.35),
