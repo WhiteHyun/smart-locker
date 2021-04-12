@@ -221,10 +221,10 @@ class SMLButton(tkinter.Frame):
                                                 fg=self.text_color)
 
                 self.text_label.place(
-                    x=int(self.width)>>1, y=int(self.height*0.35)+int(self.image.height()), anchor=tkinter.CENTER)
+                    x=int(self.width)>>1, y=self.height*0.35+self.image.height()*0.6, anchor=tkinter.CENTER)
 
                 self.image_label.place(x=int(self.width)>>1,
-                                       y=int(self.height*0.35),
+                                       y=self.height*0.35,
                                        anchor=tkinter.CENTER)
 
             # bind events the the button click and hover events also to the image_label
