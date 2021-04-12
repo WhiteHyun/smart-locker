@@ -96,11 +96,8 @@ class FindPage(tk.Frame):
             )
 
             # 완료 메시지 표시
-            top = tk.Toplevel()
-            tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
-            top.after(7000, top.destroy)
-            # 카메라 모듈 사용 해제
-            self.camera.release()
+            success_message(self.controller)
+
             # 기존 화면으로 이동
             self.controller.show_frame("StartPage", self)
         except ValueError as e:
@@ -110,6 +107,6 @@ class FindPage(tk.Frame):
 
     def destroy(self) -> None:
         super().destroy()
-        self.label.after_cancel(self.escape)
-        self.camera.release()
-        self.label.destroy()
+        self.label.after_cancel(self.escape)    # 카메라 실행 중지
+        self.camera.release()   # 카메라 모듈 사용 해제
+        self.label.destroy()    # 캠을 가지고있는 레이블 삭제
