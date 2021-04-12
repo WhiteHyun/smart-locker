@@ -48,7 +48,7 @@ class FindPage(tk.Frame):
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )
-                  ).place(x=20, y=20)
+                  ).place(x=20, y=20, anchor="w")
 
         self.__open_door_by_qrcode()
 
