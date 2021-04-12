@@ -15,30 +15,40 @@ class InformationPage(tk.Frame):
     함을 클릭했을 때 사용자 정보를 입력할 프레임입니다.
     """
 
-    def __init__(self, parent, controller, CRRMngKey, page, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+    def __init__(self, parent, controller, CRRMngKey, page, bg):
+        super().__init__(parent)
+
+        previous_arrow_img = ImageTk.PhotoImage(Image.open(
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
+        ).resize((int(100/1.618), int(100/1.618))))
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height, bg=bg)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_text(controller.width/2, controller.height/10,
+                           text="휴대폰 번호를 입력해주세요.", font=controller.title_font, fill="#385ab7")
+
         self.controller = controller
         self.CRRMngKey = CRRMngKey
         self.index = 0
-        intro_label = tk.Label(
-            self, text="휴대폰 번호를 입력해주세요.", font=controller.large_font
-        )
-        entry = tk.Entry(self)
+        entry = tk.Entry(self, font=controller.large_font)
         number_frame = tk.Frame(self)
-        before_button = SMLButton(master=self,
-                                  text="이전으로",
-                                  border_width=1,
-                                  width=100,
-                                  height=100,
-                                  hover=True,
-                                  command=lambda: controller.show_frame(
-                                      page, self
-                                  )
-                                  )
+        SMLButton(master=self,
+                  text="이전으로",
+                  border_width=1,
+                  width=100,
+                  height=100,
+                  image=previous_arrow_img,
+                  command=lambda: controller.show_frame(
+                      page, self
+                  )
+                  ).place(x=20, y=controller.height-120)
+
         row = 0
         col = 0
         button_name_list = ["1", "2", "3", "4", "5",
-                            "6", "7", "8", "9", "«", "0", "확인"]
+                            "6", "7", "8", "9", "<<", "0", "확인"]
 
         # 밑에 함수는 Entry에 입력갱신을 위해 만들어진 함수입니다.
         def insert_text(button_num, entry):
@@ -73,17 +83,16 @@ class InformationPage(tk.Frame):
                       border_width=1,
                       width=100,
                       height=100,
-                      hover=True,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "«" else verify_phone_number(entry.get())
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else verify_phone_number(entry.get())
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
 
-        intro_label.pack()
-        entry.pack(pady=10)
-        number_frame.pack()
-        before_button.pack(side="bottom", anchor="w", padx=20, pady=20)
+        entry.place(x=controller.width/2,
+                    y=controller.height*2/10, anchor=tk.CENTER)
+        number_frame.place(x=controller.width/2,
+                           y=controller.height/2, anchor=tk.CENTER)
 
     def __process_delivery(self, user_key, phone_number):
         """

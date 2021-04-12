@@ -16,6 +16,7 @@ class LockerFrame(tk.Frame):
         self.parent = parent
         self.controller = controller
         self.page = page
+
         self.color_dict = {
             f"{LockerFrame.STATE_WAIT}": ("#1E8449", "#2ECC71") if page == "DeliveryPage" else ("#A93226", "#CD6155"),
             f"{LockerFrame.STATE_USED}": ("#A93226", "#CD6155") if page == "DeliveryPage" else ("#1E8449", "#2ECC71"),
@@ -54,13 +55,14 @@ class LockerFrame(tk.Frame):
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
 
-        play_image = ImageTk.PhotoImage(Image.open(
+        locker_image = ImageTk.PhotoImage(Image.open(
             "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
         ).resize((60, 60)))
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
         state = json_data["useState"]
+        locker_number = json_data["CRRNo"]
 
         def decide_function():
             """
@@ -76,11 +78,12 @@ class LockerFrame(tk.Frame):
         SMLButton(master=self,
                   fg_color=self.color_dict[json_data["useState"]][0],
                   hover_color=self.color_dict[json_data["useState"]][1],
-                  image=play_image,
+                  image=locker_image,
                   border_width=1,
-                  width=100 if width == 1 else 100*width,
-                  height=100 if height == 1 else 100*height,
-                  hover=True,
+                  corner_radius=10,
+                  text=locker_number,
+                  width=100*width,
+                  height=100*height,
                   command=decide_function()
                   ).grid(row=location["start"]["row"],
                          column=location["start"]["col"], rowspan=height, columnspan=width)

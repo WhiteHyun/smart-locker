@@ -9,45 +9,45 @@ class StartPage(tk.Frame):
     첫 페이지를 보여주는 프레임입니다.
     """
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, bg):
         super().__init__(parent)
         self.controller = controller
-        tk.Label(self, text="택배보관함",
-                 font=controller.large_font
-                 ).pack(side="top", fill="x", pady=50)
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height, bg=bg)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_text(controller.width/2, controller.height*1/7,
+                           text="택배 보관함", font=controller.title_font, fill="#385ab7")
+
+        man_img = ImageTk.PhotoImage(Image.open(
+            "../img/delivery-man.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/delivery-man.png"
+        ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
+
+        box_img = ImageTk.PhotoImage(Image.open(
+            "../img/delivery-box.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/delivery-box.png"
+        ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
 
         SMLButton(master=self,
-                  text_font=controller.large_font,
+                  text_font=controller.xlarge_font,
                   text="맡기기",
-                  width=240,
-                  height=90,
-                  hover=True,
+                  image=man_img,
+                  width=controller.width/5,
+                  height=controller.height/3,
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
-                  ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
+                  ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
-                  text_font=controller.large_font,
+                  text_font=controller.xlarge_font,
                   text="찾기",
-                  width=240,
-                  height=90,
-                  hover=True,
+                  image=box_img,
+                  width=controller.width/5,
+                  height=controller.height/3,
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
-                  ).place(relx=0.66, rely=0.2, anchor=tk.CENTER)
-        SMLButton(master=self,
-                  fg_color="#922B21",
-                  border_color="white",
-                  hover_color="#CD6155",
-                  text_font=None,
-                  text="tkinter 종료",
-                  border_width=2,
-                  width=150,
-                  height=45,
-                  hover=True,
-                  command=lambda: controller.destroy()
-                  ).place(relx=0.50, rely=0.3, anchor=tk.CENTER)
+                  ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
 
         self.sync_to_json()
 

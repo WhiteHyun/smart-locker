@@ -15,34 +15,41 @@ class FindPage(tk.Frame):
     찾기 페이지입니다.
     """
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, bg):
         super().__init__(parent)
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
+        # after 함수를 종료시키기 위한 탈출 id
+        self.escape = ""
 
-        locker_frame = LockerFrame(
-            parent=self, controller=controller, page="FindPage", relief="solid")
-        locker_frame.pack(pady=20)
-        tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.",
-                 font=controller.title_font).pack(pady=10)
+        previous_arrow_img = ImageTk.PhotoImage(Image.open(
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/previous.png"
+        ).resize((int(100/1.618), int(100/1.618))))
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height, bg=bg)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_text(controller.width/2, controller.height*0.36,
+                           text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
+        # 캠을 보여줄 label 객체
+        self.label = tk.Label(width=300, height=250)
+        self.label.place(x=controller.width/2-150, y=10)
+
+        LockerFrame(parent=self, controller=controller, page="FindPage", relief="solid").place(
+            x=controller.width/2, y=controller.height*0.66, anchor=tk.CENTER)
+
         SMLButton(master=self,
                   text="이전으로",
                   border_width=1,
                   width=100,
                   height=100,
-                  hover=True,
+                  image=previous_arrow_img,
                   command=lambda: controller.show_frame(
                       "StartPage", self
                   )
-                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
+                  ).place(x=20, y=controller.height-120)
 
-        # after 함수를 종료시키기 위한 탈출 id
-        self.escape = ""
-        # 캠을 보여줄 label 객체
-        self.label = tk.Label(width=300, height=250)
-        self.label.pack(side="bottom", anchor="e", padx=20, pady=20)
-        self.label.place(x=controller.winfo_screenwidth()/2-150,
-                         y=controller.winfo_screenheight()/2+100)
         self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
