@@ -1,8 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.sql import SQL
 from utils.util import *
+from utils.sql import SQL
 
 if __name__ == "__main__" or __name__ == "information_page":
     from locker_frame import LockerFrame
@@ -132,10 +132,10 @@ class InformationPage(tk.Frame):
         nSMS = SMS(
             to=phone_number,
             text="""
-                QR코드가 발급되었습니다!! 🎉
-                택배를 찾을 때 표시에 따라 '찾기->QR코드로 찾기'를 누른 후
-                QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
-                항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
+QR코드가 발급되었습니다!!
+택배를 찾을 때 표시에 따라 '찾기->QR코드로 찾기'를 누른 후
+QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
+항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
                 """,
             imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
         if not nSMS.sendMessage():
