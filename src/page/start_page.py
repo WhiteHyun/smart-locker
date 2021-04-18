@@ -9,58 +9,45 @@ class StartPage(tk.Frame):
     첫 페이지를 보여주는 프레임입니다.
     """
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, bg):
         super().__init__(parent)
         self.controller = controller
-        tk.Label(self, text="택배보관함",
-                 font=controller.large_font
-                 ).pack(side="top", fill="x", pady=50)
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height, bg=bg)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_text(controller.width/2, controller.height*1/7,
+                           text="택배 보관함", font=controller.title_font, fill="#385ab7")
+
+        man_img = ImageTk.PhotoImage(Image.open(
+            "../img/delivery-man.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/delivery-man.png"
+        ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
+
+        box_img = ImageTk.PhotoImage(Image.open(
+            "../img/delivery-box.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/delivery-box.png"
+        ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
 
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  hover_color="#5499C7",
-                  text_font=controller.large_font,
+                  text_font=controller.xlarge_font,
                   text="맡기기",
-                  text_color="white",
-                  corner_radius=10,
-                  width=240,
-                  height=90,
-                  hover=True,
+                  image=man_img,
+                  width=controller.width/5,
+                  height=controller.height/3,
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
-                  ).place(relx=0.33, rely=0.2, anchor=tk.CENTER)
+                  ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  hover_color="#5499C7",
-                  text_font=controller.large_font,
+                  text_font=controller.xlarge_font,
                   text="찾기",
-                  text_color="white",
-                  corner_radius=10,
-                  width=240,
-                  height=90,
-                  hover=True,
+                  image=box_img,
+                  width=controller.width/5,
+                  height=controller.height/3,
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
-                  ).place(relx=0.66, rely=0.2, anchor=tk.CENTER)
-        SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#922B21",
-                  border_color="white",
-                  hover_color="#CD6155",
-                  text_font=None,
-                  text="tkinter 종료",
-                  text_color="white",
-                  corner_radius=10,
-                  border_width=2,
-                  width=150,
-                  height=45,
-                  hover=True,
-                  command=lambda: controller.destroy()
-                  ).place(relx=0.50, rely=0.3, anchor=tk.CENTER)
+                  ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
 
         self.sync_to_json()
 
@@ -70,12 +57,12 @@ class StartPage(tk.Frame):
         초기 파일을 실행할 때, 또는 관리자 페이지에서 사물함을 동기화할 때 사용됩니다.
         """
         try:
+            import json
             from utils.sql import SQL
             locker_manage_key = None
             sql = SQL("root", "", "10.80.76.63", "SML")
 
             # 사물함 관리 번호를 알지 못하는 경우 입력받게 함
-            import json
             with open("data/information.json") as f:
                 file_read = f.readlines()
                 if len(file_read) == 0:
