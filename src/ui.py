@@ -5,6 +5,9 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.information_page import InformationPage
     from page.locker_frame import LockerFrame
     from page.start_page import StartPage
+    #from multiprocessing import *
+    
+    #from sensorListener import * 
 
 else:
     from .utils.util import *
@@ -13,12 +16,18 @@ else:
     from .page.information_page import InformationPage
     from .page.locker_frame import LockerFrame
     from .page.start_page import StartPage
+    #from multiprocessing import *
+
+    #from .sensorListener import *
 
 
 class App(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.procs= []
+        #self.startSubProcess(1)
 
         # 폰트 지정
         self.title_font = tkfont.Font(
@@ -44,6 +53,7 @@ class App(tk.Tk):
             page_name = F.__name__
             self.pages[page_name] = F
         self.show_frame("StartPage")
+
 
     def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None, page=None):
         """
@@ -74,3 +84,8 @@ class App(tk.Tk):
                 frame.destroy()
         except Exception as e:
             raise e
+
+    # def startSubProcess(self,pName):
+    #     p1= Process(target=sensorListener(0,"COM6","H001234").startListen,args=())
+    #     self.procs.append(p1)
+    #     p1.start()
