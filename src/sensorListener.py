@@ -37,7 +37,7 @@ class sensorListener:
     def setSensorNo(self):
         tmpData = self.Sql.processDB(sql = f"SELECT CRRMngKey, SyncSensor FROM CRRInfo WHERE LCKMngKey LIKE '{self.LCKMngKey}%'")
         for dset in tmpData:
-            print(dset)
+            #print(dset)
             if(dset["SyncSensor"] != None):
                 self.SyncSensor[dset["SyncSensor"]]=dset["CRRMngKey"]
 
@@ -49,13 +49,13 @@ class sensorListener:
             seri = serial.Serial(self.port,baudrate = self.brate, timeout = None)
 
         except Exception as e:
-            print("Fail!")
+            #print("Fail!")
             time.sleep(2)
             return self.connect_arduino()        
         return seri
 
     def startListen(self):
-        print("listen start!!")
+        #print("listen start!!")
         while True:
             if self.seri.readable():
                 res = self.seri.readline().decode()
@@ -65,14 +65,11 @@ class sensorListener:
 
                 if res[:-1] == "dataset":
                     if self.dataset["CRRMngKey"] != None:
-                        #dataset으로 insert 문 생성후 DB에 insert하는 로직 추가 필요
-                        #print(makeQuery.dict2Query("testDB",self.dataset))
-                        print("listen!")
+                        #print("listen!")
                         self.Sql.processDB(makeQuery.dict2Query("SensorValue",self.dataset))
                         
                     
                     self.dataset = {"CRRMngKey":None,"FSR":-1,"LIG":-1,"SSO":-1}
-                    #CRR에 아두이노에서 받아온 숫자를 넣음 -> 여러 함일경우 숫자 변환 과정이 필요함
                     self.dataset["CRRMngKey"]= self.SyncSensor[self.sArduinoNum + res[-1:]]
                 elif res[0] == "F":
                     self.dataset["FSR"]= res[2:-1]
