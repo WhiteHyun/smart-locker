@@ -142,9 +142,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             showerror(message="문자전송에 실패 하였습니다.")
 
         # 완료 메시지 표시
-        top = tk.Toplevel()
-        tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
-        top.after(7000, top.destroy)
+        show_message(self.controller)
 
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
@@ -164,7 +162,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             )
 
         # 완료메시지 표시
-        success_message(self.controller)
+        show_message(self.controller)
 
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
