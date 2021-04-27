@@ -32,7 +32,7 @@ class sensorListener:
         
         self.setSensorNo()
 
-        self.dataset = {"CRRMngKey":None,"FSR":-1,"LIG":-1,"SSO":-1}
+        self.dataset = {"CRRMngKey":None,"FSR":-1,"LIG":-1,"SSO":-1,"HAL":-1,"VIB":-1}
 
     def setSensorNo(self):
         tmpData = self.Sql.processDB(sql = f"SELECT CRRMngKey, SyncSensor FROM CRRInfo WHERE LCKMngKey LIKE '{self.LCKMngKey}%'")
@@ -58,31 +58,41 @@ class sensorListener:
         #print("listen start!!")
         while True:
             if self.seri.readable():
-                res = self.seri.readline().decode()
-                res = res[:-2]
-                if len(res) == 0:
-                    continue
-
-                if res[:-1] == "dataset":
-                    if self.dataset["CRRMngKey"] != None:
-                        #print("listen!")
-                        self.Sql.processDB(makeQuery.dict2Query("SensorValue",self.dataset))
+                try:
+                    res = self.seri.readline().decode()
+                    res = res[:-2]
+                    if len(res) == 0:
+                        continue
+                    
+                    if res[:-1] == "dataset":
+                        if self.dataset["CRRMngKey"] != None:
+                            #print("listen!")
+                            #print(makeQuery.dict2Query("SensorValue",self.dataset))
+                            self.Sql.processDB(makeQuery.dict2Query("SensorValue",self.dataset))
+                            
                         
-                    
-                    self.dataset = {"CRRMngKey":None,"FSR":-1,"LIG":-1,"SSO":-1}
-                    self.dataset["CRRMngKey"]= self.SyncSensor[self.sArduinoNum + res[-1:]]
-                elif res[0] == "F":
-                    self.dataset["FSR"]= res[2:-1]
-                    
-                elif res[0] == "S":
-                    self.dataset["SSO"]= res[2:-1]
-                    
-                elif res[0] == "L":
-                    self.dataset["LIG"]= res[2:-1]
+                        self.dataset = {"CRRMngKey":None,"FSR":-1,"LIG":-1,"SSO":-1,"HAL":-1,"VIB":-1}
+                        self.dataset["CRRMngKey"]= self.SyncSensor[self.sArduinoNum + res[-1:]]
+                    elif res[0] == "F":
+                        self.dataset["FSR"]= res[2:]
+                        
+                    elif res[0] == "S":
+                        self.dataset["SSO"]= res[2:]
+                        
+                    elif res[0] == "L":
+                        self.dataset["LIG"]= res[2:]
+
+                    elif res[0] == "H":
+                        self.dataset["HAL"]= res[2:]
+
+                    elif res[0] == "V":
+                        self.dataset["VIB"]= res[2:]
+                except Exception as e:
+                    print(f'sensor exception : {e}')
 
 
-#test = sensorListener(0,"COM6","H001234")
+# test = sensorListener(0,"COM6","H001234")
 
-#print (test.SyncSensor)
-#test.startListen()
+# print (test.SyncSensor)
+# test.startListen()
 
