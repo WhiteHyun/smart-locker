@@ -63,12 +63,13 @@ class InformationPage(tk.Frame):
             """
             휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
             """
+            user_check = []
             if len(phone_number) != 11 or phone_number[:3] != "010":
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
-            message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", flag=ASK)
+            message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
             self.wait_window(message_frame)
-            if user_check == "yes":
+            if user_check[0] == "yes":
                 user_key = self.make_user_key(phone_number)
                 if page == "DeliveryPage":
                     self.__process_delivery(user_key, phone_number)

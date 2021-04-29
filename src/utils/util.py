@@ -7,22 +7,22 @@ from PIL import Image, ImageTk
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from custom.button import SMLButton
 
-user_check = ""
+
 CHECK = 0
 ASK = 1
 
 class MessageFrame(tk.Toplevel):
     """메시지를 표시해줍니다."""
     
-    def __init__(self, root_view, text, width=400, height=200, flag=CHECK):
+    def __init__(self, root_view, text, width=400, height=200, user_check=None, flag=CHECK):
         super().__init__(width=width, height=height)
-        global user_check
-        user_check = ""
         sw = root_view.winfo_screenwidth()
         sh = root_view.winfo_screenheight()
         x = (sw - width) // 2
         y = (sh - height) // 2
         self.attributes("-type", "splash")
+        if user_check:
+            self.user_check = user_check
         self.attributes("-topmost", True)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
@@ -67,6 +67,5 @@ class MessageFrame(tk.Toplevel):
     def __check_and_destroy(self, string):
         """user_check 값을 `string`으로 바꾸고 창을 닫습니다.
         """
-        global user_check
-        user_check = string
+        self.user_check.append(string)
         self.after(100, self.destroy)
