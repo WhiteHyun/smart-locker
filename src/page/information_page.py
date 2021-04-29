@@ -67,9 +67,9 @@ class InformationPage(tk.Frame):
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
             message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", flag=ASK)
-            while message_frame.user_check == "":
+            while message_frame.user_check.get() == "":
                 pass
-            if message_frame.user_check == "yes":
+            if message_frame.user_check.get() == "yes":
                 user_key = self.make_user_key(phone_number)
                 if page == "DeliveryPage":
                     self.__process_delivery(user_key, phone_number)
