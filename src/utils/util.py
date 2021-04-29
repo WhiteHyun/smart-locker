@@ -23,7 +23,7 @@ class MessageFrame(tk.Toplevel):
         self.attributes("-type", "splash")
         self.attributes("-topmost", True)
         self.geometry(f"{width}x{height}+{x}+{y}")
-        self.user_check = tk.StringVar()
+        self.user_check = ""
 
         canvas = tk.Canvas(self, width=width,
                         height=height, bg="white")
@@ -66,5 +66,5 @@ class MessageFrame(tk.Toplevel):
     def __check_and_destroy(self, string):
         """self의 user_check 값을 `string`으로 바꾸고 창을 닫습니다.
         """
-        self.user_check.set(string)
+        self.user_check = string
         self.after(100, self.destroy)
