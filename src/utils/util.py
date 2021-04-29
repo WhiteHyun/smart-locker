@@ -15,14 +15,14 @@ class MessageFrame(tk.Toplevel):
     
     def __init__(self, root_view, text, width=400, height=200, flag=CHECK):
         super().__init__(width=width, height=height)
-        self.attributes("-type", "splash")
-        self.attributes("-topmost", True)
-        self.geometry(f"{width}x{height}+{x}+{y}")
 
         sw = root_view.winfo_screenwidth()
         sh = root_view.winfo_screenheight()
         x = (sw - width) // 2
         y = (sh - height) // 2
+        self.attributes("-type", "splash")
+        self.attributes("-topmost", True)
+        self.geometry(f"{width}x{height}+{x}+{y}")
         self.user_check = tk.StringVar()
 
         canvas = tk.Canvas(self, width=width,
