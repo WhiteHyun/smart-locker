@@ -51,7 +51,7 @@ class MessageFrame(tk.Toplevel):
                     text_font=root_view.medium_font,
                     width=100,
                     height=100,
-                    command=lambda: self.user_check.set("yes")
+                    command=lambda: self.__check_and_destroy("yes")
                     ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
             SMLButton(master=self,
                     border_width=1,
@@ -60,7 +60,11 @@ class MessageFrame(tk.Toplevel):
                     text_font=root_view.medium_font,
                     width=100,
                     height=100,
-                    command=lambda: self.user_check.set("no")
+                    command=lambda: self.__check_and_destroy("no")
                     ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
 
-
+    def __check_and_destroy(self, string):
+        """self의 user_check 값을 `string`으로 바꾸고 창을 닫습니다.
+        """
+        self.user_check.set(string)
+        self.after(100, self.destroy)
