@@ -22,6 +22,7 @@ class MessageFrame(tk.Toplevel):
         y = (sh - height) // 2
         self.attributes("-type", "splash")
         self.attributes("-topmost", True)
+        self.focus_force()
         self.geometry(f"{width}x{height}+{x}+{y}")
         self.user_check = ""
 
