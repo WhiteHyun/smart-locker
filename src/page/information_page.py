@@ -63,7 +63,7 @@ class InformationPage(tk.Frame):
             """
             휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
             """
-            user_check = []
+            user_check = ["test"]
             if len(phone_number) != 11 or phone_number[:3] != "010":
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"

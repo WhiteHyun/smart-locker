@@ -67,5 +67,5 @@ class MessageFrame(tk.Toplevel):
     def __check_and_destroy(self, string):
         """user_check 값을 `string`으로 바꾸고 창을 닫습니다.
         """
-        self.user_check.append(string)
+        self.user_check[0] = string
         self.after(100, self.destroy)
