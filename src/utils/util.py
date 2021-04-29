@@ -7,10 +7,12 @@ from PIL import Image, ImageTk
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from custom.button import SMLButton
 
+CHECK = 0
+ASK = 1
 
-def show_message(root_view, text, width=290, height=150):
+
+def show_message(root_view, text, width=290, height=150, flag=CHECK):
     """메시지를 표시해줍니다."""
-
     sw = root_view.winfo_screenwidth()
     sh = root_view.winfo_screenheight()
     x = (sw - width) // 2
@@ -18,13 +20,45 @@ def show_message(root_view, text, width=290, height=150):
     top = tk.Toplevel(width=width, height=height)
     top.attributes("-type", "splash")
     top.geometry(f"{width}x{height}+{x}+{y}")
-    SMLButton(master=top,
-              border_width=1,
-              corner_radius=10,
-              text=text,
-              text_font=root_view.title_font,
-              width=100*width,
-              height=100*height,
-              command=top.destroy
-              ).pack()
-    top.after(4000, top.destroy)
+
+    canvas = tk.Canvas(top, width=width,
+                       height=height, bg="white")
+    canvas.pack(fill="both", expand=True)
+
+    canvas.create_text(100*width, 100*height,
+                       text=text, font=root_view.large_font)
+    assert flag == CHECK or flag == ASK
+    if flag == CHECK:
+        SMLButton(master=top,
+                  border_width=1,
+                  corner_radius=10,
+                  text="확인",
+                  text_font=root_view.medium_font,
+                  width=100,
+                  height=100,
+                  command=top.destroy
+                  ).pack()
+        top.after(4000, top.destroy)
+    else:
+        result = tk.StringVar()
+        SMLButton(master=top,
+                  border_width=1,
+                  corner_radius=10,
+                  text="예",
+                  text_font=root_view.medium_font,
+                  width=100,
+                  height=100,
+                  command=lambda: result.set("yes")
+                  ).pack()
+        SMLButton(master=top,
+                  border_width=1,
+                  corner_radius=10,
+                  text="아니오",
+                  text_font=root_view.medium_font,
+                  width=100,
+                  height=100,
+                  command=lambda: result.set("no")
+                  ).pack()
+        while result.get() == "":
+            pass
+        return result.get()
