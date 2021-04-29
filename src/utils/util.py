@@ -11,7 +11,7 @@ CHECK = 0
 ASK = 1
 
 
-def show_message(root_view, text, width=290, height=150, flag=CHECK):
+def show_message(root_view, text, width=580, height=300, flag=CHECK):
     """메시지를 표시해줍니다."""
     sw = root_view.winfo_screenwidth()
     sh = root_view.winfo_screenheight()
