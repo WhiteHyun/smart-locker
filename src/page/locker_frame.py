@@ -74,7 +74,7 @@ class LockerFrame(tk.Frame):
 
             # useState == 'B' or 'U' when deliveryPage, 'W' when FindPage
             else:
-                return lambda: show_message(self.controller, "해당 함을 사용할 수 없습니다.")
+                return lambda: MessageFrame(self.controller, "해당 함을 사용할 수 없습니다.")
         SMLButton(master=self,
                   fg_color=self.color_dict[json_data["useState"]][0],
                   hover_color=self.color_dict[json_data["useState"]][1],

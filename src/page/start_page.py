@@ -115,7 +115,7 @@ class StartPage(tk.Frame):
                 json.dump(json.loads(json_string), f, indent=2)
 
         except json.decoder.JSONDecodeError as e:
-            show_message(self.controller, "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
+            MessageFrame(self.controller, "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
             raise e
         except FileNotFoundError as e:
             with open("data/information.json", "w") as f:

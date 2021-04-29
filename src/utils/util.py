@@ -10,56 +10,57 @@ from custom.button import SMLButton
 CHECK = 0
 ASK = 1
 
-
-def show_message(root_view, text, width=400, height=200, flag=CHECK):
+class MessageFrame(tk.Toplevel):
     """메시지를 표시해줍니다."""
-    sw = root_view.winfo_screenwidth()
-    sh = root_view.winfo_screenheight()
-    x = (sw - width) // 2
-    y = (sh - height) // 2
-    top = tk.Toplevel(width=width, height=height)
-    top.attributes("-type", "splash")
-    top.attributes("-topmost", True)
-    top.geometry(f"{width}x{height}+{x}+{y}")
+    
+    def __init__(self, root_view, text, width=400, height=200, flag=CHECK):
+        super().__init__(width=width, height=height)
+        self.attributes("-type", "splash")
+        self.attributes("-topmost", True)
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
-    canvas = tk.Canvas(top, width=width,
-                       height=height, bg="white")
-    canvas.pack(fill="both", expand=True)
+        sw = root_view.winfo_screenwidth()
+        sh = root_view.winfo_screenheight()
+        x = (sw - width) // 2
+        y = (sh - height) // 2
+        self.user_check = tk.StringVar()
 
-    canvas.create_text(width/2, height/7,
-                       text=text, font=root_view.large_font)
-    assert flag == CHECK or flag == ASK
-    if flag == CHECK:
-        SMLButton(master=top,
-                  border_width=1,
-                  corner_radius=10,
-                  text="확인",
-                  text_font=root_view.medium_font,
-                  width=100,
-                  height=100,
-                  command=top.destroy
-                  ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-        top.after(4000, top.destroy)
-    else:
-        result = tk.StringVar()
-        SMLButton(master=top,
-                  border_width=1,
-                  corner_radius=10,
-                  text="예",
-                  text_font=root_view.medium_font,
-                  width=100,
-                  height=100,
-                  command=lambda: result.set("yes")
-                  ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
-        SMLButton(master=top,
-                  border_width=1,
-                  corner_radius=10,
-                  text="아니오",
-                  text_font=root_view.medium_font,
-                  width=100,
-                  height=100,
-                  command=lambda: result.set("no")
-                  ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
-        while result.get() == "":
-            pass
-        return result.get()
+        canvas = tk.Canvas(self, width=width,
+                        height=height, bg="white")
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_text(width/2, height/7,
+                        text=text, font=root_view.large_font)
+        assert flag == CHECK or flag == ASK
+        if flag == CHECK:
+            SMLButton(master=self,
+                    border_width=1,
+                    corner_radius=10,
+                    text="확인",
+                    text_font=root_view.medium_font,
+                    width=100,
+                    height=100,
+                    command=self.destroy
+                    ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+            self.after(4000, self.destroy)
+        else:
+            SMLButton(master=self,
+                    border_width=1,
+                    corner_radius=10,
+                    text="예",
+                    text_font=root_view.medium_font,
+                    width=100,
+                    height=100,
+                    command=lambda: self.user_check.set("yes")
+                    ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
+            SMLButton(master=self,
+                    border_width=1,
+                    corner_radius=10,
+                    text="아니오",
+                    text_font=root_view.medium_font,
+                    width=100,
+                    height=100,
+                    command=lambda: self.user_check.set("no")
+                    ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
+
+
