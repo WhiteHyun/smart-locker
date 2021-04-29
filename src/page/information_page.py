@@ -67,15 +67,13 @@ class InformationPage(tk.Frame):
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
             message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", flag=ASK)
-            while message_frame.user_check == "":
-                pass
-            if message_frame.user_check == "yes":
+            self.wait_window(message_frame)
+            if user_check == "yes":
                 user_key = self.make_user_key(phone_number)
                 if page == "DeliveryPage":
                     self.__process_delivery(user_key, phone_number)
                 elif page == "FindPage":
                     self.__find_delivery(user_key)
-
         for i in button_name_list:
             SMLButton(master=number_frame,
                       text_font=controller.large_font,

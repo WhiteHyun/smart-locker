@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from custom.button import SMLButton
 
+user_check = ""
 CHECK = 0
 ASK = 1
 
@@ -15,16 +16,16 @@ class MessageFrame(tk.Toplevel):
     
     def __init__(self, root_view, text, width=400, height=200, flag=CHECK):
         super().__init__(width=width, height=height)
-
+        global user_check
+        user_check = ""
         sw = root_view.winfo_screenwidth()
         sh = root_view.winfo_screenheight()
         x = (sw - width) // 2
         y = (sh - height) // 2
         self.attributes("-type", "splash")
         self.attributes("-topmost", True)
-        self.focus_force()
+        self.grab_set()
         self.geometry(f"{width}x{height}+{x}+{y}")
-        self.user_check = ""
 
         canvas = tk.Canvas(self, width=width,
                         height=height, bg="white")
@@ -65,7 +66,8 @@ class MessageFrame(tk.Toplevel):
                     ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
 
     def __check_and_destroy(self, string):
-        """self의 user_check 값을 `string`으로 바꾸고 창을 닫습니다.
+        """user_check 값을 `string`으로 바꾸고 창을 닫습니다.
         """
-        self.user_check = string
+        global user_check
+        user_check = string
         self.after(100, self.destroy)
