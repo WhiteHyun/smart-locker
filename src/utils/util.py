@@ -37,7 +37,7 @@ def show_message(root_view, text, width=290, height=150, flag=CHECK):
                   width=100,
                   height=100,
                   command=top.destroy
-                  ).pack()
+                  ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         top.after(4000, top.destroy)
     else:
         result = tk.StringVar()
@@ -49,7 +49,7 @@ def show_message(root_view, text, width=290, height=150, flag=CHECK):
                   width=100,
                   height=100,
                   command=lambda: result.set("yes")
-                  ).pack()
+                  ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=top,
                   border_width=1,
                   corner_radius=10,
@@ -58,7 +58,7 @@ def show_message(root_view, text, width=290, height=150, flag=CHECK):
                   width=100,
                   height=100,
                   command=lambda: result.set("no")
-                  ).pack()
+                  ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
         while result.get() == "":
             pass
         return result.get()
