@@ -1,11 +1,3 @@
----
-name: Pull request
-about: Pull request to merge progress
-title: "[PR]"
-labels: enhancement
-assignees: sungkyulh, WhiteHyun
----
-
 ## 구현 사항
 
 -
