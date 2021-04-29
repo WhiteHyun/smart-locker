@@ -24,7 +24,6 @@ class MessageFrame(tk.Toplevel):
         y = (sh - height) // 2
         self.attributes("-type", "splash")
         self.attributes("-topmost", True)
-        self.grab_set()
         self.geometry(f"{width}x{height}+{x}+{y}")
 
         canvas = tk.Canvas(self, width=width,
