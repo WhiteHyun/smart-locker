@@ -19,6 +19,7 @@ def show_message(root_view, text, width=400, height=200, flag=CHECK):
     y = (sh - height) // 2
     top = tk.Toplevel(width=width, height=height)
     top.attributes("-type", "splash")
+    top.attributes("-topmost", True)
     top.geometry(f"{width}x{height}+{x}+{y}")
 
     canvas = tk.Canvas(top, width=width,
