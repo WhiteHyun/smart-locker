@@ -11,7 +11,7 @@ CHECK = 0
 ASK = 1
 
 
-def show_message(root_view, text, width=580, height=300, flag=CHECK):
+def show_message(root_view, text, width=400, height=200, flag=CHECK):
     """메시지를 표시해줍니다."""
     sw = root_view.winfo_screenwidth()
     sh = root_view.winfo_screenheight()
@@ -25,7 +25,7 @@ def show_message(root_view, text, width=580, height=300, flag=CHECK):
                        height=height, bg="white")
     canvas.pack(fill="both", expand=True)
 
-    canvas.create_text(100*width, 100*height,
+    canvas.create_text(width/2, height/7,
                        text=text, font=root_view.large_font)
     assert flag == CHECK or flag == ASK
     if flag == CHECK:
