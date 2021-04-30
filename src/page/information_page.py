@@ -70,7 +70,7 @@ class InformationPage(tk.Frame):
             message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
             self.wait_window(message_frame)
             if user_check[0] == "yes":
-                user_key = self.make_user_key(phone_number)
+                user_key = self.get_user_key(phone_number)
                 if page == "DeliveryPage":
                     self.__process_delivery(user_key, phone_number)
                 elif page == "FindPage":
@@ -154,19 +154,20 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 
         sql = SQL("root", "", "10.80.76.63", "SML")
 
-        # TODO: USRMngKey값이 phone_number로 현재는 대체중이며 나중에 바꿔야함!
         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
             sql.processDB(
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
             )
+            # 완료메시지 표시
+            MessageFrame(self.controller, "완료되었습니다.")
 
-        # 완료메시지 표시
-        MessageFrame(self.controller, "완료되었습니다.")
+            # 일반화면으로 이동
+            self.controller.show_frame("StartPage", self)
+        else:
+            # 실패메시지 표시
+            MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
 
-        # 일반화면으로 이동
-        self.controller.show_frame("StartPage", self)
-
-    def make_user_key(self, phone_number: str):
+    def get_user_key(self, phone_number: str):
         """
         휴대폰 번호를 받아 유저를 생성하여 데이터베이스에 저장한 후 관리번호를 리턴합니다.
         만약 이미 존재하는 경우 존재하는 관리번호를 리턴합니다.
