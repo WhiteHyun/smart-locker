@@ -155,7 +155,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         sql = SQL("root", "", "10.80.76.63", "SML")
         result = sql.processDB(
             f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
-        if result and result[0]["CRRMngKey"] == self.CRRMngKey:
+        if result and result[0]["USRMngKey"] == user_key:
             sql.processDB(
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
             )
