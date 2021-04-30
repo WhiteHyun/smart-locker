@@ -153,8 +153,9 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         # TODO: #17 택배함이 열리고 택배함에 물건을 가져가고 문을 닫는 등의 확인절차 필요
 
         sql = SQL("root", "", "10.80.76.63", "SML")
-
-        if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
+        result = sql.processDB(
+            f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
+        if result and result[0]["CRRMngKey"] == self.CRRMngKey:
             sql.processDB(
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
             )

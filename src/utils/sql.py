@@ -64,7 +64,7 @@ class SQL:
                 self.__cursor.execute(sql)
                 self.__conn.commit()
         except Exception as e:
-            raise e
+            return None
 
     def __convert_to_csv(self, data: list) -> str:
         """
