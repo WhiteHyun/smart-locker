@@ -27,7 +27,7 @@ class DeliveryPage(tk.Frame):
                            height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height*1/7,
+        canvas.create_text(controller.width/2, controller.height/7,
                            text="택배 넣을 함을 선택해주세요.", font=controller.title_font, fill="#385ab7")
 
         LockerFrame(

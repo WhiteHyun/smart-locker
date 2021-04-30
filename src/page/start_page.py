@@ -17,7 +17,7 @@ class StartPage(tk.Frame):
                            height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height*1/7,
+        canvas.create_text(controller.width/2, controller.height/7,
                            text="택배 보관함", font=controller.title_font, fill="#385ab7")
 
         man_img = ImageTk.PhotoImage(Image.open(
@@ -32,8 +32,8 @@ class StartPage(tk.Frame):
                   text_font=controller.xlarge_font,
                   text="맡기기",
                   image=man_img,
-                  width=controller.width/5,
-                  height=controller.height/3,
+                  width=controller.width/4,
+                  height=controller.height/2.6,
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
@@ -42,8 +42,8 @@ class StartPage(tk.Frame):
                   text_font=controller.xlarge_font,
                   text="찾기",
                   image=box_img,
-                  width=controller.width/5,
-                  height=controller.height/3,
+                  width=controller.width/4,
+                  height=controller.height/2.6,
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )

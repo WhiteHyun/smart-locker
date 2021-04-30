@@ -89,7 +89,7 @@ class InformationPage(tk.Frame):
             col = 0 if col == 2 else col+1
 
         entry.place(x=controller.width/2,
-                    y=controller.height*2/10, anchor=tk.CENTER)
+                    y=controller.height/5, anchor=tk.CENTER)
         number_frame.place(x=controller.width/2,
                            y=controller.height/2, anchor=tk.CENTER)
 
