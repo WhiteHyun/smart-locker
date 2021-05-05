@@ -7,7 +7,25 @@ else:
     from serial.serialutil import SerialException
 
 
-class ratchControler:
+
+
+class SingletonInstane:
+  __instance = None
+
+  @classmethod
+  def __getInstance(cls):
+    return cls.__instance
+
+  @classmethod
+  def instance(cls, *args, **kargs):
+    cls.__instance = cls(*args, **kargs)
+    cls.instance = cls.__getInstance
+    return cls.__instance
+
+
+
+class ratchControler(SingletonInstane):
+
     def __init__(self,Port) -> None:
         self.port = Port
         self.brate = 9600
@@ -28,3 +46,5 @@ class ratchControler:
             time.sleep(2)
             return self.connect_arduino()        
         return seri
+
+
