@@ -1,24 +1,16 @@
-# if __name__ == "__main__":
-#     from src import ui
-#     ui.App().mainloop()
-
-
-
 if __name__ == "__main__":
-    from src import  ui,sensorListener
-    import json
     import time
-
-    LCKMngKey =''
-     
-    
+    import json
     from multiprocessing import *
+    from src import ui, sensorListener
+
+    LCKMngKey = ""
 
     procs = []
 
-    a= ui.App()
-    
-    proc1 = Process(target= a.mainloop,args=())
+    a = ui.App()
+
+    proc1 = Process(target=a.mainloop, args=())
     procs.append(proc1)
     proc1.start()
 
@@ -30,12 +22,11 @@ if __name__ == "__main__":
                 continue
             else:
                 json_object = json.loads("".join(file_read))
-                LCKMngKey = json_object["LCKMngKey"]    
+                LCKMngKey = json_object["LCKMngKey"]
                 break
 
-    sListener = sensorListener.sensorListener(0,"/dev/ttyACM0",LCKMngKey)
-    #proc2 = Process(target=sensorListener.sensorListener(0,"/dev/ttyACM0","H001234").startListen,args=())
-    proc2 = Process(target=sListener.startListen,args=())
+    sListener = sensorListener.SensorListener(0, "/dev/ttyACM0", LCKMngKey)
+    proc2 = Process(target=sListener.startListen, args=())
     procs.append(proc2)
     proc2.start()
 
@@ -44,4 +35,3 @@ if __name__ == "__main__":
 
     for p in procs:
         p.join()
-    
