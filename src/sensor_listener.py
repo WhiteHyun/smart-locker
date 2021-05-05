@@ -1,5 +1,4 @@
 import serial
-from serial.serialutil import SerialException
 if __name__ == "__main__" or __name__ == "sensorListener":
     from utils.util import dict2Query
     from utils.sql import SQL
@@ -75,7 +74,7 @@ class SensorListener:
             return self.connect_arduino()
         return seri
 
-    def startListen(self):
+    def listen(self):
         """각 함들의 센서들의 듣는(Listening) 값을 DB에 저장합니다.
         """
         dataset = {"CRRMngKey": None, "FSR": -1,
@@ -114,4 +113,4 @@ class SensorListener:
 # test = sensorListener(0,"COM6","H001234")
 
 # print (test.SyncSensor)
-# test.startListen()
+# test.listen()

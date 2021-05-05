@@ -2,7 +2,7 @@ if __name__ == "__main__":
     import time
     import json
     from multiprocessing import *
-    from src import ui, sensorListener
+    from src import ui, sensor_listener
 
     LCKMngKey = ""
 
@@ -25,8 +25,8 @@ if __name__ == "__main__":
                 LCKMngKey = json_object["LCKMngKey"]
                 break
 
-    sListener = sensorListener.SensorListener(0, "/dev/ttyACM0", LCKMngKey)
-    proc2 = Process(target=sListener.startListen, args=())
+    sListener = sensor_listener.SensorListener(0, "/dev/ttyACM0", LCKMngKey)
+    proc2 = Process(target=sListener.listen, args=())
     procs.append(proc2)
     proc2.start()
 
