@@ -96,12 +96,12 @@ class FindPage(tk.Frame):
             )
 
             # 완료 메시지 표시
-            success_message(self.controller)
+            MessageFrame(self.controller)
 
             # 기존 화면으로 이동
             self.controller.show_frame("StartPage", self)
         except ValueError as e:
-            showerror("오류!", "존재하지 않는 QR코드입니다.")
+            MessageFrame(self.controller, "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
 

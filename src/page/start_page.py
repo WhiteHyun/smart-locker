@@ -17,7 +17,7 @@ class StartPage(tk.Frame):
                            height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height*1/7,
+        canvas.create_text(controller.width/2, controller.height/7,
                            text="택배 보관함", font=controller.title_font, fill="#385ab7")
 
         man_img = ImageTk.PhotoImage(Image.open(
@@ -32,8 +32,8 @@ class StartPage(tk.Frame):
                   text_font=controller.xlarge_font,
                   text="맡기기",
                   image=man_img,
-                  width=controller.width/5,
-                  height=controller.height/3,
+                  width=controller.width/4,
+                  height=controller.height/2.6,
                   command=lambda: controller.show_frame(
                       "DeliveryPage", self
                   )
@@ -42,8 +42,8 @@ class StartPage(tk.Frame):
                   text_font=controller.xlarge_font,
                   text="찾기",
                   image=box_img,
-                  width=controller.width/5,
-                  height=controller.height/3,
+                  width=controller.width/4,
+                  height=controller.height/2.6,
                   command=lambda: controller.show_frame(
                       "FindPage", self
                   )
@@ -115,7 +115,7 @@ class StartPage(tk.Frame):
                 json.dump(json.loads(json_string), f, indent=2)
 
         except json.decoder.JSONDecodeError as e:
-            showerror("에러!", "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
+            MessageFrame(self.controller, "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
             raise e
         except FileNotFoundError as e:
             with open("data/information.json", "w") as f:

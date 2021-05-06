@@ -63,19 +63,18 @@ class InformationPage(tk.Frame):
             """
             휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
             """
+            user_check = ["test"]
             if len(phone_number) != 11 or phone_number[:3] != "010":
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
-            user_check = askquestion(
-                "번호 확인", f"{phone_format_number}가 맞습니까?"
-            )
-            if user_check == "yes":
-                user_key = self.make_user_key(phone_number)
+            message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
+            self.wait_window(message_frame)
+            if user_check[0] == "yes":
+                user_key = self.get_user_key(phone_number)
                 if page == "DeliveryPage":
                     self.__process_delivery(user_key, phone_number)
                 elif page == "FindPage":
                     self.__find_delivery(user_key)
-
         for i in button_name_list:
             SMLButton(master=number_frame,
                       text_font=controller.large_font,
@@ -90,7 +89,7 @@ class InformationPage(tk.Frame):
             col = 0 if col == 2 else col+1
 
         entry.place(x=controller.width/2,
-                    y=controller.height*2/10, anchor=tk.CENTER)
+                    y=controller.height/5, anchor=tk.CENTER)
         number_frame.place(x=controller.width/2,
                            y=controller.height/2, anchor=tk.CENTER)
 
@@ -110,7 +109,7 @@ class InformationPage(tk.Frame):
         hash_value = encrypt(value)
         # QR코드 생성 실패시 다시 시도
         if not generateQR(hash_value):
-            showerror("에러!", "qr코드 생성에 실패하였습니다.")
+            MessageFrame(self.controller, "qr코드 생성에 실패하였습니다.")
             sleep(2)
             self.__process_delivery(user_key, phone_number)
 
@@ -139,12 +138,10 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
                 """,
             imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
         if not nSMS.sendMessage():
-            showerror(message="문자전송에 실패 하였습니다.")
+            MessageFrame(self.controller, "문자전송에 실패 하였습니다.")
 
         # 완료 메시지 표시
-        top = tk.Toplevel()
-        tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
-        top.after(7000, top.destroy)
+        MessageFrame(self.controller, "완료되었습니다")
 
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
@@ -156,20 +153,22 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         # TODO: #17 택배함이 열리고 택배함에 물건을 가져가고 문을 닫는 등의 확인절차 필요
 
         sql = SQL("root", "", "10.80.76.63", "SML")
-
-        # TODO: USRMngKey값이 phone_number로 현재는 대체중이며 나중에 바꿔야함!
-        if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
+        result = sql.processDB(
+            f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
+        if result and result[0]["USRMngKey"] == user_key:
             sql.processDB(
                 f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
             )
+            # 완료메시지 표시
+            MessageFrame(self.controller, "완료되었습니다.")
 
-        # 완료메시지 표시
-        success_message(self.controller)
+            # 일반화면으로 이동
+            self.controller.show_frame("StartPage", self)
+        else:
+            # 실패메시지 표시
+            MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
 
-        # 일반화면으로 이동
-        self.controller.show_frame("StartPage", self)
-
-    def make_user_key(self, phone_number: str):
+    def get_user_key(self, phone_number: str):
         """
         휴대폰 번호를 받아 유저를 생성하여 데이터베이스에 저장한 후 관리번호를 리턴합니다.
         만약 이미 존재하는 경우 존재하는 관리번호를 리턴합니다.
