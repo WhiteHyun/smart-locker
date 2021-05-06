@@ -24,7 +24,8 @@ class Discriminate:
                     for locker_key in locker_list:
                         data = self.sql.processDB(
                             f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{locker_key}' LIMIT 1;")
-                        print(data)
+                        if data:
+                            print(data)
 
             except Exception as e:
                 print(e)
