@@ -123,6 +123,7 @@ class InformationPage(tk.Frame):
         if result:
             ratch.excute(0, "O")
 
+        MessageFrame(self.controller, "문이 열렸습니다.")
         while not d.has_item(self.CRRMngKey):
             pass
 
