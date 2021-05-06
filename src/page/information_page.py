@@ -119,11 +119,10 @@ class InformationPage(tk.Frame):
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
         d = Discriminate()
         ratch = RatchController.instance()
-        result = d.is_door_open(self.CRRMngKey)
-        if result:
+        if not d.is_door_open(self.CRRMngKey):
             ratch.excute(0, "O")
 
-        MessageFrame(self.controller, "문이 열렸습니다.")
+        m = MessageFrame(self.controller, "문이 열렸습니다.", 600, 400)
         while not d.has_item(self.CRRMngKey):
             pass
 
