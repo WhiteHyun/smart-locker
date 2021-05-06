@@ -2,7 +2,8 @@ if __name__ == "__main__":
     import time
     import json
     from multiprocessing import *
-    from src import ui, sensor_listener
+    from src import ui
+    from src.utils import sensor_listener
 
     LCKMngKey = ""
 
