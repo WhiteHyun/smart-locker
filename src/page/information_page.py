@@ -121,6 +121,7 @@ class InformationPage(tk.Frame):
         if result:
             t = RatchController.instance("/dev/ttyARDMR0")
             t.excute(0, "O")
+        return
         # 여기서부터 데이터베이스 저장 시작
         sql = SQL("root", "", "10.80.76.63", "SML")
 
