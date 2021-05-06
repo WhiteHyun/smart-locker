@@ -29,7 +29,7 @@ class Discriminate:
                     data = self.sql.processDB(
                         f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{locker_key}' ORDER BY SenKey DESC LIMIT 1;")
                     if data:
-                        if data["HAL"] == 0:
+                        if data[0]["HAL"] == 0:
                             print(True)
                         else:
                             print(False)
