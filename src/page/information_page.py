@@ -1,8 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
 from utils.sql import SQL
+from utils.util import *
 
 if __name__ == "__main__" or __name__ == "information_page":
     from locker_frame import LockerFrame

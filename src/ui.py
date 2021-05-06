@@ -41,12 +41,16 @@ class App(tk.Tk):
         self.large_font = tkfont.Font(
             family="a시월구일1", size=self.width*self.height//73500, weight="bold")
 
+        from utils.ratchController import RatchController
+        RatchController.instance("/dev/ttyARDMR0")
+        
         # 모든 프레임들을 가지는 변수
         self.pages = {}
         for F in (StartPage, DeliveryPage, FindPage, InformationPage):
             page_name = F.__name__
             self.pages[page_name] = F
         self.show_frame("StartPage")
+
 
     def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None, page=None):
         """
