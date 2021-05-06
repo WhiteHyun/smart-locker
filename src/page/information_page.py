@@ -126,6 +126,9 @@ class InformationPage(tk.Frame):
         while not d.has_item(self.CRRMngKey):
             pass
 
+        while d.is_door_open(self.CRRMngKey):
+            pass
+
         ratch.excute(0, "C")
 
         # 완료 메시지 표시
