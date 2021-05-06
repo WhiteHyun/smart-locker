@@ -26,7 +26,7 @@ if __name__ == "__main__":
                 LCKMngKey = json_object["LCKMngKey"]
                 break
 
-    sListener = sensor_listener.SensorListener(0, "/dev/ttyARDMR")
+    sListener = sensor_listener.SensorListener(0, "/dev/ttyARDMR", LCKMngKey)
 
     proc2 = Process(target=sListener.listen, args=())
     procs.append(proc2)
