@@ -1,5 +1,8 @@
 import serial
-from serial.serialutil import SerialException
+if __name__ == "__main__" or __name__ == "ratchController":
+    from utils.util import connect_arduino
+else:
+    from .utils.util import connect_arduino
 
 
 class SingletonInstane:
@@ -17,29 +20,12 @@ class SingletonInstane:
 class ratchController(SingletonInstane):
 
     def __init__(self, port) -> None:
-        self.port = port
 
-        self.seri = self.connect_arduino()
+        self.seri = connect_arduino(port)
 
     def excute(self, arduinoNum, order):
         self.seri.write(bytes(f'{arduinoNum}:{order}', encoding='ascii'))
 
-    def connect_arduino(self):
-        import time
-        try:
-            seri = serial.Serial(self.port, baudrate=9600, timeout=None)
-
-        except Exception as e:
-            time.sleep(2)
-            return self.connect_arduino()
-        return seri
-
-    def test(self):
-        print(self.port)
-
 
 if __name__ == "__main__":
-    a = ratchController.instance(2)
-    b = ratchController.instance(3)
-    a.test()
-    b.test()
+    pass

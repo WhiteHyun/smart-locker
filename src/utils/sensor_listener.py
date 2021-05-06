@@ -1,9 +1,9 @@
 import serial
-if __name__ == "__main__" or __name__ == "sensorListener":
-    from utils.util import dict2Query
+if __name__ == "__main__" or __name__ == "sensor_listener":
+    from utils.util import dict2Query, connect_arduino
     from utils.sql import SQL
 else:
-    from .utils.util import dict2Query
+    from .utils.util import dict2Query, connect_arduino
     from .utils.sql import SQL
 
 
@@ -15,13 +15,10 @@ class SensorListener:
     sql: SQL Class
         DB에 저장하기 위한 `connection` 객체
 
-    port: str
-        아두이노와 통신을 위한 포트
-
     arduino_number: str
         연결되어있는 아두이노의 번호
 
-    SyncSensor: str
+    sync_sensor: str
         아두이노 번호(arduino_number)와 센서묶음셋 번호를 합친 문자열
     """
 
@@ -43,9 +40,8 @@ class SensorListener:
         >>> SensorListener(arduino_num=0, port="/dev/ttyACM0", LCKMngKey="H001234")
         """
         self.sql = SQL("root", "", "10.80.76.63", "SML")
-        self.port = port
         self.LCKMngKey = LCKMngKey
-        self.seri = self.connect_arduino()
+        self.seri = connect_arduino(port)
         self.arduino_number = str(arduino_num)
         self.sync_sensor = self.__set_sensor_number()
 
@@ -60,19 +56,6 @@ class SensorListener:
             if dataset["SyncSensor"] is not None:
                 sync_sensor[dataset["SyncSensor"]] = dataset["CRRMngKey"]
         return sync_sensor
-
-    def connect_arduino(self):
-        """아두이노 연결을 시도합니다.
-        연결에 성공하면 해당 `Serial`을 리턴합니다.
-        """
-        import time
-        try:
-            seri = serial.Serial(self.port, baudrate=9600, timeout=None)
-
-        except Exception as e:
-            time.sleep(2)
-            return self.connect_arduino()
-        return seri
 
     def listen(self):
         """각 함들의 센서들의 듣는(Listening) 값을 DB에 저장합니다.
