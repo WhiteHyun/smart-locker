@@ -3,7 +3,7 @@ if __name__ == "__main__":
     import json
     from multiprocessing import *
     from src import ui
-    from src.utils import sensor_listener
+    from src.utils import sensor_listener, discriminate
 
     LCKMngKey = ""
 
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     while True:
         with open("data/information.json") as f:
             file_read = f.readlines()
-            if len(file_read) == 0:
+            if not file_read:
                 time.sleep(1)
                 continue
             else:
@@ -26,10 +26,17 @@ if __name__ == "__main__":
                 LCKMngKey = json_object["LCKMngKey"]
                 break
 
-    sListener = sensor_listener.SensorListener(0, "/dev/ttyACM0", LCKMngKey)
+    sListener = sensor_listener.SensorListener(0, "/dev/ttyARDMR")
+
     proc2 = Process(target=sListener.listen, args=())
     procs.append(proc2)
     proc2.start()
+
+    sBehavior = discriminate.Discriminate()
+
+    proc3 = Process(target=sBehavior.check_door, args=())
+    procs.append(proc3)
+    proc3.start()
 
     # for p in procs:
     #     p.start()

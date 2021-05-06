@@ -1,10 +1,10 @@
 import serial
 if __name__ == "__main__" or __name__ == "sensor_listener":
-    from utils.util import dict2Query, connect_arduino
-    from utils.sql import SQL
+    from util import dict2Query, connect_arduino
+    from sql import SQL
 else:
-    from .utils.util import dict2Query, connect_arduino
-    from .utils.sql import SQL
+    from .util import dict2Query, connect_arduino
+    from .sql import SQL
 
 
 class SensorListener:
@@ -41,7 +41,7 @@ class SensorListener:
         """
         self.sql = SQL("root", "", "10.80.76.63", "SML")
         self.LCKMngKey = LCKMngKey
-        self.seri = connect_arduino(port)
+        self.seri = connect_arduino(f"{port}{arduino_num}")
         self.arduino_number = str(arduino_num)
         self.sync_sensor = self.__set_sensor_number()
 
