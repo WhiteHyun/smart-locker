@@ -104,6 +104,8 @@ class InformationPage(tk.Frame):
         # from utils.sms import SMS
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
+        from utils.discriminate import Discriminate
+        from utils.ratchController import RatchController
 
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime 포맷값
         value = self.CRRMngKey+user_key+time
@@ -115,7 +117,10 @@ class InformationPage(tk.Frame):
             self.__process_delivery(user_key, phone_number)
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
-
+        result = Discriminate().is_door_open(self.CRRMngKey)
+        if result:
+            t = RatchController.instance("/dev/ttyARDMR0")
+            t.excute(0, "O")
         # 여기서부터 데이터베이스 저장 시작
         sql = SQL("root", "", "10.80.76.63", "SML")
 

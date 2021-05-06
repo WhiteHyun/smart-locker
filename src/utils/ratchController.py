@@ -17,7 +17,7 @@ class SingletonInstane:
         return cls.__instance
 
 
-class ratchController(SingletonInstane):
+class RatchController(SingletonInstane):
 
     def __init__(self, port) -> None:
 

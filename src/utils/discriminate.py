@@ -20,20 +20,26 @@ class Discriminate:
                 map(lambda x: x["CRRMngKey"], json_object["CRRInfo"]))
         self.locker_list = locker_list
 
+    def is_door_open(self, CRRMngKey):
+        try:
+            data = self.sql.processDB(
+                f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{CRRMngKey}' ORDER BY SenKey DESC LIMIT 1;")
+            if not data:
+                return
+            else:
+                if data[0]["HAL"] == 0:
+                    return True
+                else:
+                    return False
+        except Exception as e:
+            print(e)
+            return
+
     def check_door(self):
         from time import sleep
         while True:
-            try:
-                # locker_list = ["H001234001", "H001234002", ...]
-                for locker_key in self.locker_list:
-                    data = self.sql.processDB(
-                        f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{locker_key}' ORDER BY SenKey DESC LIMIT 1;")
-                    if data:
-                        if data[0]["HAL"] == 0:
-                            print(True)
-                        else:
-                            print(False)
-                sleep(1)
-
-            except Exception as e:
-                print(e)
+            # locker_list = ["H001234001", "H001234002", ...]
+            for locker_key in self.locker_list:
+                result = self.is_door_open(locker_key)
+                print(f"{locker_key}: {result}")
+            sleep(1)
