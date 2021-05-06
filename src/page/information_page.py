@@ -67,7 +67,8 @@ class InformationPage(tk.Frame):
             if len(phone_number) != 11 or phone_number[:3] != "010":
                 return
             phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
-            message_frame = MessageFrame(self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
+            message_frame = MessageFrame(
+                self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
             self.wait_window(message_frame)
             if user_check[0] == "yes":
                 user_key = self.get_user_key(phone_number)
@@ -103,6 +104,8 @@ class InformationPage(tk.Frame):
         from utils.sms import SMS
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
+        from utils.discriminate import Discriminate
+        from utils.ratchController import RatchController
 
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime 포맷값
         value = self.CRRMngKey+user_key+time
@@ -114,7 +117,23 @@ class InformationPage(tk.Frame):
             self.__process_delivery(user_key, phone_number)
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
+        d = Discriminate()
+        ratch = RatchController.instance()
+        result = d.is_door_open(self.CRRMngKey)
+        if result:
+            ratch.excute(0, "O")
 
+        while not d.has_item(self.CRRMngKey):
+            pass
+
+        ratch.excute(0, "C")
+
+        # 완료 메시지 표시
+        MessageFrame(self.controller, "완료되었습니다")
+
+        # 일반화면으로 이동
+        self.controller.show_frame("StartPage", self)
+        return
         # 여기서부터 데이터베이스 저장 시작
         sql = SQL("root", "", "10.80.76.63", "SML")
 
