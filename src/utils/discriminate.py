@@ -30,7 +30,7 @@ class Discriminate:
                 return
             else:
                 data = data[0]
-                if data["HAL"] == 0:
+                if data["HAL"] == 1:
                     return True
                 else:
                     return False
