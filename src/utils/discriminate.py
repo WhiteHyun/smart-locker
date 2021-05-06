@@ -23,7 +23,7 @@ class Discriminate:
                         map(lambda x: x["CRRMngKey"], json_object["CRRInfo"]))
                     for locker_key in locker_list:
                         data = self.sql.processDB(
-                            f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{locker_key}' LIMIT 1;")
+                            f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{locker_key}' ORDER BY SenKey DESC LIMIT 1;")
                         if data:
                             print(data)
 
