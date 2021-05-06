@@ -1,8 +1,8 @@
 import serial
 if __name__ == "__main__" or __name__ == "ratchController":
-    from utils.util import connect_arduino
+    from util import connect_arduino
 else:
-    from .utils.util import connect_arduino
+    from .util import connect_arduino
 
 
 class SingletonInstane:
