@@ -43,7 +43,7 @@ class App(tk.Tk):
 
         from utils.ratchController import RatchController
         RatchController.instance("/dev/ttyARDMR0")
-        
+
         # 모든 프레임들을 가지는 변수
         self.pages = {}
         for F in (StartPage, DeliveryPage, FindPage, InformationPage):
@@ -51,14 +51,13 @@ class App(tk.Tk):
             self.pages[page_name] = F
         self.show_frame("StartPage")
 
-
     def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None, page=None):
         """
         프레임(창)을 띄워줍니다.
 
         Args:
             new_frame_cls (str): 새롭게 보여줄 프레임 객체의 이름
-            frame (tk.Frame): 기존에 보여지고 있는 프레임
+            frame (tk.Frame): 기존에 보여지고 있는 프레임, 삭제할 프레임
             parent (tk.Frame): 새롭게 보여질 프레임의 부모프레임
             CRRMngKey (str): 주어질 함 관리번호
             page (str): information에서 보여지는 page에 따른 구분값

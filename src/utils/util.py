@@ -24,6 +24,8 @@ class MessageFrame(tk.Toplevel):
         self.attributes("-type", "splash")
         self.attributes("-topmost", True)
         self.geometry(f"{width}x{height}+{x}+{y}")
+        if user_check:
+            self.user_check = user_check
 
         canvas = tk.Canvas(self, width=width,
                            height=height, bg="white")
@@ -51,8 +53,7 @@ class MessageFrame(tk.Toplevel):
                       text_font=root_view.medium_font,
                       width=100,
                       height=100,
-                      command=lambda: self.__check_and_destroy(
-                          "yes", user_check)
+                      command=lambda: self.__check_and_destroy("yes")
                       ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
             SMLButton(master=self,
                       border_width=1,
@@ -61,14 +62,13 @@ class MessageFrame(tk.Toplevel):
                       text_font=root_view.medium_font,
                       width=100,
                       height=100,
-                      command=lambda: self.__check_and_destroy(
-                          "no", user_check)
+                      command=lambda: self.__check_and_destroy("no")
                       ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
 
-    def __check_and_destroy(self, string, user_check):
+    def __check_and_destroy(self, string):
         """user_check 값을 `string`으로 바꾸고 창을 닫습니다.
         """
-        user_check[0] = string
+        self.user_check[0] = string
         self.after(100, self.destroy)
 
 
