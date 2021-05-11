@@ -122,7 +122,7 @@ class InformationPage(tk.Frame):
         if not d.is_door_open(self.CRRMngKey):
             ratch.excute(0, "O")
 
-        m = MessageFrame(self.controller, "문이 열렸습니다.", 600, 400)
+        MessageFrame(self.controller, "문이 열렸습니다. 물건을 넣어주세요", 600, 400)
         while not d.has_item(self.CRRMngKey):
             pass
 
