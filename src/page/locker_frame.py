@@ -1,7 +1,9 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from utils.util import *
 
 
 class LockerFrame(tk.Frame):
@@ -70,7 +72,7 @@ class LockerFrame(tk.Frame):
             """
             # useState == 'U' when FindPage, useState == 'W' when DeliveryPage
             if state == LockerFrame.STATE_USED and self.page == "FindPage" or state == LockerFrame.STATE_WAIT and self.page == "DeliveryPage":
-                return lambda CRRMngKey=json_data["CRRMngKey"]: self.controller.show_frame("InformationPage", self.parent, CRRMngKey=CRRMngKey, page=self.page)
+                return lambda CRRMngKey=json_data["CRRMngKey"]: self.controller.show_frame("InformationPage", frame=self.parent, CRRMngKey=CRRMngKey, page=self.page)
 
             # useState == 'B' or 'U' when deliveryPage, 'W' when FindPage
             else:
