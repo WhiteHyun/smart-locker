@@ -1,8 +1,10 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.sql import SQL
-from utils.util import *
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from utils.util import *
+    from utils.sql import SQL
 
 if __name__ == "__main__" or __name__ == "information_page":
     from locker_frame import LockerFrame
@@ -122,13 +124,15 @@ class InformationPage(tk.Frame):
         if not d.is_door_open(self.CRRMngKey):
             ratch.excute(0, "O")
 
+        sleep(2)
         MessageFrame(self.controller, "문이 열렸습니다. 물건을 넣어주세요", 600, 400)
+
         while not d.has_item(self.CRRMngKey):
             pass
 
         while d.is_door_open(self.CRRMngKey):
             pass
-
+        sleep(3)
         ratch.excute(0, "C")
 
         # 완료 메시지 표시

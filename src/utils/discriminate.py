@@ -62,5 +62,6 @@ class Discriminate:
             # locker_list = ["H001234001", "H001234002", ...]
             for locker_key in self.locker_list:
                 result = self.is_door_open(locker_key)
-                print(f"{locker_key}: {result}")
+                if result:
+                    print(f"{locker_key}: {result}")
             sleep(1)
