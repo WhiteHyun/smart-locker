@@ -65,7 +65,7 @@ class InformationPage(tk.Frame):
                       width=100,
                       height=100,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__verify_phone_number(entry.get())
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__verify_phone_number(entry.get(), page)
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
@@ -96,7 +96,7 @@ class InformationPage(tk.Frame):
         else:
             return result[0]["USRMngKey"]
 
-    def __verify_phone_number(self, phone_number):
+    def __verify_phone_number(self, phone_number, page):
         """
         휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
         """
