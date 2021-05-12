@@ -48,7 +48,7 @@ class App(tk.Tk):
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, InformationPage):
+        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage):
             page_name = F.__name__
             self.pages[page_name] = F
         self.show_frame("StartPage")
