@@ -4,6 +4,7 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.delivery_page import DeliveryPage
     from page.information_page import InformationPage
     from page.start_page import StartPage
+    from page.process_page import ProcessPage
 
 else:
     from .utils.util import *
@@ -11,6 +12,7 @@ else:
     from .page.delivery_page import DeliveryPage
     from .page.information_page import InformationPage
     from .page.start_page import StartPage
+    from .page.process_page import ProcessPage
 
 
 class App(tk.Tk):
@@ -51,7 +53,7 @@ class App(tk.Tk):
             self.pages[page_name] = F
         self.show_frame("StartPage")
 
-    def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None, page=None):
+    def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
         """
         프레임(창)을 띄워줍니다.
 
@@ -63,14 +65,9 @@ class App(tk.Tk):
             page (str): information에서 보여지는 page에 따른 구분값
         """
         try:
-            if CRRMngKey is None or page is None:
-                temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self, bg="white"
-                )
-            else:
-                temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey, page=page, bg="white"
-                )
+            temp_frame = self.pages[new_frame](
+                parent=parent if parent is not None else self.container, controller=self, bg="white", *args, **kwargs
+            )
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()

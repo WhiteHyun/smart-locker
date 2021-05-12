@@ -48,7 +48,7 @@ class Discriminate:
                 return
             else:
                 data = data[0]
-                if data["SSO"] < 25 or data["FSR"] > 160:
+                if data["SSO"] < 25 or data["FSR"] > 200:
                     return True
                 else:
                     return False

@@ -1,8 +1,10 @@
 import os
 import sys
 import cv2
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from utils.util import *
 
 if __name__ == "__main__" or __name__ == "find_page":
     from locker_frame import LockerFrame
@@ -15,7 +17,7 @@ class FindPage(tk.Frame):
     찾기 페이지입니다.
     """
 
-    def __init__(self, parent, controller, bg):
+    def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
@@ -46,7 +48,7 @@ class FindPage(tk.Frame):
                   height=100,
                   image=previous_arrow_img,
                   command=lambda: controller.show_frame(
-                      "StartPage", self
+                      "StartPage", frame=self
                   )
                   ).place(x=20, y=controller.height-120)
 
@@ -69,7 +71,6 @@ class FindPage(tk.Frame):
 
             # 흑백이미지로 변환하여 qr 디코드
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
-            # 받아오지 못한 경우 단순 리턴
 
             img = cv2.resize(img, (300, 250))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -77,6 +78,8 @@ class FindPage(tk.Frame):
             img = ImageTk.PhotoImage(img)
             self.label.configure(image=img)
             self.label.image = img
+
+            # 받아오지 못한 경우 단순 리턴
             if result_data is None:
                 self.escape = self.label.after(1, self.__open_door_by_qrcode)
                 return
@@ -99,7 +102,7 @@ class FindPage(tk.Frame):
             MessageFrame(self.controller)
 
             # 기존 화면으로 이동
-            self.controller.show_frame("StartPage", self)
+            self.controller.show_frame("StartPage", frame=self)
         except ValueError as e:
             MessageFrame(self.controller, "존재하지 않는 QR코드입니다.")
         except Exception as e:

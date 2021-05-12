@@ -1,7 +1,9 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from utils.util import *
 
 
 class StartPage(tk.Frame):
@@ -9,7 +11,7 @@ class StartPage(tk.Frame):
     첫 페이지를 보여주는 프레임입니다.
     """
 
-    def __init__(self, parent, controller, bg):
+    def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
         self.controller = controller
 
@@ -35,7 +37,7 @@ class StartPage(tk.Frame):
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: controller.show_frame(
-                      "DeliveryPage", self
+                      "DeliveryPage", frame=self
                   )
                   ).place(relx=0.32, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
@@ -45,7 +47,7 @@ class StartPage(tk.Frame):
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: controller.show_frame(
-                      "FindPage", self
+                      "FindPage", frame=self
                   )
                   ).place(relx=0.67, rely=0.5, anchor=tk.CENTER)
 

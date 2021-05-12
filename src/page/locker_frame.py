@@ -12,7 +12,7 @@ class LockerFrame(tk.Frame):
     STATE_USED = "U"
     STATE_BROKEN = "B"
 
-    def __init__(self, parent, controller, page="DeliveryPage", *args, **kwargs):
+    def __init__(self, parent, controller, page, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.parent = parent
