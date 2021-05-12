@@ -57,22 +57,6 @@ class InformationPage(tk.Frame):
             entry.delete(self.index-1)
             self.index = self.index-1 if self.index > 0 else 0
 
-        def verify_phone_number(phone_number):
-            """
-            휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
-            """
-            user_check = ["test"]
-            if len(phone_number) != 11 or phone_number[:3] != "010":
-                return
-            phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
-            message_frame = MessageFrame(
-                self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
-            self.wait_window(message_frame)
-            if user_check[0] == "yes":
-                user_key = self.get_user_key(phone_number)
-                self.controller.show_frame(
-                    "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=user_key, phone_number=phone_number)
-
         for i in button_name_list:
             SMLButton(master=number_frame,
                       text_font=controller.large_font,
@@ -81,7 +65,7 @@ class InformationPage(tk.Frame):
                       width=100,
                       height=100,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else verify_phone_number(entry.get())
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__verify_phone_number(entry.get())
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
@@ -111,3 +95,19 @@ class InformationPage(tk.Frame):
             return user_key
         else:
             return result[0]["USRMngKey"]
+
+    def __verify_phone_number(self, phone_number):
+        """
+        휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
+        """
+        user_check = ["test"]
+        if len(phone_number) != 11 or phone_number[:3] != "010":
+            return
+        phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
+        message_frame = MessageFrame(
+            self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
+        self.wait_window(message_frame)
+        if user_check[0] == "yes":
+            user_key = self.get_user_key(phone_number)
+            self.controller.show_frame(
+                "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=user_key, phone_number=phone_number)
