@@ -4,8 +4,10 @@ import tkinter as tk
 from tkinter import font as tkfont
 from tkinter.simpledialog import askstring
 from PIL import Image, ImageTk
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from custom.button import SMLButton
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from custom.button import SMLButton
 
 
 CHECK = 0
@@ -16,7 +18,7 @@ class MessageFrame(tk.Toplevel):
     """메시지를 표시해줍니다."""
 
     def __init__(self, root_view, text, width=400, height=200, user_check=None, flag=CHECK):
-        super().__init__(width=width, height=height)
+        super().__init__(width=width, height=height, relief="solid")
         sw = root_view.winfo_screenwidth()
         sh = root_view.winfo_screenheight()
         x = (sw - width) // 2

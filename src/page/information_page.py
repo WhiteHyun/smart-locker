@@ -70,11 +70,9 @@ class InformationPage(tk.Frame):
             self.wait_window(message_frame)
             if user_check[0] == "yes":
                 user_key = self.get_user_key(phone_number)
-                if page == "DeliveryPage":
-                    self.controller.show_frame("ProcessPage", frame=self, )
-                    self.__process_delivery(user_key, phone_number)
-                elif page == "FindPage":
-                    self.__find_delivery(user_key)
+                self.controller.show_frame(
+                    "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=user_key, phone_number=phone_number)
+
         for i in button_name_list:
             SMLButton(master=number_frame,
                       text_font=controller.large_font,
