@@ -5,7 +5,7 @@ if __name__:
         os.path.abspath(os.path.dirname(__file__))))
     from utils.util import *
     from utils.sql import SQL
-if __name__ == "__main__" or __name__ == "information_page":
+if __name__ == "__main__" or __name__ == "process_page":
     from locker_frame import LockerFrame
 else:
     from .locker_frame import LockerFrame
