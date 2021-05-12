@@ -23,7 +23,7 @@ class RatchController(SingletonInstane):
 
         self.seri = connect_arduino(port)
 
-    def excute(self, arduinoNum, order):
+    def execute(self, arduinoNum, order):
         self.seri.write(bytes(f'{arduinoNum}:{order}', encoding='ascii'))
 
 
