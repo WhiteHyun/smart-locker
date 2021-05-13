@@ -38,6 +38,11 @@ class ProcessPage(tk.Frame):
 
         user_key = kwargs["USRMngKey"]
         page = kwargs["page"]
+        sql = SQL("root", "", "10.80.76.63", "SML")
+        result = sql.processDB(
+            f"SELECT SyncSensor FROM CRRInfo WHERE CRRMngKey='{self.CRRMngKey}';")
+        assert result is not None   # 값이 무조건 존재해야함
+        self.sync_sensor = result[0]["SyncSensor"]
 
         if page == "DeliveryPage":
             self.after(1, lambda: self.__process_delivery(
@@ -54,11 +59,6 @@ class ProcessPage(tk.Frame):
         from utils.sms import SMS
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
-        sql = SQL("root", "", "10.80.76.63", "SML")
-        result = sql.processDB(
-            f"SELECT SyncSensor FROM CRRInfo WHERE CRRMngKey='{self.CRRMngKey}';")
-
-        assert result is not None   # 값이 무조건 존재해야함
 
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime 포맷값
         value = self.CRRMngKey+user_key+time
@@ -69,7 +69,7 @@ class ProcessPage(tk.Frame):
             return
 
         if not self.discriminate.is_door_open(self.CRRMngKey):
-            self.ratch.execute(result[0]["SyncSensor"], "O")
+            self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
@@ -83,10 +83,11 @@ class ProcessPage(tk.Frame):
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
-        self.ratch.execute(result[0]["SyncSensor"], "C")
+        self.ratch.execute(self.sync_sensor, "C")
         sleep(2)
 
         # 여기서부터 데이터베이스 저장 시작
+        sql = SQL("root", "", "10.80.76.63", "SML")
 
         # 저장하려는 함의 정보가 존재할 때
         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
@@ -121,7 +122,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
         if not self.discriminate.is_door_open(self.CRRMngKey):
-            self.ratch.execute(0, "O")
+            self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 가져가세요")
@@ -135,7 +136,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
-        self.ratch.execute(0, "C")
+        self.ratch.execute(self.sync_sensor, "C")
         sleep(2)
 
         sql = SQL("root", "", "10.80.76.63", "SML")
