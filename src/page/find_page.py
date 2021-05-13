@@ -71,7 +71,6 @@ class FindPage(tk.Frame):
 
             # 흑백이미지로 변환하여 qr 디코드
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
-            print(result_data)
             img = cv2.resize(img, (300, 250))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(img)
@@ -99,7 +98,7 @@ class FindPage(tk.Frame):
             )
 
             # 완료 메시지 표시
-            MessageFrame(self.controller)
+            MessageFrame(self.controller, "완료되었습니다.")
 
             # 기존 화면으로 이동
             self.controller.show_frame("StartPage", frame=self)
