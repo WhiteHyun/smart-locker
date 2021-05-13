@@ -36,7 +36,7 @@ class RatchController(SingletonInstane):
 
             self.seri = list()
             for port_dict in result:
-                self.seri.append(connect_arduino(port_dict["Port"]))
+                self.seri.append(connect_arduino(f"/dev/{port_dict['Port']}"))
 
         except Exception as e:
             raise e
