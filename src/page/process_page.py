@@ -75,7 +75,10 @@ class ProcessPage(tk.Frame):
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
         self.__listen_item()
-        self.canvas.wait_variable(self.has_item)
+
+        # 이미 물건이 들어있는 상태라면 바로 넘어감
+        if not self.has_item.get():
+            self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
 
