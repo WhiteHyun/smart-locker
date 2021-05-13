@@ -114,6 +114,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         # 완료 메시지 표시
         MessageFrame(self.controller, "완료되었습니다")
 
+        self.controller.sync_to_json()
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
 
@@ -148,6 +149,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             )
             # 완료메시지 표시
             MessageFrame(self.controller, "완료되었습니다.")
+            self.controller.sync_to_json()
 
             # 일반화면으로 이동
             self.controller.show_frame("StartPage", self)
