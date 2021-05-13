@@ -37,9 +37,10 @@ class ProcessPage(tk.Frame):
         page = kwargs["page"]
 
         if page == "DeliveryPage":
-            self.__process_delivery(user_key, kwargs["phone_number"])
+            self.after(1, lambda: self.__process_delivery(
+                user_key, kwargs["phone_number"]))
         elif page == "FindPage":
-            self.__find_delivery(user_key)
+            self.after(1, lambda: self.__find_delivery(user_key))
 
     def __process_delivery(self, user_key, phone_number):
         """
