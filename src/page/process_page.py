@@ -19,13 +19,13 @@ class ProcessPage(tk.Frame):
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
 
-        canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(self, width=controller.width,
+                                height=controller.height, bg=bg)
+        self.canvas.pack(fill="both", expand=True)
         self.controller = controller
         self.CRRMngKey = kwargs["CRRMngKey"]
-        self.text_id = canvas.create_text(controller.width/2, controller.height/10,
-                                          text="문을 여는 중입니다.", font=controller.title_font, fill="#385ab7")
+        self.text_id = self.canvas.create_text(controller.width/2, controller.height/10,
+                                               text="문을 여는 중입니다.", font=controller.title_font, fill="#385ab7")
         user_key = kwargs["USRMngKey"]
         page = kwargs["page"]
 
@@ -62,17 +62,17 @@ class ProcessPage(tk.Frame):
             ratch.execute(0, "O")
 
         sleep(2)
-        tk.Canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
+        self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
         while not d.has_item(self.CRRMngKey):
             pass
 
-        tk.Canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
+        self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
 
         while d.is_door_open(self.CRRMngKey):
             pass
 
-        tk.Canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
+        self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
         ratch.execute(0, "C")
         sleep(3)
