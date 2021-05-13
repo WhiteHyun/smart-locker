@@ -18,6 +18,7 @@ class ProcessPage(tk.Frame):
 
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
+        from utils.discriminate import Discriminate
 
         self.canvas = tk.Canvas(self, width=controller.width,
                                 height=controller.height, bg=bg)
@@ -26,6 +27,12 @@ class ProcessPage(tk.Frame):
         self.CRRMngKey = kwargs["CRRMngKey"]
         self.text_id = self.canvas.create_text(controller.width/2, controller.height/10,
                                                text="문을 여는 중입니다.", font=controller.title_font, fill="#385ab7")
+        self.escape_open_door = ""
+        self.escape_has_item = ""
+        self.is_door_open = tk.BooleanVar(self, value=True)
+        self.has_item = tk.BooleanVar(self, value=False)
+        self.discriminate = Discriminate()
+
         user_key = kwargs["USRMngKey"]
         page = kwargs["page"]
 
@@ -44,7 +51,6 @@ class ProcessPage(tk.Frame):
         from utils.sms import SMS
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
-        from utils.discriminate import Discriminate
         from utils.ratchController import RatchController
 
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime 포맷값
@@ -56,22 +62,20 @@ class ProcessPage(tk.Frame):
             return
 
         # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
-        d = Discriminate()
         ratch = RatchController.instance()
-        if not d.is_door_open(self.CRRMngKey):
+        if not self.discriminate.is_door_open(self.CRRMngKey):
             ratch.execute(0, "O")
 
         sleep(2)
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
-        while not d.has_item(self.CRRMngKey):
-            pass
+        self.__listen_item()
+        self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
 
-        while d.is_door_open(self.CRRMngKey):
-            pass
-
+        self.__listen_door()
+        self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
         ratch.execute(0, "C")
@@ -135,3 +139,17 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         else:
             # 실패메시지 표시
             MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
+
+    def __listen_item(self):
+        if not self.discriminate.has_item(self.CRRMngKey):
+            self.escape_has_item = self.canvas.after(1, self.__listen_item)
+        else:
+            self.has_item.set(True)
+            self.canvas.after_cancel(self.escape_has_item)  # after 중지
+
+    def __listen_door(self):
+        if d.is_door_open(self.CRRMngKey):
+            self.escape_open_door = self.canvas.after(1, self.__listen_door)
+        else:
+            self.is_door_open.set(False)
+            self.canvas.after_cancel(1, self.escape_open_door)  # after 중지
