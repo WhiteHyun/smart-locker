@@ -1,5 +1,7 @@
 import os
 import sys
+from time import sleep
+
 if __name__:
     sys.path.append(os.path.dirname(
         os.path.abspath(os.path.dirname(__file__))))
@@ -19,19 +21,20 @@ class ProcessPage(tk.Frame):
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
         from utils.discriminate import Discriminate
-
+        from utils.ratchController import RatchController
         self.canvas = tk.Canvas(self, width=controller.width,
                                 height=controller.height, bg=bg)
         self.canvas.pack(fill="both", expand=True)
         self.controller = controller
         self.CRRMngKey = kwargs["CRRMngKey"]
-        self.text_id = self.canvas.create_text(controller.width/2, controller.height/10,
+        self.text_id = self.canvas.create_text(controller.width/2, controller.height/2,
                                                text="문을 여는 중입니다.", font=controller.title_font, fill="#385ab7")
         self.escape_open_door = ""
         self.escape_has_item = ""
         self.is_door_open = tk.BooleanVar(self, value=True)
         self.has_item = tk.BooleanVar(self, value=False)
         self.discriminate = Discriminate()
+        self.ratch = RatchController.instance()
 
         user_key = kwargs["USRMngKey"]
         page = kwargs["page"]
@@ -48,11 +51,14 @@ class ProcessPage(tk.Frame):
         그리고 데이터베이스에 해당 내용을 저장합니다.
         """
         from datetime import datetime
-        from time import sleep
         from utils.sms import SMS
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
-        from utils.ratchController import RatchController
+        sql = SQL("root", "", "10.80.76.63", "SML")
+        result = sql.processDB(
+            f"SELECT SyncSensor FROM CRRInfo WHERE CRRMngKey='{self.CRRMngKey}';")
+
+        assert result is not None   # 값이 무조건 존재해야함
 
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime 포맷값
         value = self.CRRMngKey+user_key+time
@@ -62,12 +68,10 @@ class ProcessPage(tk.Frame):
             MessageFrame(self.controller, "qr코드 생성에 실패하였습니다.")
             return
 
-        # TODO: #17 택배함이 열리고 물건넣고 닫은 후의 과정을 넣어야 함
-        ratch = RatchController.instance()
         if not self.discriminate.is_door_open(self.CRRMngKey):
-            ratch.execute(0, "O")
+            self.ratch.execute(result[0]["SyncSensor"], "O")
+            sleep(2)
 
-        sleep(2)
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
         self.__listen_item()
@@ -79,17 +83,10 @@ class ProcessPage(tk.Frame):
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
-        ratch.execute(0, "C")
-        sleep(3)
+        self.ratch.execute(result[0]["SyncSensor"], "C")
+        sleep(2)
 
-        # 완료 메시지 표시
-        MessageFrame(self.controller, "완료되었습니다")
-
-        # 일반화면으로 이동
-        self.controller.show_frame("StartPage", self)
-        return
         # 여기서부터 데이터베이스 저장 시작
-        sql = SQL("root", "", "10.80.76.63", "SML")
 
         # 저장하려는 함의 정보가 존재할 때
         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
@@ -123,7 +120,23 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
-        # TODO: #17 택배함이 열리고 택배함에 물건을 가져가고 문을 닫는 등의 확인절차 필요
+        if not self.discriminate.is_door_open(self.CRRMngKey):
+            self.ratch.execute(0, "O")
+            sleep(2)
+
+        self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 가져가세요")
+
+        self.__listen_item()
+        self.canvas.wait_variable(self.has_item)
+
+        self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
+
+        self.__listen_door()
+        self.canvas.wait_variable(self.is_door_open)
+        self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
+
+        self.ratch.execute(0, "C")
+        sleep(2)
 
         sql = SQL("root", "", "10.80.76.63", "SML")
         result = sql.processDB(
@@ -146,11 +159,9 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             self.escape_has_item = self.canvas.after(1, self.__listen_item)
         else:
             self.has_item.set(True)
-            self.canvas.after_cancel(self.escape_has_item)  # after 중지
 
     def __listen_door(self):
         if self.discriminate.is_door_open(self.CRRMngKey):
             self.escape_open_door = self.canvas.after(1, self.__listen_door)
         else:
             self.is_door_open.set(False)
-            self.canvas.after_cancel(1, self.escape_open_door)  # after 중지

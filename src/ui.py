@@ -44,9 +44,9 @@ class App(tk.Tk):
             family="a시월구일1", size=self.width*self.height//73500, weight="bold")
 
         from utils.ratchController import RatchController
-        self.sync_to_json()
 
-        RatchController.instance("LCKMngKey")
+        self.sync_to_json()
+        RatchController.instance()
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
