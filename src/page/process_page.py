@@ -131,10 +131,11 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 가져가세요")
 
+        # FIXME: 이곳 수정해야함! delivery랑은 반대로 쓰여야 하기 때문에 메소드를 다르게 처리해줄 필요가 있음!!!
         self.__listen_item()
         self.canvas.wait_variable(self.has_item)
 
-        self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
+        self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
 
         self.__listen_door()
         self.canvas.wait_variable(self.is_door_open)
