@@ -160,9 +160,11 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             self.escape_has_item = self.canvas.after(1, self.__listen_item)
         else:
             self.has_item.set(True)
+            self.canvas.after_cancel(self.escape_has_item)  # after 중지
 
     def __listen_door(self):
         if self.discriminate.is_door_open(self.CRRMngKey):
             self.escape_open_door = self.canvas.after(1, self.__listen_door)
         else:
             self.is_door_open.set(False)
+            self.canvas.after_cancel(1, self.escape_open_door)  # after 중지
