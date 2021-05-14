@@ -5,6 +5,7 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.information_page import InformationPage
     from page.start_page import StartPage
     from page.process_page import ProcessPage
+    from page.admin_page import AdminPage
 
 else:
     from .utils.util import *
@@ -13,6 +14,7 @@ else:
     from .page.information_page import InformationPage
     from .page.start_page import StartPage
     from .page.process_page import ProcessPage
+    from .page.admin_page import AdminPage
 
 
 class App(tk.Tk):
@@ -44,16 +46,23 @@ class App(tk.Tk):
             family="a시월구일1", size=self.width*self.height//73500, weight="bold")
 
         from utils.ratchController import RatchController
-
-        self.sync_to_json()
         RatchController.instance()
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage):
+        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage):
             page_name = F.__name__
             self.pages[page_name] = F
-        self.show_frame("StartPage")
+
+        try:
+            with open("data/information.json") as f:
+                file_read = f.readlines()
+                if len(file_read) == 0:
+                    raise FileNotFoundError
+        except FileNotFoundError as e:
+            self.show_frame("AdminPage")
+        else:
+            self.show_frame("StartPage")
 
     def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
         """
@@ -80,29 +89,22 @@ class App(tk.Tk):
         except Exception as e:
             raise e
 
-    def sync_to_json(self):
+    def sync_to_json(self, locker_manage_key=None):
         """
         함의 정보를 동기화하여 json파일을 수정합니다.
-        초기 파일을 실행할 때, 또는 관리자 페이지에서 사물함을 동기화할 때 사용됩니다.
+        유저가 함을 사용하고 난 다음, 또는 관리자 페이지에서 사물함을 동기화할 때 사용됩니다.
         """
         try:
             import json
             from utils.sql import SQL
-            locker_manage_key = None
             sql = SQL("root", "", "10.80.76.63", "SML")
 
-            # 사물함 관리 번호를 알지 못하는 경우 입력받게 함
+            # 사물함 관리 번호를 알지 못하는 경우 오류 출력
             with open("data/information.json") as f:
                 file_read = f.readlines()
-                if len(file_read) == 0:
-                    manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
-                        "SELECT LCKMngKey FROM LCKInfo;"
-                    )))
-
-                    while locker_manage_key is None or locker_manage_key not in manage_key_list:
-                        locker_manage_key = askstring(
-                            "사물함 관리번호", "사물함 관리번호가 무엇인지 정확하게 기입하여주세요!"
-                        )
+                if len(file_read) == 0 and locker_manage_key is None:
+                    MessageFrame(self, "json 파싱 오류!!! 얼른 고치시죠!")
+                    return
                 else:
                     json_object = json.loads("".join(file_read))
                     locker_manage_key = json_object["LCKMngKey"]
@@ -144,11 +146,9 @@ class App(tk.Tk):
                 json.dump(json.loads(json_string), f, indent=2)
 
         except json.decoder.JSONDecodeError as e:
-            MessageFrame(self.controller, "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
-            raise e
+            MessageFrame(self, "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
+
         except FileNotFoundError as e:
             with open("data/information.json", "w") as f:
                 f.write("")
-                self.sync_to_json()
-        except Exception as e:
-            raise e
+                self.sync_to_json(locker_manage_key)

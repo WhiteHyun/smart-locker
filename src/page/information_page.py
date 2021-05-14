@@ -31,6 +31,9 @@ class InformationPage(tk.Frame):
         page = kwargs["page"]
         self.index = 0
         entry = tk.Entry(self, font=controller.large_font)
+        if page == "AdminPage":
+            entry.insert(0, "H")
+            self.index += 1
         number_frame = tk.Frame(self)
         SMLButton(master=self,
                   text="이전으로",
@@ -55,7 +58,10 @@ class InformationPage(tk.Frame):
 
         def delete_text(entry):
             entry.delete(self.index-1)
-            self.index = self.index-1 if self.index > 0 else 0
+            if page != "AdminPage":
+                self.index = self.index-1 if self.index > 0 else 0
+            else:
+                self.index = self.index-1 if self.index > 1 else 1
 
         for i in button_name_list:
             SMLButton(master=number_frame,
@@ -65,7 +71,7 @@ class InformationPage(tk.Frame):
                       width=100,
                       height=100,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__verify_phone_number(entry.get(), page)
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__set_locker_key(entry.get()) if page == "AdminPage" else self.__verify_phone_number(entry.get(), page)
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
@@ -75,7 +81,7 @@ class InformationPage(tk.Frame):
         number_frame.place(x=controller.width/2,
                            y=controller.height/2, anchor=tk.CENTER)
 
-    def get_user_key(self, phone_number: str):
+    def __get_user_key(self, phone_number: str):
         """
         휴대폰 번호를 받아 유저를 생성하여 데이터베이스에 저장한 후 관리번호를 리턴합니다.
         만약 이미 존재하는 경우 존재하는 관리번호를 리턴합니다.
@@ -102,12 +108,26 @@ class InformationPage(tk.Frame):
         """
         user_check = ["test"]
         if len(phone_number) != 11 or phone_number[:3] != "010":
+            MessageFrame(self.controller, "오류! 정확한 번호를 입력해주세요")
             return
         phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
         message_frame = MessageFrame(
             self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
         self.wait_window(message_frame)
         if user_check[0] == "yes":
-            user_key = self.get_user_key(phone_number)
+            user_key = self.__get_user_key(phone_number)
             self.controller.show_frame(
                 "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=user_key, phone_number=phone_number)
+
+    def __set_locker_key(self, locker_manage_key: str):
+        """입력받은 LCKMngKey를 가지고 sync_to_json합니다.
+        """
+        sql = SQL("root", "", "10.80.76.63", "SML")
+        manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
+            "SELECT LCKMngKey FROM LCKInfo;"
+        )))
+        if locker_manage_key not in manage_key_list:
+            MessageFrame(self.controller, "실패! 존재하지 않는 키입니다")
+            return
+
+        self.controller.sync_to_json(locker_manage_key)

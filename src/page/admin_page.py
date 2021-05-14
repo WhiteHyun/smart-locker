@@ -33,6 +33,9 @@ class AdminPage(tk.Frame):
         unlock_img = ImageTk.PhotoImage(Image.open(
             "../img/unlock.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/unlock.png"
         ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
+        previous_arrow_img = ImageTk.PhotoImage(Image.open(
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
+        ).resize((int(100/1.618), int(100/1.618))))
 
         SMLButton(master=self,
                   text_font=controller.large_font,
@@ -58,3 +61,23 @@ class AdminPage(tk.Frame):
                   height=controller.height/2.6,
                   command=None
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
+        SMLButton(master=self,
+                  text="이전으로",
+                  border_width=1,
+                  width=100,
+                  height=100,
+                  image=previous_arrow_img,
+                  command=self.__move_to_start_page
+                  ).place(x=20, y=controller.height-120)
+
+    def __move_to_start_page(self):
+        """시작페이지로 이동하는 함수입니다.
+        """
+        try:
+            with open("data/information.json") as f:
+                file_read = f.readlines()
+                if len(file_read) == 0:
+                    raise FileNotFoundError
+                self.controller.show_frame("StartPage", frame=self)
+        except FileNotFoundError as e:
+            MessageFrame(self.controller, "사물함번호입력을 먼저 해주세요")
