@@ -132,7 +132,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 가져가세요")
 
         # FIXME: 이곳 수정해야함! delivery랑은 반대로 쓰여야 하기 때문에 메소드를 다르게 처리해줄 필요가 있음!!!
-        self.__listen_item()
+        self.__listen_item(False)
         self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
@@ -161,8 +161,8 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             # 실패메시지 표시
             MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
 
-    def __listen_item(self):
-        if not self.discriminate.has_item(self.CRRMngKey):
+    def __listen_item(self, flag=True):
+        if (flag and not self.discriminate.has_item(self.CRRMngKey)) or (not flag and self.discriminate.has_item(self.CRRMngKey)):
             self.escape_has_item = self.canvas.after(1, self.__listen_item)
         else:
             self.has_item.set(True)
