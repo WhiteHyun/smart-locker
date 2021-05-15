@@ -130,9 +130,11 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 가져가세요")
 
-        # FIXME: 이곳 수정해야함! delivery랑은 반대로 쓰여야 하기 때문에 메소드를 다르게 처리해줄 필요가 있음!!!
         self.__listen_item(False)
-        self.canvas.wait_variable(self.has_item)
+
+        # 물건이 존재하지 않으면 바로 넘어감
+        if self.has_item.get():
+            self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
 
@@ -144,20 +146,15 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         sleep(2)
 
         sql = SQL("root", "", "10.80.76.63", "SML")
-        result = sql.processDB(
-            f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
-        if result and result[0]["USRMngKey"] == user_key:
-            sql.processDB(
-                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
-            )
-            # 완료메시지 표시
-            MessageFrame(self.controller, "완료되었습니다.")
 
-            # 일반화면으로 이동
-            self.controller.show_frame("StartPage", self)
-        else:
-            # 실패메시지 표시
-            MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
+        sql.processDB(
+            f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
+        )
+        # 완료메시지 표시
+        MessageFrame(self.controller, "완료되었습니다.")
+
+        # 일반화면으로 이동
+        self.controller.show_frame("StartPage", self)
 
     def __listen_item(self, flag=True):
         if (flag and not self.discriminate.has_item(self.CRRMngKey)) or (not flag and self.discriminate.has_item(self.CRRMngKey)):

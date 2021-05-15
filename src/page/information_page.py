@@ -119,6 +119,18 @@ class InformationPage(tk.Frame):
         self.wait_window(message_frame)
         if user_check[0] == "yes":
             user_key = self.__get_user_key(phone_number)
+
+            # 찾기 페이지일 때 동일한 번호인지 처리
+            if page == "FindPage":
+                sql = SQL("root", "", "10.80.76.63", "SML")
+                result = sql.processDB(
+                    f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
+                # 다른 번호일 경우
+                if not result or result[0]["USRMngKey"] != user_key:
+                    # 실패메시지 표시
+                    MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
+                    return
+
             self.controller.show_frame(
                 "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=user_key, phone_number=phone_number)
 
