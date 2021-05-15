@@ -20,7 +20,7 @@ class AdminPage(tk.Frame):
         canvas.pack(fill="both", expand=True)
 
         canvas.create_text(controller.width/2, controller.height/7,
-                           text="택배 보관함", font=controller.title_font, fill="#385ab7")
+                           text="택배 보관함 (관리자)", font=controller.title_font, fill="#385ab7")
 
         settings_img = ImageTk.PhotoImage(Image.open(
             "../img/settings.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/settings.png"
@@ -43,7 +43,7 @@ class AdminPage(tk.Frame):
                   image=settings_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=self.controller.show_frame(
+                  command=lambda: self.controller.show_frame(
                       "InformationPage", self, page="AdminPage")
                   ).place(relx=0.22, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,

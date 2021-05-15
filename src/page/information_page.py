@@ -61,11 +61,10 @@ class InformationPage(tk.Frame):
             self.index += 1
 
         def delete_text(entry):
+            if page == "AdminPage" and self.index == 1:
+                return
             entry.delete(self.index-1)
-            if page != "AdminPage":
-                self.index = self.index-1 if self.index > 0 else 0
-            else:
-                self.index = self.index-1 if self.index > 1 else 1
+            self.index = self.index-1 if self.index > 0 else 0
 
         for i in button_name_list:
             SMLButton(master=number_frame,

@@ -97,14 +97,15 @@ class App(tk.Tk):
             sql = SQL("root", "", "10.80.76.63", "SML")
 
             # 사물함 관리 번호를 알지 못하는 경우 오류 출력
-            with open("data/information.json") as f:
-                file_read = f.readlines()
-                if len(file_read) == 0 and locker_manage_key is None:
-                    MessageFrame(self, "json 파싱 오류!!! 얼른 고치시죠!")
-                    return
-                else:
-                    json_object = json.loads("".join(file_read))
-                    locker_manage_key = json_object["LCKMngKey"]
+            if locker_manage_key is None:
+                with open("data/information.json") as f:
+                    file_read = f.readlines()
+                    if len(file_read) == 0:
+                        MessageFrame(self, "json 파싱 오류!!! 얼른 고치시죠!")
+                        return
+                    else:
+                        json_object = json.loads("".join(file_read))
+                        locker_manage_key = json_object["LCKMngKey"]
 
             # 본격적인 파싱 시작
             locker_size = sql.processDB(
