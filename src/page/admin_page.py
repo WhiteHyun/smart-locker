@@ -36,7 +36,7 @@ class AdminPage(tk.Frame):
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
             "../img/previous.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
-        has_json_file = self.__check_json_file()
+        has_json_file = self.controller.check_json_file()
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="사물함번호설정",
