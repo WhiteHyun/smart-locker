@@ -6,10 +6,14 @@ if __name__:
     from utils.util import *
     from utils.sql import SQL
 
+PHONE_NUMBER_ERROR = 0
+NO_SIGN_ERROR = 1
+FAILED_ERROR = 2
+
 
 class InformationPage(tk.Frame):
     """
-    함을 클릭했을 때 사용자 정보를 입력할 프레임입니다.
+    정보를 입력받는 프레임입니다.
     """
 
     def __init__(self, parent, controller, bg, *args, **kwargs):
@@ -74,7 +78,7 @@ class InformationPage(tk.Frame):
                       width=100,
                       height=100,
                       command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__set_locker_key(entry.get()) if page == "AdminPage" else self.__verify_phone_number(entry.get(), page)
+                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__check_and_show_page(entry.get(), page)
                       ).grid(row=row, column=col)
             row = row+1 if col == 2 else row
             col = 0 if col == 2 else col+1
@@ -84,10 +88,10 @@ class InformationPage(tk.Frame):
         number_frame.place(x=controller.width/2,
                            y=controller.height/2, anchor=tk.CENTER)
 
-    def __get_user_key(self, phone_number: str):
+    def __get_user_key(self, phone_number: str) -> str:
         """
-        휴대폰 번호를 받아 유저를 생성하여 데이터베이스에 저장한 후 관리번호를 리턴합니다.
-        만약 이미 존재하는 경우 존재하는 관리번호를 리턴합니다.
+        휴대폰 번호를 받아 유저를 생성하여 데이터베이스에 저장한 후 유저관리번호를 리턴합니다.
+        만약 이미 존재하는 경우 존재하는 유저관리번호를 리턴합니다.
         """
         sql = SQL("root", "", "10.80.76.63", "SML")
         result = sql.processDB(
@@ -105,46 +109,72 @@ class InformationPage(tk.Frame):
         else:
             return result[0]["USRMngKey"]
 
-    def __verify_phone_number(self, phone_number, page):
+    def __verify_number(self, number, page):
         """
-        휴대폰 번호를 확인하고, 맞다면 process함수로 넘어갑니다.
+        입력받은 번호를 확인하고, 검증합니다.
         """
-        user_check = ["test"]
-        if len(phone_number) != 11 or phone_number[:3] != "010":
-            MessageFrame(self.controller, "오류! 정확한 번호를 입력해주세요")
-            return
-        phone_format_number = f"{phone_number[:3]}-{phone_number[3:7]}-{phone_number[7:]}"
-        message_frame = MessageFrame(
-            self.controller, f"{phone_format_number}가 맞습니까?", user_check=user_check, flag=ASK)
-        self.wait_window(message_frame)
-        if user_check[0] == "yes":
-            user_key = self.__get_user_key(phone_number)
+        user_check = [""]
+        if page != "AdminPage":
+            if len(number) != 11 or number[:3] != "010":
+                # 올바르지 않는 전화번호
+                return False, PHONE_NUMBER_ERROR
+            format_number = f"{number[:3]}-{number[3:7]}-{number[7:]}"
+        else:
+            format_number = number
 
+        # 번호가 맞는지 물어봄
+        message_frame = MessageFrame(
+            self.controller, f"{format_number}가 맞습니까?", user_check=user_check, flag=ASK)
+        self.wait_window(message_frame)
+
+        # No!
+        if user_check[0] != "yes":
+            return False, NO_SIGN_ERROR
+
+        # ok verify time!
+        sql = SQL("root", "", "10.80.76.63", "SML")
+        if page != "AdminPage":
+            user_key = self.__get_user_key(number)
             # 찾기 페이지일 때 동일한 번호인지 처리
             if page == "FindPage":
-                sql = SQL("root", "", "10.80.76.63", "SML")
                 result = sql.processDB(
                     f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
+
                 # 다른 번호일 경우
                 if not result or result[0]["USRMngKey"] != user_key:
-                    # 실패메시지 표시
-                    MessageFrame(self.controller, "실패! 올바르지 않는 값입니다.")
-                    return
+                    return False, FAILED_ERROR
+            return True, user_key
+        else:
+            manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
+                "SELECT LCKMngKey FROM LCKInfo;"
+            )))
+            # 입력받은 관리번호가 존재하지 않는 경우
+            if number not in manage_key_list:
+                return False, FAILED_ERROR
+            return True, None
 
-            self.controller.show_frame(
-                "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=user_key, phone_number=phone_number)
-
-    def __set_locker_key(self, locker_manage_key: str):
+    def __set_locker_key(self, locker_manage_key: str) -> None:
         """입력받은 LCKMngKey를 가지고 sync_to_json합니다.
         """
-        sql = SQL("root", "", "10.80.76.63", "SML")
-        manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
-            "SELECT LCKMngKey FROM LCKInfo;"
-        )))
-        if locker_manage_key not in manage_key_list:
-            MessageFrame(self.controller, "실패! 존재하지 않는 키입니다")
-            return
 
         self.controller.sync_to_json(locker_manage_key)
-        MessageFrame(self.controller, "사물함번호가 설정되었습니다")
-        self.controller.show_frame("AdminPage", self)
+        from utils.ratchController import RatchController
+        RatchController.instance()
+
+    def __check_and_show_page(self, number, page):
+        result, code = self.__verify_number(number, page)
+        if result:
+            if page == "AdminPage":
+                self.__set_locker_key(number)
+                MessageFrame(self.controller, "사물함번호가 설정되었습니다")
+                self.controller.show_frame("AdminPage", self)
+
+            else:
+                self.controller.show_frame(
+                    "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=code, phone_number=number)
+        # 실패메시지 표시
+        else:
+            if code == PHONE_NUMBER_ERROR:
+                MessageFrame(self.controller, "실패! 번호를 다시 입력해주세요")
+            elif code == FAILED_ERROR:
+                MessageFrame(self.controller, "실패! 올바르지 않는 값입니다")
