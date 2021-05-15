@@ -19,6 +19,7 @@ class DeliveryPage(tk.Frame):
 
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
+        controller.sync_to_json()
         self.controller = controller
 
         previous_arrow_img = ImageTk.PhotoImage(Image.open(

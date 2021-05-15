@@ -19,6 +19,7 @@ class FindPage(tk.Frame):
 
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
+        controller.sync_to_json()
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
         # after 함수를 종료시키기 위한 탈출 id
