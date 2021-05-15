@@ -20,7 +20,7 @@ class ProcessPage(tk.Frame):
 
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
-        from utils.discriminate import Discriminate
+        from utils.locker_state import LockerState
         from utils.ratchController import RatchController
         self.canvas = tk.Canvas(self, width=controller.width,
                                 height=controller.height, bg=bg)
@@ -33,7 +33,7 @@ class ProcessPage(tk.Frame):
         self.escape_has_item = ""
         self.is_door_open = tk.BooleanVar(self, value=True)
         self.has_item = tk.BooleanVar(self, value=False)
-        self.discriminate = Discriminate()
+        self.locker_state = LockerState()
         self.ratch = RatchController.instance()
 
         user_key = kwargs["USRMngKey"]
@@ -68,7 +68,7 @@ class ProcessPage(tk.Frame):
             MessageFrame(self.controller, "qr코드 생성에 실패하였습니다.")
             return
 
-        if not self.discriminate.is_door_open(self.CRRMngKey):
+        if not self.locker_state.is_door_open(self.CRRMngKey):
             self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
 
@@ -124,7 +124,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
-        if not self.discriminate.is_door_open(self.CRRMngKey):
+        if not self.locker_state.is_door_open(self.CRRMngKey):
             self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
 
@@ -157,7 +157,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         self.controller.show_frame("StartPage", self)
 
     def __listen_item(self, flag=True):
-        if (flag and not self.discriminate.has_item(self.CRRMngKey)) or (not flag and self.discriminate.has_item(self.CRRMngKey)):
+        if (flag and not self.locker_state.has_item(self.CRRMngKey)) or (not flag and self.locker_state.has_item(self.CRRMngKey)):
             self.escape_has_item = self.canvas.after(1, self.__listen_item)
         else:
             self.has_item.set(flag)
@@ -165,7 +165,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
                 self.canvas.after_cancel(self.escape_has_item)  # after 중지
 
     def __listen_door(self):
-        if self.discriminate.is_door_open(self.CRRMngKey):
+        if self.locker_state.is_door_open(self.CRRMngKey):
             self.escape_open_door = self.canvas.after(1, self.__listen_door)
         else:
             self.is_door_open.set(False)

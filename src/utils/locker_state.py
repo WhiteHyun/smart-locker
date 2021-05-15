@@ -1,12 +1,12 @@
-if __name__ == "__main__" or __name__ == "discriminate":
+if __name__ == "__main__" or __name__ == "locker_state":
     from sql import SQL
 else:
     from .sql import SQL
 
 
-class Discriminate:
+class LockerState:
     """
-    센싱값을 판별해주는 클래스
+    각 함의 상태(물건의 유무, 문 개폐 여부)를 확인합니다.
     """
 
     def __init__(self) -> None:
