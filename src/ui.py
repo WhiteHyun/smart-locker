@@ -52,6 +52,8 @@ class App(tk.Tk):
             self.pages[page_name] = F
 
         if self.check_json_file():
+            from utils.ratchController import RatchController
+            RatchController.instance()
             self.show_frame("StartPage")
         else:
             self.show_frame("AdminPage")
