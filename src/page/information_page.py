@@ -96,8 +96,8 @@ class InformationPage(tk.Frame):
         # 해당 유저가 등록되지 않은 경우
         if not result:
             recent_user_key = sql.processDB(
-                "SELECT USRMngKey FROM USRInfo ORDER BY USRMngKey DESC LIMIT 1;")[0]["USRMngKey"]
-            user_key = recent_user_key[:-1] + str(int(recent_user_key[-1])+1)
+                "SELECT USRMngKey FROM USRInfo ORDER BY USRInfoKey DESC LIMIT 1;")[0]["USRMngKey"]
+            user_key = recent_user_key[:1] + str(int(recent_user_key[1:])+1)
             # FIXME: USRDis를 강제적으로 A로 만듦. 후에 수정 필요!
             sql.processDB(
                 f"INSERT INTO USRInfo(USRMngKey, USRTellNo, USRDis) values('{user_key}', '{phone_number}', 'A');")
