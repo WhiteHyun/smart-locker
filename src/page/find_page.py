@@ -74,6 +74,7 @@ class FindPage(tk.Frame):
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
             img = cv2.resize(img, (300, 250))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = cv2.flip(img, 1)
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(img)
             self.label.configure(image=img)
