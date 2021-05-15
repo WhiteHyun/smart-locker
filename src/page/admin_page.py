@@ -23,18 +23,18 @@ class AdminPage(tk.Frame):
                            text="택배 보관함 (관리자)", font=controller.title_font, fill="#385ab7")
 
         settings_img = ImageTk.PhotoImage(Image.open(
-            "../img/settings.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/settings.png"
+            "../img/settings.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/settings.png"
         ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
 
         fix_img = ImageTk.PhotoImage(Image.open(
-            "../img/support.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/support.png"
+            "../img/support.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/support.png"
         ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
 
         unlock_img = ImageTk.PhotoImage(Image.open(
-            "../img/unlock.png" if __name__ == "__main__" or __name__ == "start_page" else "src/img/unlock.png"
+            "../img/unlock.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/unlock.png"
         ).resize((int(controller.width/5/1.618), int(controller.height/3/1.8))))
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
-            "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
         has_json_file = self.__check_json_file()
         SMLButton(master=self,
@@ -69,7 +69,7 @@ class AdminPage(tk.Frame):
                   command=None
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
-                  text="이전으로",
+                  text="관리페이지로",
                   fg_color="#7C7877" if not has_json_file else "#385ab7",
                   hover_color="#7C7877" if not has_json_file else "#496bc9",
                   border_width=1,
@@ -79,23 +79,10 @@ class AdminPage(tk.Frame):
                   command=self.__move_to_start_page
                   ).place(x=20, y=controller.height-120)
 
-    def __check_json_file(self) -> bool:
-        """json파일이 만들어졌는지 체크합니다.
-        """
-        try:
-            with open("data/information.json") as f:
-                file_read = f.readlines()
-                if len(file_read) == 0:
-                    raise FileNotFoundError
-        except FileNotFoundError as e:
-            return False
-        else:
-            return True
-
     def __move_to_start_page(self):
         """시작페이지로 이동하는 함수입니다.
         """
-        if self.__check_json_file():
+        if self.controller.check_json_file():
             self.controller.show_frame("StartPage", frame=self)
         else:
             MessageFrame(self.controller, "사물함번호입력을 먼저 해주세요")

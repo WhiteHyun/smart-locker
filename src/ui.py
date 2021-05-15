@@ -51,15 +51,10 @@ class App(tk.Tk):
             page_name = F.__name__
             self.pages[page_name] = F
 
-        try:
-            with open("data/information.json") as f:
-                file_read = f.readlines()
-                if len(file_read) == 0:
-                    raise FileNotFoundError
-        except FileNotFoundError as e:
-            self.show_frame("AdminPage")
-        else:
+        if self.check_json_file():
             self.show_frame("StartPage")
+        else:
+            self.show_frame("AdminPage")
 
     def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
         """
@@ -85,6 +80,19 @@ class App(tk.Tk):
                 frame.destroy()
         except Exception as e:
             raise e
+
+    def check_json_file(self) -> bool:
+        """json파일이 만들어졌는지 체크합니다.
+        """
+        try:
+            with open("data/information.json") as f:
+                file_read = f.readlines()
+                if len(file_read) == 0:
+                    raise FileNotFoundError
+        except FileNotFoundError as e:
+            return False
+        else:
+            return True
 
     def sync_to_json(self, locker_manage_key=None):
         """
