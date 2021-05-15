@@ -56,7 +56,7 @@ class AdminPage(tk.Frame):
                   image=fix_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=self.controller.show_frame(
+                  command=lambda: self.controller.show_frame(
                       "SettingPage", self, mode=0)
                   ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
@@ -67,7 +67,7 @@ class AdminPage(tk.Frame):
                   image=unlock_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=self.controller.show_frame(
+                  command=lambda: self.controller.show_frame(
                       "SettingPage", self, mode=1)
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
