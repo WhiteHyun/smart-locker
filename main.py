@@ -3,7 +3,7 @@ if __name__ == "__main__":
     import json
     from multiprocessing import *
     from src import ui
-    from src.utils import sensor_listener, discriminate
+    from src.utils import sensor_listener, locker_state
 
     LCKMngKey = ""
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     procs.append(proc2)
     proc2.start()
 
-    sBehavior = discriminate.Discriminate()
+    sBehavior = locker_state.LockerState()
 
     proc3 = Process(target=sBehavior.check_door, args=())
     procs.append(proc3)

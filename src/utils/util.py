@@ -2,7 +2,6 @@ import os
 import sys
 import tkinter as tk
 from tkinter import font as tkfont
-from tkinter.simpledialog import askstring
 from PIL import Image, ImageTk
 if __name__:
     sys.path.append(os.path.dirname(
