@@ -36,11 +36,12 @@ class AdminPage(tk.Frame):
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
             "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
-
+        has_json_file = self.__check_json_file()
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="사물함번호설정",
-                  fg_color="#385ab7" if not self.__check_json_file() else "#7C7877",
+                  fg_color="#385ab7" if not has_json_file else "#7C7877",
+                  hover_color="#496bc9" if not has_json_file else "#7C7877",
                   image=settings_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
@@ -50,7 +51,8 @@ class AdminPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="고장유무설정",
-                  fg_color="#7C7877" if not self.__check_json_file() else "#385ab7",
+                  fg_color="#7C7877" if not has_json_file else "#385ab7",
+                  hover_color="#7C7877" if not has_json_file else "#496bc9",
                   image=fix_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
@@ -59,7 +61,8 @@ class AdminPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="문강제개방",
-                  fg_color="#7C7877" if not self.__check_json_file() else "#385ab7",
+                  fg_color="#7C7877" if not has_json_file else "#385ab7",
+                  hover_color="#7C7877" if not has_json_file else "#496bc9",
                   image=unlock_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
@@ -67,7 +70,8 @@ class AdminPage(tk.Frame):
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text="이전으로",
-                  fg_color="#7C7877" if not self.__check_json_file() else "#385ab7",
+                  fg_color="#7C7877" if not has_json_file else "#385ab7",
+                  hover_color="#7C7877" if not has_json_file else "#496bc9",
                   border_width=1,
                   width=100,
                   height=100,
