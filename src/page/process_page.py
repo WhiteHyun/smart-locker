@@ -160,7 +160,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         if (flag and not self.discriminate.has_item(self.CRRMngKey)) or (not flag and self.discriminate.has_item(self.CRRMngKey)):
             self.escape_has_item = self.canvas.after(1, self.__listen_item)
         else:
-            self.has_item.set(True)
+            self.has_item.set(flag)
             if self.escape_has_item:
                 self.canvas.after_cancel(self.escape_has_item)  # after 중지
 
