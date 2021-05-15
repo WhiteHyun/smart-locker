@@ -6,6 +6,7 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.start_page import StartPage
     from page.process_page import ProcessPage
     from page.admin_page import AdminPage
+    from page.setting_page import SettingPage
 
 else:
     from .utils.util import *
@@ -15,6 +16,7 @@ else:
     from .page.start_page import StartPage
     from .page.process_page import ProcessPage
     from .page.admin_page import AdminPage
+    from .page.setting_page import SettingPage
 
 
 class App(tk.Tk):
@@ -47,7 +49,7 @@ class App(tk.Tk):
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage):
+        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage, SettingPage):
             page_name = F.__name__
             self.pages[page_name] = F
 
