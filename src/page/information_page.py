@@ -131,3 +131,5 @@ class InformationPage(tk.Frame):
             return
 
         self.controller.sync_to_json(locker_manage_key)
+        MessageFrame(self.controller, "사물함번호가 설정되었습니다")
+        self.controller.show_frame("AdminPage", self)

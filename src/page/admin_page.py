@@ -43,7 +43,7 @@ class AdminPage(tk.Frame):
                   image=settings_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=None
+                  command=self.controller.show_frame("InformationPage", self)
                   ).place(relx=0.22, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.large_font,

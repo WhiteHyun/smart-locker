@@ -45,9 +45,6 @@ class App(tk.Tk):
         self.large_font = tkfont.Font(
             family="a시월구일1", size=self.width*self.height//73500, weight="bold")
 
-        from utils.ratchController import RatchController
-        RatchController.instance()
-
         # 모든 프레임들을 가지는 변수
         self.pages = {}
         for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage):
