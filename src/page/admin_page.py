@@ -40,6 +40,7 @@ class AdminPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="사물함번호설정",
+                  fg_color=None if not self.__check_json_file() else "#7C7877",
                   image=settings_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
@@ -49,6 +50,7 @@ class AdminPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="고장유무설정",
+                  fg_color="#7C7877" if not self.__check_json_file() else None,
                   image=fix_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
@@ -57,6 +59,7 @@ class AdminPage(tk.Frame):
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="문강제개방",
+                  fg_color="#7C7877" if not self.__check_json_file() else None,
                   image=unlock_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
@@ -71,14 +74,23 @@ class AdminPage(tk.Frame):
                   command=self.__move_to_start_page
                   ).place(x=20, y=controller.height-120)
 
-    def __move_to_start_page(self):
-        """시작페이지로 이동하는 함수입니다.
+    def __check_json_file(self) -> bool:
+        """json파일이 만들어졌는지 체크합니다.
         """
         try:
             with open("data/information.json") as f:
                 file_read = f.readlines()
                 if len(file_read) == 0:
                     raise FileNotFoundError
-                self.controller.show_frame("StartPage", frame=self)
         except FileNotFoundError as e:
+            return False
+        else:
+            return True
+
+    def __move_to_start_page(self):
+        """시작페이지로 이동하는 함수입니다.
+        """
+        if self.__check_json_file():
+            self.controller.show_frame("StartPage", frame=self)
+        else:
             MessageFrame(self.controller, "사물함번호입력을 먼저 해주세요")
