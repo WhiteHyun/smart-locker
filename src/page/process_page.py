@@ -89,30 +89,30 @@ class ProcessPage(tk.Frame):
         self.ratch.execute(self.sync_sensor, "C")
         sleep(2)
 
-        # 여기서부터 데이터베이스 저장 시작
-        sql = SQL("root", "", "10.80.76.63", "SML")
+#         # 여기서부터 데이터베이스 저장 시작
+#         sql = SQL("root", "", "10.80.76.63", "SML")
 
-        # 저장하려는 함의 정보가 존재할 때
-        if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
-            sql.processDB(
-                f"UPDATE LCKStat SET USRMngKey='{user_key}', AddDt='{time}', HashKey='{hash_value}', UseStat='{LockerFrame.STATE_USED}' WHERE CRRMngKey='{self.CRRMngKey}';"
-            )
-        else:
-            sql.processDB(
-                f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{user_key}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
-            )
+#         # 저장하려는 함의 정보가 존재할 때
+#         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
+#             sql.processDB(
+#                 f"UPDATE LCKStat SET USRMngKey='{user_key}', AddDt='{time}', HashKey='{hash_value}', UseStat='{LockerFrame.STATE_USED}' WHERE CRRMngKey='{self.CRRMngKey}';"
+#             )
+#         else:
+#             sql.processDB(
+#                 f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{user_key}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
+#             )
 
-        nSMS = SMS(
-            to=phone_number,
-            text="""
-QR코드가 발급되었습니다!!
-택배를 찾을 때 표시에 따라 '찾기->QR코드로 찾기'를 누른 후
-QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
-항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
-                """,
-            imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
-        if not nSMS.sendMessage():
-            MessageFrame(self.controller, "문자전송에 실패 하였습니다.")
+#         nSMS = SMS(
+#             to=phone_number,
+#             text="""
+# QR코드가 발급되었습니다!!
+# 택배를 찾을 때 표시에 따라 '찾기->QR코드로 찾기'를 누른 후
+# QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
+# 항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
+#                 """,
+#             imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
+#         if not nSMS.sendMessage():
+#             MessageFrame(self.controller, "문자전송에 실패 하였습니다.")
 
         # 완료 메시지 표시
         MessageFrame(self.controller, "완료되었습니다")
