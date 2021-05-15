@@ -57,7 +57,7 @@ class AdminPage(tk.Frame):
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: self.controller.show_frame(
-                      "SettingPage", self, mode=0)
+                      "SettingPage", self, mode=1)
                   ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.large_font,
@@ -68,7 +68,7 @@ class AdminPage(tk.Frame):
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: self.controller.show_frame(
-                      "SettingPage", self, mode=1)
+                      "SettingPage", self, mode=2)
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text="관리페이지로",

@@ -111,6 +111,6 @@ class SettingPage(tk.Frame):
         # 기존 모드와 동일한 경우
         if self.mode == mode:
             return
-
+        self.mode = mode
         self.locker_frame.destroy()
         self.locker_frame = self.__load_locker(mode)
