@@ -19,6 +19,7 @@ class InformationPage(tk.Frame):
     def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
 
+        page = kwargs["page"]
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
             "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
@@ -28,10 +29,9 @@ class InformationPage(tk.Frame):
         canvas.pack(fill="both", expand=True)
 
         canvas.create_text(controller.width/2, controller.height/10,
-                           text="휴대폰 번호를 입력해주세요.", font=controller.title_font, fill="#385ab7")
+                           text="사물함관리번호를 입력하세요" if page == "AdminPage" else "휴대폰 번호를 입력해주세요.", font=controller.title_font, fill="#385ab7")
 
         self.controller = controller
-        page = kwargs["page"]
         self.index = 0
         entry = tk.Entry(self, font=controller.large_font)
 
