@@ -27,14 +27,17 @@ class InformationPage(tk.Frame):
                            text="휴대폰 번호를 입력해주세요.", font=controller.title_font, fill="#385ab7")
 
         self.controller = controller
-        self.CRRMngKey = kwargs["CRRMngKey"]
         page = kwargs["page"]
         self.index = 0
         entry = tk.Entry(self, font=controller.large_font)
+
         if page == "AdminPage":
             entry.insert(0, "H")
             self.index += 1
+        else:
+            self.CRRMngKey = kwargs["CRRMngKey"]
         number_frame = tk.Frame(self)
+
         SMLButton(master=self,
                   text="이전으로",
                   border_width=1,
@@ -52,6 +55,7 @@ class InformationPage(tk.Frame):
                             "6", "7", "8", "9", "<<", "0", "확인"]
 
         # 밑에 함수는 Entry에 입력갱신을 위해 만들어진 함수입니다.
+
         def insert_text(button_num, entry):
             entry.insert(self.index, button_num)
             self.index += 1
