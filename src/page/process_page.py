@@ -74,7 +74,7 @@ class ProcessPage(tk.Frame):
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
-        self.__listen_item()
+        self.canvas.after(100, self.__listen_item)
 
         # 이미 물건이 들어있는 상태라면 바로 넘어감
         if not self.has_item.get():
@@ -82,7 +82,7 @@ class ProcessPage(tk.Frame):
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
 
-        self.__listen_door()
+        self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
@@ -130,7 +130,7 @@ class ProcessPage(tk.Frame):
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 가져가세요")
 
-        self.__listen_item(False)
+        self.canvas.after(100, lambda: self.__listen_item(False))
 
         # 물건이 존재하지 않으면 바로 넘어감
         if self.has_item.get():
@@ -138,7 +138,7 @@ class ProcessPage(tk.Frame):
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
 
-        self.__listen_door()
+        self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
