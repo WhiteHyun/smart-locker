@@ -1,7 +1,9 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from utils.util import *
 
 if __name__ == "__main__" or __name__ == "delivery_page":
     from locker_frame import LockerFrame
@@ -15,8 +17,9 @@ class DeliveryPage(tk.Frame):
     사물함의 위치 및 상태가 gui로 보여집니다.
     """
 
-    def __init__(self, parent, controller, bg):
+    def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
+        controller.sync_to_json()
         self.controller = controller
 
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
@@ -31,7 +34,7 @@ class DeliveryPage(tk.Frame):
                            text="택배 넣을 함을 선택해주세요.", font=controller.title_font, fill="#385ab7")
 
         LockerFrame(
-            parent=self, controller=controller, relief="solid").place(x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
+            parent=self, controller=controller, page="DeliveryPage", relief="solid").place(x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
 
         SMLButton(master=self,
                   text="이전으로",

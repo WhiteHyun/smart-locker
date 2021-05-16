@@ -1,12 +1,12 @@
-if __name__ == "__main__" or __name__ == "discriminate":
+if __name__ == "__main__" or __name__ == "locker_state":
     from sql import SQL
 else:
     from .sql import SQL
 
 
-class Discriminate:
+class LockerState:
     """
-    센싱값을 판별해주는 클래스
+    각 함의 상태(물건의 유무, 문 개폐 여부)를 확인합니다.
     """
 
     def __init__(self) -> None:
@@ -21,13 +21,34 @@ class Discriminate:
         self.locker_list = locker_list
 
     def is_door_open(self, CRRMngKey):
+        """`CRRMngKey`의 함의 문 개폐 여부를 확인합니다.
+        """
         try:
             data = self.sql.processDB(
                 f"SELECT LIG, HAL FROM SensorValue WHERE CRRMngKey='{CRRMngKey}' ORDER BY SenKey DESC LIMIT 1;")
             if not data:
                 return
             else:
-                if data[0]["HAL"] == 0:
+                data = data[0]
+                if data["HAL"] == 1:
+                    return True
+                else:
+                    return False
+        except Exception as e:
+            print(e)
+            return
+
+    def has_item(self, CRRMngKey):
+        """`CRRMngKey`의 함 내부에 물건이 존재하는지 판별하는 함수입니다.
+        """
+        try:
+            data = self.sql.processDB(
+                f"SELECT SSO, FSR FROM SensorValue WHERE CRRMngKey='{CRRMngKey}' ORDER BY SenKey DESC LIMIT 1;")
+            if not data:
+                return
+            else:
+                data = data[0]
+                if data["SSO"] < 25 or data["FSR"] > 200:
                     return True
                 else:
                     return False
@@ -41,5 +62,6 @@ class Discriminate:
             # locker_list = ["H001234001", "H001234002", ...]
             for locker_key in self.locker_list:
                 result = self.is_door_open(locker_key)
-                print(f"{locker_key}: {result}")
+                if result:
+                    print(f"{locker_key}: {result}")
             sleep(1)

@@ -1,30 +1,31 @@
 if __name__ == "__main__":
-    import time
+    from time import sleep
     import json
     from multiprocessing import *
     from src import ui
-    from src.utils import sensor_listener, discriminate
+    from src.utils import sensor_listener, locker_state
 
     LCKMngKey = ""
 
     procs = []
 
-    a = ui.App()
+    app = ui.App()
 
-    proc1 = Process(target=a.mainloop, args=())
+    proc1 = Process(target=app.mainloop, args=())
     procs.append(proc1)
     proc1.start()
 
-    while True:
-        with open("data/information.json") as f:
-            file_read = f.readlines()
-            if not file_read:
-                time.sleep(1)
-                continue
-            else:
-                json_object = json.loads("".join(file_read))
-                LCKMngKey = json_object["LCKMngKey"]
-                break
+    while LCKMngKey:
+        try:
+            with open("data/information.json") as f:
+                file_read = f.readlines()
+                if not file_read:
+                    sleep(1)
+                else:
+                    json_object = json.loads("".join(file_read))
+                    LCKMngKey = json_object["LCKMngKey"]
+        except FileNotFoundError as e:
+            pass
 
     sListener = sensor_listener.SensorListener(0, "/dev/ttyARDMS", LCKMngKey)
 
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     procs.append(proc2)
     proc2.start()
 
-    sBehavior = discriminate.Discriminate()
+    sBehavior = locker_state.LockerState()
 
     proc3 = Process(target=sBehavior.check_door, args=())
     procs.append(proc3)
