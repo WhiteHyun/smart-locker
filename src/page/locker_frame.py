@@ -22,7 +22,7 @@ class LockerFrame(tk.Frame):
         self.controller = controller
         self.page = page
         self.mode = mode
-
+        self.size = None
         self.color_dict = {
             f"{self.STATE_WAIT}": ("#A93226", "#CD6155") if self.page == "FindPage" else ("#385ab7", "#496bc9") if self.mode == self.UNLOCK_MODE else ("#1E8449", "#2ECC71"),
             f"{self.STATE_USED}": ("#1E8449", "#2ECC71") if self.page == "FindPage" else ("#385ab7", "#496bc9") if self.mode == self.UNLOCK_MODE else ("#A93226", "#CD6155"),
@@ -43,6 +43,7 @@ class LockerFrame(tk.Frame):
                 locker_list = sorted(
                     json_object["CRRInfo"], key=lambda dic: dic["location"]["start"]["row"]
                 )
+                self.size = (json_object["LCKSize"]["width"], json_object["LCKSize"]["height"])
                 for json_data in locker_list:
                     self.__make_locker_button(json_data)
         except Exception as e:
@@ -61,10 +62,12 @@ class LockerFrame(tk.Frame):
             빨간색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 발생합니다.
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
-
+        locker_width, locker_height = self.size
+        img_size = 960//(locker_width*locker_height)
+        text_size = 1600//(locker_width*locker_height)
         locker_image = ImageTk.PhotoImage(Image.open(
             "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
-        ).resize((60, 60)))
+        ).resize((img_size, img_size)))
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
@@ -95,8 +98,8 @@ class LockerFrame(tk.Frame):
                            border_width=1,
                            corner_radius=10,
                            text=locker_number,
-                           width=100*width,
-                           height=100*height,
+                           width=text_size*width,
+                           height=text_size*height,
                            command=decide_function()
                            )
         button.grid(row=location["start"]["row"], column=location["start"]
