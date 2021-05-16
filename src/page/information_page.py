@@ -6,7 +6,7 @@ if __name__:
     from utils.util import *
     from utils.sql import SQL
 
-PHONE_NUMBER_ERROR = 0
+NUMBER_ERROR = 0
 NO_SIGN_ERROR = 1
 FAILED_ERROR = 2
 
@@ -117,7 +117,7 @@ class InformationPage(tk.Frame):
         if page != "AdminPage":
             if len(number) != 11 or number[:3] != "010":
                 # 올바르지 않는 전화번호
-                return False, PHONE_NUMBER_ERROR
+                return False, NUMBER_ERROR
             format_number = f"{number[:3]}-{number[3:7]}-{number[7:]}"
         else:
             format_number = number
@@ -151,6 +151,11 @@ class InformationPage(tk.Frame):
             # 입력받은 관리번호가 존재하지 않는 경우
             if number not in manage_key_list:
                 return False, FAILED_ERROR
+            # 아두이노 연결이 되어있는가
+            result = sql.processDB(
+                f"SELECT Port FROM ARDInfo WHERE LCKMngKey='{number}' AND ARDKind='R' ORDER BY ARDNum;")
+            if result and result[0]["Port"] is not None:
+                return False, NUMBER_ERROR
             return True, None
 
     def __set_locker_key(self, locker_manage_key: str) -> None:
@@ -174,7 +179,7 @@ class InformationPage(tk.Frame):
                     "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=code, phone_number=number)
         # 실패메시지 표시
         else:
-            if code == PHONE_NUMBER_ERROR:
+            if code == NUMBER_ERROR:
                 MessageFrame(self.controller, "실패! 번호를 다시 입력해주세요")
             elif code == FAILED_ERROR:
                 MessageFrame(self.controller, "실패! 올바르지 않는 값입니다")

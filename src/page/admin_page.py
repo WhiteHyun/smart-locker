@@ -36,44 +36,45 @@ class AdminPage(tk.Frame):
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
             "../img/previous.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
-        has_json_file = self.controller.check_json_file()
+
+        self.has_json_file = self.controller.check_json_file()
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="사물함번호설정",
-                  fg_color="#385ab7" if not has_json_file else "#7C7877",
-                  hover_color="#496bc9" if not has_json_file else "#7C7877",
+                  fg_color="#385ab7" if not self.has_json_file else "#7C7877",
+                  hover_color="#496bc9" if not self.has_json_file else "#7C7877",
                   image=settings_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: self.controller.show_frame(
-                      "InformationPage", self, page="AdminPage")
+                      "InformationPage", self, page="AdminPage") if not self.has_json_file else None
                   ).place(relx=0.22, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="고장유무설정",
-                  fg_color="#7C7877" if not has_json_file else "#385ab7",
-                  hover_color="#7C7877" if not has_json_file else "#496bc9",
+                  fg_color="#7C7877" if not self.has_json_file else "#385ab7",
+                  hover_color="#7C7877" if not self.has_json_file else "#496bc9",
                   image=fix_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=lambda: self.controller.show_frame(
+                  command=None if not self.has_json_file else lambda: self.controller.show_frame(
                       "SettingPage", self, mode=1)
                   ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="문강제개방",
-                  fg_color="#7C7877" if not has_json_file else "#385ab7",
-                  hover_color="#7C7877" if not has_json_file else "#496bc9",
+                  fg_color="#7C7877" if not self.has_json_file else "#385ab7",
+                  hover_color="#7C7877" if not self.has_json_file else "#496bc9",
                   image=unlock_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=lambda: self.controller.show_frame(
+                  command=None if not self.has_json_file else lambda: self.controller.show_frame(
                       "SettingPage", self, mode=2)
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text="관리페이지로",
-                  fg_color="#7C7877" if not has_json_file else "#385ab7",
-                  hover_color="#7C7877" if not has_json_file else "#496bc9",
+                  fg_color="#7C7877" if not self.has_json_file else "#385ab7",
+                  hover_color="#7C7877" if not self.has_json_file else "#496bc9",
                   border_width=1,
                   width=100,
                   height=100,
@@ -84,7 +85,7 @@ class AdminPage(tk.Frame):
     def __move_to_start_page(self):
         """시작페이지로 이동하는 함수입니다.
         """
-        if self.controller.check_json_file():
+        if self.has_json_file:
             self.controller.show_frame("StartPage", frame=self)
         else:
             MessageFrame(self.controller, "사물함번호입력을 먼저 해주세요")
