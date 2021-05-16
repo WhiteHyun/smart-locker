@@ -22,18 +22,18 @@ class SMLButton(tkinter.Frame):
                     image= PIL.PhotoImage, standard is None"""
 
     def __init__(self,
-                 bg_color=None,
-                 fg_color="#2874A6",
-                 hover_color="#5499C7",
+                 bg_color="#ffffff",
+                 fg_color="#385ab7",
+                 hover_color="#496bc9",
                  border_color=None,
                  border_width=0,
                  command=None,
                  width=120,
                  height=40,
-                 corner_radius=10,
+                 corner_radius=0,
                  text_font=None,
                  text_color="white",
-                 text="CustomButton",
+                 text="",
                  hover=True,
                  image=None,
                  *args, **kwargs):
@@ -207,9 +207,26 @@ class SMLButton(tkinter.Frame):
                                              image=self.image,
                                              bg=self.fg_color)
 
-            self.image_label.place(relx=0.5,
-                                   rely=0.5,
-                                   anchor=tkinter.CENTER)
+            # text is None
+            if self.text == "":
+                self.image_label.place(relx=0.5,
+                                       rely=0.5,
+                                       anchor=tkinter.CENTER)
+            else:
+
+                self.text_label = tkinter.Label(master=self,
+                                                text=self.text,
+                                                font=self.text_font,
+                                                bg=self.fg_color,
+                                                fg=self.text_color)
+
+                self.text_label.place(
+                    x=int(self.width) >> 1, y=(int(self.height) >> 1)+self.image.height()*0.6, anchor=tkinter.CENTER)
+
+                self.image_label.place(x=int(self.width) >> 1,
+                                       y=(int(self.height) >> 1) -
+                                       self.image.height()*0.2,
+                                       anchor=tkinter.CENTER)
 
             # bind events the the button click and hover events also to the image_label
             if self.hover is True:

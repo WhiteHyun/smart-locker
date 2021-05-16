@@ -33,17 +33,30 @@ def generateQR(url: str) -> bool:
 
     try:
         import qrcode
-        qr = qrcode.make(url)
-        if __name__ == "__main__" or __name__ == "qrcodes":
-            qr.save(f"../data/qrcode_{url}.png")
+        from PIL import Image
+
+        img = Image.open("../img/unlock_background.png" if __name__ ==
+                         "qrcodes" else "src/img/unlock_background.png")
+        img = img.resize((img.width // 10, img.height // 10))
+        qr = qrcode.QRCode(
+            error_correction=qrcode.ERROR_CORRECT_H)  # 오류 복원기능 H: 30%
+        qr.add_data(url)
+        img_qr = qr.make_image(fill_color="#385ab7")    # QR 색깔 변경
+        pos = ((img_qr.size[0] - img.size[0]) >> 1,
+               (img_qr.size[1] - img.size[1]) >> 1)
+        img_qr.paste(img, pos)  # 이미지 가운데에 붙이기
+        if __name__ == "qrcodes":
+            img_qr.save(f"../../data/{url}.png")
         else:
-            qr.save(f"data/{url}.png")
+            img_qr.save(f"data/{url}.png")
     except ValueError as e:
         print("URL 값이 입력되지 않았습니다!")
     except TypeError as e:
         print("문자열값이 아닙니다!")
     except QRCodeError as e:
         print(f"QRCode 생성 중 오류가 발생하였습니다. {e}")
+    except Exception as e:
+        print(e)
     else:
         result = True
     finally:
@@ -74,3 +87,12 @@ def detectQR(gray_image) -> str:
     # QR코드 값이 하나 들어온 경우
     if decoded:
         return decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
+
+
+<< << << < HEAD
+== == == =
+
+
+if __name__ == "__main__":
+    print(generateQR("https://github.com/WhiteHyun"))
+>>>>>> > develop

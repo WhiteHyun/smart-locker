@@ -3,16 +3,20 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.find_page import FindPage
     from page.delivery_page import DeliveryPage
     from page.information_page import InformationPage
-    from page.locker_frame import LockerFrame
     from page.start_page import StartPage
+    from page.process_page import ProcessPage
+    from page.admin_page import AdminPage
+    from page.setting_page import SettingPage
 
 else:
     from .utils.util import *
     from .page.find_page import FindPage
     from .page.delivery_page import DeliveryPage
     from .page.information_page import InformationPage
-    from .page.locker_frame import LockerFrame
     from .page.start_page import StartPage
+    from .page.process_page import ProcessPage
+    from .page.admin_page import AdminPage
+    from .page.setting_page import SettingPage
 
 
 class App(tk.Tk):
@@ -20,51 +24,57 @@ class App(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # 폰트 지정
-        self.title_font = tkfont.Font(
-            family='Helvetica', size=18, weight="bold")
-        self.large_font = tkfont.Font(
-            family="MS Sans Serif", size=24, weight="bold")
-
         # 화면 설정
         self.geometry(
             f"{super().winfo_screenwidth()}x{super().winfo_screenheight()}+0+0"
         )
         super().attributes('-type', 'splash')
-
         # 화면에 보여질 컨테이너 생성
         self.container = tk.Frame()
         self.container.pack(side="top", fill="both", expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
+        self.width = self.container.winfo_screenwidth()
+        self.height = self.container.winfo_screenheight()
+
+        # 폰트 지정
+        self.title_font = tkfont.Font(
+            family="a시월구일1", size=self.width*self.height//22000, weight="bold")
+        self.medium_font = tkfont.Font(
+            family='a시월구일1', size=self.width*self.height//98000, weight="bold")
+        self.xlarge_font = tkfont.Font(
+            family="a시월구일1", size=self.width*self.height//35280, weight="bold")
+        self.large_font = tkfont.Font(
+            family="a시월구일1", size=self.width*self.height//73500, weight="bold")
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, LockerFrame, InformationPage):
+        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage, SettingPage):
             page_name = F.__name__
             self.pages[page_name] = F
-        self.show_frame("StartPage")
 
-    def show_frame(self, new_frame, frame=None, parent=None, CRRMngKey=None, page=None):
+        if self.check_json_file():
+            from utils.ratchController import RatchController
+            RatchController.instance()
+            self.show_frame("StartPage")
+        else:
+            self.show_frame("AdminPage")
+
+    def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
         """
         프레임(창)을 띄워줍니다.
 
         Args:
             new_frame_cls (str): 새롭게 보여줄 프레임 객체의 이름
-            frame (tk.Frame): 기존에 보여지고 있는 프레임
+            frame (tk.Frame): 기존에 보여지고 있는 프레임, 삭제할 프레임
             parent (tk.Frame): 새롭게 보여질 프레임의 부모프레임
             CRRMngKey (str): 주어질 함 관리번호
             page (str): information에서 보여지는 page에 따른 구분값
         """
         try:
-            if CRRMngKey is None or page is None:
-                temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self
-                )
-            else:
-                temp_frame = self.pages[new_frame](
-                    parent=parent if parent is not None else self.container, controller=self, CRRMngKey=CRRMngKey, page=page
-                )
+            temp_frame = self.pages[new_frame](
+                parent=parent if parent is not None else self.container, controller=self, bg="white", *args, **kwargs
+            )
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
@@ -74,3 +84,81 @@ class App(tk.Tk):
                 frame.destroy()
         except Exception as e:
             raise e
+
+    def check_json_file(self) -> bool:
+        """json파일이 만들어졌는지 체크합니다.
+        """
+        try:
+            with open("data/information.json") as f:
+                file_read = f.readlines()
+                if len(file_read) == 0:
+                    raise FileNotFoundError
+        except FileNotFoundError as e:
+            return False
+        else:
+            return True
+
+    def sync_to_json(self, locker_manage_key=None):
+        """
+        함의 정보를 동기화하여 json파일을 수정합니다.
+        유저가 함을 사용하고 난 다음, 또는 관리자 페이지에서 사물함을 동기화할 때 사용됩니다.
+        """
+        try:
+            import json
+            from utils.sql import SQL
+            sql = SQL("root", "", "10.80.76.63", "SML")
+
+            # 사물함 관리 번호를 알지 못하는 경우 오류 출력
+            if locker_manage_key is None:
+                with open("data/information.json") as f:
+                    file_read = f.readlines()
+                    if len(file_read) == 0:
+                        MessageFrame(self, "json 파싱 오류!!! 얼른 고치시죠!")
+                        return
+                    else:
+                        json_object = json.loads("".join(file_read))
+                        locker_manage_key = json_object["LCKMngKey"]
+
+            # 본격적인 파싱 시작
+            locker_size = sql.processDB(
+                f"SELECT LCKSizeX, LCKSizeY FROM LCKInfo WHERE LCKMngKey='{locker_manage_key}'"
+            )[0]
+
+            result = sql.processDB(
+                f"SELECT c.CRRMngKey, CRRNo, PosX, PosY, Width, Height, UseStat FROM CRRInfo c INNER JOIN LCKStat l ON LCKMngKey='{locker_manage_key}' AND c.CRRMngKey=l.CRRMngKey;"
+            )
+            result = list(map(lambda dic: f"""
+        {{
+            "CRRMngKey": "{dic["CRRMngKey"]}",
+            "CRRNo": "{dic["CRRNo"]}",
+            "location": {{
+                "start": {{
+                    "row": {dic["PosY"]},
+                    "col": {dic["PosX"]}
+                }},
+                "width": {dic["Width"]},
+                "height": {dic["Height"]}
+            }},
+            "useState": "{dic["UseStat"]}"
+        }}""", result))
+
+            json_string = f"""{{
+    "LCKMngKey": "{locker_manage_key}",
+    "LCKSize": {{
+        "width": {locker_size["LCKSizeX"]},
+        "height": {locker_size["LCKSizeY"]}
+    }},
+    "CRRInfo": [
+        {",".join(result)}
+    ]
+}}"""
+            with open("data/information.json", "w") as f:
+                json.dump(json.loads(json_string), f, indent=2)
+
+        except json.decoder.JSONDecodeError as e:
+            MessageFrame(self, "잘못된 정보입니다. 새롭게 json세팅을 시도해주세요.")
+
+        except FileNotFoundError as e:
+            with open("data/information.json", "w") as f:
+                f.write("")
+                self.sync_to_json(locker_manage_key)

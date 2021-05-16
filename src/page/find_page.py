@@ -1,8 +1,10 @@
 import os
 import sys
 import cv2
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from utils.util import *
+if __name__:
+    sys.path.append(os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__))))
+    from utils.util import *
 
 if __name__ == "__main__" or __name__ == "find_page":
     from locker_frame import LockerFrame
@@ -15,40 +17,42 @@ class FindPage(tk.Frame):
     찾기 페이지입니다.
     """
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, bg, *args, **kwargs):
         super().__init__(parent)
+        controller.sync_to_json()
         self.controller = controller
         self.camera = cv2.VideoCapture(0)
+        # after 함수를 종료시키기 위한 탈출 id
+        self.escape = ""
 
-        locker_frame = LockerFrame(
-            parent=self, controller=controller, page="FindPage", relief="solid")
-        locker_frame.pack(pady=20)
-        tk.Label(self, text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.").pack(pady=10)
+        previous_arrow_img = ImageTk.PhotoImage(Image.open(
+            "../img/previous.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/previous.png"
+        ).resize((int(100/1.618), int(100/1.618))))
+
+        canvas = tk.Canvas(self, width=controller.width,
+                           height=controller.height, bg=bg)
+        canvas.pack(fill="both", expand=True)
+
+        canvas.create_text(controller.width/2, controller.height*0.36,
+                           text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
+        # 캠을 보여줄 label 객체
+        self.label = tk.Label(width=300, height=250)
+        self.label.place(x=controller.width/2-150, y=10)
+
+        LockerFrame(parent=self, controller=controller, page="FindPage", relief="solid").place(
+            x=controller.width/2, y=controller.height*0.66, anchor=tk.CENTER)
+
         SMLButton(master=self,
-                  bg_color=None,
-                  fg_color="#2874A6",
-                  border_color=None,
-                  hover_color="#5499C7",
-                  text_font=None,
                   text="이전으로",
-                  text_color="white",
-                  corner_radius=10,
                   border_width=1,
                   width=100,
                   height=100,
-                  hover=True,
+                  image=previous_arrow_img,
                   command=lambda: controller.show_frame(
-                      "StartPage", self
+                      "StartPage", frame=self
                   )
-                  ).pack(side="bottom", anchor="w", padx=20, pady=20)
+                  ).place(x=20, y=controller.height-120)
 
-        # after 함수를 종료시키기 위한 탈출 id
-        self.escape = ""
-        # 캠을 보여줄 label 객체
-        self.label = tk.Label(width=300, height=250)
-        self.label.pack(side="bottom", anchor="e", padx=20, pady=20)
-        self.label.place(x=controller.winfo_screenwidth()/2-150,
-                         y=controller.winfo_screenheight()/2+100)
         self.__open_door_by_qrcode()
 
     def __open_door_by_qrcode(self):
@@ -68,14 +72,15 @@ class FindPage(tk.Frame):
 
             # 흑백이미지로 변환하여 qr 디코드
             result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
-            # 받아오지 못한 경우 단순 리턴
-
             img = cv2.resize(img, (300, 250))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = cv2.flip(img, 1)
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(img)
             self.label.configure(image=img)
             self.label.image = img
+
+            # 받아오지 못한 경우 단순 리턴
             if result_data is None:
                 self.escape = self.label.after(1, self.__open_door_by_qrcode)
                 return
@@ -95,20 +100,17 @@ class FindPage(tk.Frame):
             )
 
             # 완료 메시지 표시
-            top = tk.Toplevel()
-            tk.Message(top, text="완료되었습니다.", padx=20, pady=20).pack()
-            top.after(7000, top.destroy)
-            # 카메라 모듈 사용 해제
-            self.camera.release()
+            MessageFrame(self.controller, "완료되었습니다.")
+
             # 기존 화면으로 이동
-            self.controller.show_frame("StartPage", self)
+            self.controller.show_frame("StartPage", frame=self)
         except ValueError as e:
-            showerror("오류!", "존재하지 않는 QR코드입니다.")
+            MessageFrame(self.controller, "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
 
     def destroy(self) -> None:
         super().destroy()
-        self.label.after_cancel(self.escape)
-        self.camera.release()
-        self.label.destroy()
+        self.label.after_cancel(self.escape)    # 카메라 실행 중지
+        self.camera.release()   # 카메라 모듈 사용 해제
+        self.label.destroy()    # 캠을 가지고있는 레이블 삭제
