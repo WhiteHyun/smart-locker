@@ -63,8 +63,9 @@ class LockerFrame(tk.Frame):
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
         locker_width, locker_height = self.size
-        img_size = 960//(locker_width*locker_height)
-        text_size = 1600//(locker_width*locker_height)
+        img_size = 120 -20*(max(locker_height, locker_width)-1)
+        button_size = 160 - 20*(max(locker_width, locker_height)-1)
+        text_font = tkfont.Font(family="a시월구일1", size=20-2*(max(locker_width, locker_height)-1), weight="bold")
         locker_image = ImageTk.PhotoImage(Image.open(
             "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
         ).resize((img_size, img_size)))
@@ -98,10 +99,11 @@ class LockerFrame(tk.Frame):
                            border_width=1,
                            corner_radius=10,
                            text=locker_number,
-                           width=text_size*width,
-                           height=text_size*height,
+                           text_font=text_font,
+                           width=button_size*width,
+                           height=button_size*height,
                            command=decide_function()
                            )
         button.grid(row=location["start"]["row"], column=location["start"]
-                    ["col"], rowspan=height, columnspan=width)
+                    ["col"], rowspan=height, columnspan=width, pad)
         self.button_dict[locker_number] = button
