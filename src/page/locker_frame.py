@@ -105,5 +105,5 @@ class LockerFrame(tk.Frame):
                            command=decide_function()
                            )
         button.grid(row=location["start"]["row"], column=location["start"]
-                    ["col"], rowspan=height, columnspan=width, pad)
+                    ["col"], rowspan=height, columnspan=width)
         self.button_dict[locker_number] = button
