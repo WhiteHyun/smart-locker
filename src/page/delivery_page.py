@@ -34,7 +34,7 @@ class DeliveryPage(tk.Frame):
                            text="택배 넣을 함을 선택해주세요.", font=controller.title_font, fill="#385ab7")
 
         LockerFrame(
-            parent=self, controller=controller, page="DeliveryPage", relief="solid").place(x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
+            parent=self, controller=controller, page="DeliveryPage", relief="solid").place(relx=0.5, rely=0.6, anchor=tk.CENTER)
 
         SMLButton(master=self,
                   text="이전으로",
