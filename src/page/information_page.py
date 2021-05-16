@@ -154,7 +154,7 @@ class InformationPage(tk.Frame):
             # 아두이노 연결이 되어있는가
             result = sql.processDB(
                 f"SELECT Port FROM ARDInfo WHERE LCKMngKey='{number}' AND ARDKind='R' ORDER BY ARDNum;")
-            if result and result[0]["Port"] is not None:
+            if not result or result[0]["Port"] is None:
                 return False, NUMBER_ERROR
             return True, None
 
