@@ -38,6 +38,7 @@ class AdminPage(tk.Frame):
         ).resize((int(100/1.618), int(100/1.618))))
 
         has_json_file = self.controller.check_json_file()
+
         SMLButton(master=self,
                   text_font=controller.large_font,
                   text="사물함번호설정",
@@ -47,7 +48,7 @@ class AdminPage(tk.Frame):
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: self.controller.show_frame(
-                      "InformationPage", self, page="AdminPage") if not has_json_file else None
+                      "InformationPage", self, page="AdminPage") if not has_json_file else MessageFrame(self.controller, "사물함 번호를 한 번 설정 후 다시 할 수 없습니다")
                   ).place(relx=0.22, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.large_font,
@@ -57,7 +58,7 @@ class AdminPage(tk.Frame):
                   image=fix_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=lambda: MessageFrame(self.controller, "사물함번호를 설정한 후 다시 시도해주세요") if not has_json_file else lambda: self.controller.show_frame(
+                  command=lambda: MessageFrame(self.controller, "사물함번호를 설정한 후 다시 시도해주세요") if not has_json_file else self.controller.show_frame(
                       "SettingPage", self, mode=1)
                   ).place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
@@ -68,7 +69,7 @@ class AdminPage(tk.Frame):
                   image=unlock_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
-                  command=lambda: MessageFrame(self.controller, "사물함번호를 설정한 후 다시 시도해주세요") if not has_json_file else lambda: self.controller.show_frame(
+                  command=lambda: MessageFrame(self.controller, "사물함번호를 설정한 후 다시 시도해주세요") if not has_json_file else self.controller.show_frame(
                       "SettingPage", self, mode=2)
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
@@ -79,7 +80,7 @@ class AdminPage(tk.Frame):
                   width=100,
                   height=100,
                   image=previous_arrow_img,
-                  command=lambda: MessageFrame(self.controller, "사물함번호를 설정한 후 다시 시도해주세요") if not has_json_file else lambda: self.controller.show_frame(
+                  command=lambda: MessageFrame(self.controller, "사물함번호를 설정한 후 다시 시도해주세요") if not has_json_file else self.controller.show_frame(
                       "StartPage", frame=self
                   )
                   ).place(x=20, y=controller.height-120)
