@@ -82,6 +82,7 @@ class SettingPage(tk.Frame):
         self.locker_frame.button_dict[locker_number].configure_color(
             fg_color="#1E8449" if current_state == LockerFrame.STATE_BROKEN else"#7C7877",
             hover_color="#2ECC71" if current_state == LockerFrame.STATE_BROKEN else"#7C7877")
+        self.controller.sync_to_json()  # json sync
 
     def force_open_door(self, CRRMngKey):
         """함의 문을 강제개방합니다.
