@@ -43,15 +43,16 @@ class InformationPage(tk.Frame):
                                      font=controller.title_font,
                                      fill="#385ab7")
 
-        if self.mode == DEFAULT_MODE:
-            self.page = kwargs["page"]
-            text = "휴대폰 번호를 입력해주세요"
-            self.CRRMngKey = kwargs["CRRMngKey"]
-        elif self.mode == VERIFY_MODE:
-            self.verified_number = verified_number
-            text = "인증번호를 전송했습니다. 인증번호를 입력해주세요"
-        elif self.mode == ADMIN_MODE:
+        if self.mode == ADMIN_MODE:
             text = "사물함 관리번호를 입력해주세요"
+        else:
+            self.page = kwargs["page"]
+            self.CRRMngKey = kwargs["CRRMngKey"]
+            if self.mode == DEFAULT_MODE:
+                text = "휴대폰 번호를 입력해주세요"
+            elif self.mode == VERIFY_MODE:
+                self.verified_number = verified_number
+                text = "인증번호를 전송했습니다. 인증번호를 입력해주세요"
 
         canvas.itemconfig(text_id, text=text)
         entry = tk.Entry(self, font=controller.large_font)
@@ -168,7 +169,7 @@ class InformationPage(tk.Frame):
 
     def check_and_show_page(self, number):
         from random import randint
-        result, code = self.__verify_number(number, self.page)
+        result, code = self.__verify_number(number)
         if result:
             if self.mode == ADMIN_MODE:
                 self.__set_locker_key(number)
@@ -179,6 +180,7 @@ class InformationPage(tk.Frame):
 
             elif self.page == "FindPage" and self.mode == DEFAULT_MODE:
                 verified_number = f"{randint(0, 999999):06d}"
+                self.__send_random_number_message(number, verified_number)
                 self.controller.show_frame(
                     new_frame="InformationPage",
                     frame=self,

@@ -6,7 +6,7 @@ if __name__:
         os.path.abspath(os.path.dirname(__file__))))
     from utils.util import *
 
-from page.information_page import ADMIN_MODE
+ADMIN_MODE = 2
 
 
 class InputFrame(tk.Frame):
@@ -14,7 +14,7 @@ class InputFrame(tk.Frame):
     """
 
     def __init__(self, parent, controller, entry, mode, *args, **kwargs) -> None:
-        super.__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.index = 0
         row = 0
         col = 0
