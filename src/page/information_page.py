@@ -175,8 +175,12 @@ class InformationPage(tk.Frame):
                 self.controller.show_frame("AdminPage", self)
 
             else:
-                self.controller.show_frame(
-                    "ProcessPage", frame=self, CRRMngKey=self.CRRMngKey, page=page, USRMngKey=code, phone_number=number)
+                self.controller.show_frame(new_frame="ProcessPage",
+                                           frame=self,
+                                           CRRMngKey=self.CRRMngKey,
+                                           page=page,
+                                           USRMngKey=code,
+                                           phone_number=number)
         # 실패메시지 표시
         else:
             if code == NUMBER_ERROR:
