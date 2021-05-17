@@ -51,6 +51,7 @@ class InformationPage(tk.Frame):
             if self.mode == DEFAULT_MODE:
                 text = "휴대폰 번호를 입력해주세요"
             elif self.mode == VERIFY_MODE:
+                self.tried = 0
                 self.verified_number = verified_number
                 self.user_key = kwargs["USRMngKey"]
                 text = "인증번호를 전송했습니다. 인증번호를 입력해주세요"
@@ -205,7 +206,18 @@ class InformationPage(tk.Frame):
                     phone_number=number)
         # 실패메시지 표시
         else:
-            if code == NUMBER_ERROR:
+            if self.mode == VERIFY_MODE:
+                self.tried += 1
+                if self.tried < 3:
+                    MessageFrame(self.controller,
+                                 text=f"틀린 인증번호입니다. (3회 제한 중 {self.tried}회 시도함)")
+                else:
+                    MessageFrame(self.controller, "3회 실패로 처음화면으로 돌아갑니다")
+                    self.controller.show_frame(
+                        new_frame="StartPage",
+                        frame=self
+                    )
+            elif code == NUMBER_ERROR:
                 MessageFrame(self.controller, "실패! 번호를 다시 입력해주세요")
             elif code == FAILED_ERROR:
                 MessageFrame(self.controller, "실패! 올바르지 않는 값입니다")
