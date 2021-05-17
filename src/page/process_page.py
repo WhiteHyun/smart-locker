@@ -81,6 +81,7 @@ class ProcessPage(tk.Frame):
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
+        sleep(2)
 
         self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
@@ -138,7 +139,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
-
+        sleep(2)
         self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")

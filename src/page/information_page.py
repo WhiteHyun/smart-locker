@@ -52,6 +52,7 @@ class InformationPage(tk.Frame):
                 text = "휴대폰 번호를 입력해주세요"
             elif self.mode == VERIFY_MODE:
                 self.verified_number = verified_number
+                self.user_key = kwargs["USRMngKey"]
                 text = "인증번호를 전송했습니다. 인증번호를 입력해주세요"
 
         canvas.itemconfig(text_id, text=text)
@@ -134,7 +135,10 @@ class InformationPage(tk.Frame):
                     return False, FAILED_ERROR
             return True, user_key
         elif self.mode == VERIFY_MODE:
-            return self.verified_number == number, NUMBER_ERROR
+            if self.verified_number == number:
+                return True, self.user_key
+            else:
+                return False, NUMBER_ERROR
         elif self.mode == ADMIN_MODE:
             manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
                 "SELECT LCKMngKey FROM LCKInfo;"
