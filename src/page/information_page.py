@@ -6,9 +6,18 @@ if __name__:
     from utils.util import *
     from utils.sql import SQL
 
+
+if __name__ == "__main__" or __name__ == "information_page":
+    from input_frame import InputFrame
+else:
+    from .input_frame import InputFrame
+
 NUMBER_ERROR = 0
 NO_SIGN_ERROR = 1
 FAILED_ERROR = 2
+DEFAULT_MODE = 0
+VERIFY_MODE = 1
+ADMIN_MODE = 2
 
 
 class InformationPage(tk.Frame):
@@ -16,10 +25,9 @@ class InformationPage(tk.Frame):
     정보를 입력받는 프레임입니다.
     """
 
-    def __init__(self, parent, controller, bg, *args, **kwargs):
+    def __init__(self, parent, controller, bg, mode, verified_number=None, *args, **kwargs):
         super().__init__(parent)
 
-        page = kwargs["page"]
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
             "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
@@ -27,21 +35,34 @@ class InformationPage(tk.Frame):
         canvas = tk.Canvas(self, width=controller.width,
                            height=controller.height, bg=bg)
         canvas.pack(fill="both", expand=True)
-
-        canvas.create_text(controller.width/2, controller.height/10,
-                           text="사물함관리번호를 입력하세요" if page == "AdminPage" else "휴대폰 번호를 입력해주세요.", font=controller.title_font, fill="#385ab7")
-
         self.controller = controller
-        self.index = 0
+        self.mode = mode
+        text_id = canvas.create_text(controller.width/2,
+                                     controller.height/10,
+                                     text="empty",
+                                     font=controller.title_font if mode != VERIFY_MODE else controller.subtitle_font,
+                                     fill="#385ab7")
+
+        if self.mode == ADMIN_MODE:
+            text = "사물함 관리번호를 입력해주세요"
+        else:
+            self.page = kwargs["page"]
+            self.CRRMngKey = kwargs["CRRMngKey"]
+            if self.mode == DEFAULT_MODE:
+                text = "휴대폰 번호를 입력해주세요"
+            elif self.mode == VERIFY_MODE:
+                self.tried = 0
+                self.verified_number = verified_number
+                self.user_key = kwargs["USRMngKey"]
+                text = "인증번호를 전송했습니다. 인증번호를 입력해주세요"
+
+        canvas.itemconfig(text_id, text=text)
         entry = tk.Entry(self, font=controller.large_font)
 
-        if page == "AdminPage":
-            entry.insert(0, "H")
-            self.index += 1
-        else:
-            self.CRRMngKey = kwargs["CRRMngKey"]
-        number_frame = tk.Frame(self)
-
+        number_frame = InputFrame(parent=self,
+                                  controller=self.controller,
+                                  entry=entry,
+                                  mode=mode)
         SMLButton(master=self,
                   text="이전으로",
                   border_width=1,
@@ -49,40 +70,9 @@ class InformationPage(tk.Frame):
                   height=100,
                   image=previous_arrow_img,
                   command=lambda: controller.show_frame(
-                      page, self
+                      self.page, self
                   )
                   ).place(x=20, y=controller.height-120)
-
-        row = 0
-        col = 0
-        button_name_list = ["1", "2", "3", "4", "5",
-                            "6", "7", "8", "9", "<<", "0", "확인"]
-
-        # 밑에 함수는 Entry에 입력갱신을 위해 만들어진 함수입니다.
-
-        def insert_text(button_num, entry):
-            entry.insert(self.index, button_num)
-            self.index += 1
-
-        def delete_text(entry):
-            if page == "AdminPage" and self.index == 1:
-                return
-            entry.delete(self.index-1)
-            self.index = self.index-1 if self.index > 0 else 0
-
-        for i in button_name_list:
-            SMLButton(master=number_frame,
-                      text_font=controller.large_font,
-                      text=i,
-                      border_width=1,
-                      width=100,
-                      height=100,
-                      command=lambda button_num=i, entry=entry: insert_text(
-                          button_num, entry) if button_num.isnumeric() else delete_text(entry) if button_num == "<<" else self.__check_and_show_page(entry.get(), page)
-                      ).grid(row=row, column=col)
-            row = row+1 if col == 2 else row
-            col = 0 if col == 2 else col+1
-
         entry.place(x=controller.width/2,
                     y=controller.height/5, anchor=tk.CENTER)
         number_frame.place(x=controller.width/2,
@@ -109,14 +99,15 @@ class InformationPage(tk.Frame):
         else:
             return result[0]["USRMngKey"]
 
-    def __verify_number(self, number, page):
+    def __verify_number(self, number):
         """
         입력받은 번호를 확인하고, 검증합니다.
         """
         user_check = [""]
-        if page != "AdminPage":
+
+        if self.mode == DEFAULT_MODE:
+            # 올바르지 않는 전화번호
             if len(number) != 11 or number[:3] != "010":
-                # 올바르지 않는 전화번호
                 return False, NUMBER_ERROR
             format_number = f"{number[:3]}-{number[3:7]}-{number[7:]}"
         else:
@@ -124,7 +115,7 @@ class InformationPage(tk.Frame):
 
         # 번호가 맞는지 물어봄
         message_frame = MessageFrame(
-            self.controller, f"{format_number}가 맞습니까?", user_check=user_check, flag=ASK)
+            self.controller, f"입력하신 {format_number}가 맞습니까?", user_check=user_check, flag=ASK)
         self.wait_window(message_frame)
 
         # No!
@@ -133,10 +124,10 @@ class InformationPage(tk.Frame):
 
         # ok verify time!
         sql = SQL("root", "", "10.80.76.63", "SML")
-        if page != "AdminPage":
+        if self.mode == DEFAULT_MODE:
             user_key = self.__get_user_key(number)
             # 찾기 페이지일 때 동일한 번호인지 처리
-            if page == "FindPage":
+            if self.page == "FindPage":
                 result = sql.processDB(
                     f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';")
 
@@ -144,7 +135,12 @@ class InformationPage(tk.Frame):
                 if not result or result[0]["USRMngKey"] != user_key:
                     return False, FAILED_ERROR
             return True, user_key
-        else:
+        elif self.mode == VERIFY_MODE:
+            if self.verified_number == number:
+                return True, self.user_key
+            else:
+                return False, NUMBER_ERROR
+        elif self.mode == ADMIN_MODE:
             manage_key_list = list(map(lambda dic: dic["LCKMngKey"], sql.processDB(
                 "SELECT LCKMngKey FROM LCKInfo;"
             )))
@@ -166,24 +162,62 @@ class InformationPage(tk.Frame):
         from utils.ratchController import RatchController
         RatchController.instance()
 
-    def __check_and_show_page(self, number, page):
-        result, code = self.__verify_number(number, page)
+    def __send_random_number_message(self, phone_number, text):
+        """사용자에게 메시지를 보냅니다."""
+        from utils.sms import Messenger
+        messenger = Messenger.SMS(
+            to=phone_number,
+            text=f"[인증번호:{text}] INU 통합보관함 인증번호입니다")
+        if not messenger.send_message():
+            MessageFrame(self.controller, "문자전송에 실패 하였습니다. 다시 시도해주세요")
+            return
+
+    def check_and_show_page(self, number):
+        from random import randint
+        result, code = self.__verify_number(number)
         if result:
-            if page == "AdminPage":
+            if self.mode == ADMIN_MODE:
                 self.__set_locker_key(number)
                 MessageFrame(self.controller, "사물함번호가 설정되었습니다")
-                self.controller.show_frame("AdminPage", self)
+                self.controller.show_frame(
+                    new_frame="AdminPage",
+                    frame=self)
 
+            elif self.page == "FindPage" and self.mode == DEFAULT_MODE:
+                verified_number = f"{randint(0, 999999):06d}"
+                self.__send_random_number_message(number, verified_number)
+                self.controller.show_frame(
+                    new_frame="InformationPage",
+                    frame=self,
+                    CRRMngKey=self.CRRMngKey,
+                    page=self.page,
+                    USRMngKey=code,
+                    mode=VERIFY_MODE,
+                    phone_number=number,
+                    verified_number=verified_number)
             else:
-                self.controller.show_frame(new_frame="ProcessPage",
-                                           frame=self,
-                                           CRRMngKey=self.CRRMngKey,
-                                           page=page,
-                                           USRMngKey=code,
-                                           phone_number=number)
+
+                self.controller.show_frame(
+                    new_frame="ProcessPage",
+                    frame=self,
+                    CRRMngKey=self.CRRMngKey,
+                    page=self.page,
+                    USRMngKey=code,
+                    phone_number=number)
         # 실패메시지 표시
         else:
-            if code == NUMBER_ERROR:
+            if self.mode == VERIFY_MODE:
+                self.tried += 1
+                if self.tried < 3:
+                    MessageFrame(self.controller,
+                                 text=f"틀린 인증번호입니다. (3회 제한 중 {self.tried}회 시도함)")
+                else:
+                    MessageFrame(self.controller, "3회 실패로 처음화면으로 돌아갑니다")
+                    self.controller.show_frame(
+                        new_frame="StartPage",
+                        frame=self
+                    )
+            elif code == NUMBER_ERROR:
                 MessageFrame(self.controller, "실패! 번호를 다시 입력해주세요")
             elif code == FAILED_ERROR:
                 MessageFrame(self.controller, "실패! 올바르지 않는 값입니다")

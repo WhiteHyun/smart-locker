@@ -40,6 +40,8 @@ class App(tk.Tk):
         # 폰트 지정
         self.title_font = tkfont.Font(
             family="a시월구일1", size=self.width*self.height//22000, weight="bold")
+        self.subtitle_font = tkfont.Font(
+            family="a시월구일1", size=self.width*self.height//25000, weight="bold")
         self.medium_font = tkfont.Font(
             family='a시월구일1', size=self.width*self.height//98000, weight="bold")
         self.xlarge_font = tkfont.Font(

@@ -56,7 +56,7 @@ class ProcessPage(tk.Frame):
         그리고 데이터베이스에 해당 내용을 저장합니다.
         """
         from datetime import datetime
-        from utils.sms import SMS
+        from utils.sms import Messenger
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
 
@@ -81,6 +81,7 @@ class ProcessPage(tk.Frame):
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
+        sleep(2)
 
         self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
@@ -102,7 +103,7 @@ class ProcessPage(tk.Frame):
                 f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{user_key}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
             )
 
-        nSMS = SMS(
+        messenger = Messenger.MMS(
             to=phone_number,
             text="""
 QR코드가 발급되었습니다!!
@@ -110,8 +111,8 @@ QR코드가 발급되었습니다!!
 QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
                 """,
-            imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
-        if not nSMS.sendMessage():
+            image_path=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
+        if not messenger.send_message():
             MessageFrame(self.controller, "문자전송에 실패 하였습니다.")
             return
 
@@ -138,7 +139,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
-
+        sleep(2)
         self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
