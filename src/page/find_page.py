@@ -71,7 +71,7 @@ class FindPage(tk.Frame):
                 raise VideoError
 
             # 흑백이미지로 변환하여 qr 디코드
-            result_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
+            hash_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
             img = cv2.resize(img, (300, 250))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = cv2.flip(img, 1)
@@ -81,29 +81,23 @@ class FindPage(tk.Frame):
             self.label.image = img
 
             # 받아오지 못한 경우 단순 리턴
-            if result_data is None:
+            if hash_data is None:
                 self.escape = self.label.after(1, self.__open_door_by_qrcode)
                 return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
             result = sql.processDB(
-                f"SELECT * FROM LCKStat WHERE HashKey='{result_data}';"
+                f"SELECT * FROM LCKStat WHERE HashKey='{hash_data}';"
             )
             if not result:
                 raise ValueError
-            # TODO: #19 result 값을 가지고 함의 문을 열어줌
-            # TODO: 문이 닫히고 나서 센서값을 가져와 물건을 잘 찾아갔다고 판단되는 경우 데이터베이스 갱신 후 기존화면으로 이동
+            result = result[0]
+            self.controller.show_frame(new_frame="ProcessPage",
+                                       frame=self,
+                                       CRRMngKey=result["CRRMngKey"],
+                                       page="FindPage",
+                                       USRMngKey=result["USRMngKey"])
 
-            # 데이터베이스 갱신
-            sql.processDB(
-                f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE HashKey='{result_data}';"
-            )
-
-            # 완료 메시지 표시
-            MessageFrame(self.controller, "완료되었습니다.")
-
-            # 기존 화면으로 이동
-            self.controller.show_frame("StartPage", frame=self)
         except ValueError as e:
             MessageFrame(self.controller, "존재하지 않는 QR코드입니다.")
         except Exception as e:
