@@ -43,7 +43,8 @@ class LockerFrame(tk.Frame):
                 locker_list = sorted(
                     json_object["CRRInfo"], key=lambda dic: dic["location"]["start"]["row"]
                 )
-                self.size = (json_object["LCKSize"]["width"], json_object["LCKSize"]["height"])
+                self.size = (json_object["LCKSize"]["width"],
+                             json_object["LCKSize"]["height"])
                 for json_data in locker_list:
                     self.__make_locker_button(json_data)
         except Exception as e:
@@ -63,9 +64,12 @@ class LockerFrame(tk.Frame):
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
         locker_width, locker_height = self.size
-        img_size = 170 -50*(max(locker_height, locker_width)-1)
+        img_size = 170 - 50*(max(locker_height, locker_width)-1)
         button_size = 250 - 50*(max(locker_width, locker_height)-1)
-        text_font = tkfont.Font(family="a시월구일1", size=20-2*(max(locker_width, locker_height)-1), weight="bold")
+        text_font = tkfont.Font(
+            family="a시월구일1",
+            size=20-2*(max(locker_width, locker_height)-1),
+            weight="bold")
         locker_image = ImageTk.PhotoImage(Image.open(
             "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
         ).resize((img_size, img_size)))
@@ -82,7 +86,7 @@ class LockerFrame(tk.Frame):
             """
             # useState == 'U' when FindPage, useState == 'W' when DeliveryPage
             if state == self.STATE_USED and self.page == "FindPage" or state == self.STATE_WAIT and self.page == "DeliveryPage":
-                return lambda CRRMngKey=CRRMngKey: self.controller.show_frame("InformationPage", frame=self.parent, CRRMngKey=CRRMngKey, page=self.page)
+                return lambda CRRMngKey=CRRMngKey: self.controller.show_frame("InformationPage", frame=self.parent, CRRMngKey=CRRMngKey, mode=0, page=self.page)
             elif self.page == "SettingPage":
                 if self.mode == self.FIX_MODE:
                     return lambda CRRMngKey=CRRMngKey: self.parent.set_locker(CRRMngKey, state, locker_number)

@@ -48,7 +48,7 @@ class AdminPage(tk.Frame):
                   width=controller.width/4,
                   height=controller.height/2.6,
                   command=lambda: self.controller.show_frame(
-                      "InformationPage", self, page="AdminPage") if not has_json_file else MessageFrame(self.controller, "사물함 번호를 한 번 설정 후 다시 할 수 없습니다")
+                      "InformationPage", self, mode=2, page=None) if not has_json_file else MessageFrame(self.controller, "사물함 번호를 한 번 설정 후 다시 할 수 없습니다")
                   ).place(relx=0.22, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
                   text_font=controller.large_font,
