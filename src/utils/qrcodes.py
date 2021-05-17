@@ -89,10 +89,5 @@ def detectQR(gray_image) -> str:
         return decoded[0].data.decode("utf-8")  # 디코드된 값 또는 파일
 
 
-<< << << < HEAD
-== == == =
-
-
 if __name__ == "__main__":
     print(generateQR("https://github.com/WhiteHyun"))
->>>>>> > develop
