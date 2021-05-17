@@ -195,6 +195,7 @@ class InformationPage(tk.Frame):
                     phone_number=number,
                     verified_number=verified_number)
             else:
+
                 self.controller.show_frame(
                     new_frame="ProcessPage",
                     frame=self,
