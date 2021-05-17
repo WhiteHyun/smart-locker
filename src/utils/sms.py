@@ -4,13 +4,13 @@ from sdk.exceptions import CoolsmsException
 # pip install coolsms_python_sdk
 
 
-class SMS():
+class Messenger():
     """
     sms 발송을 위한 class
     """
 
     @classmethod
-    def mms(cls, to, text, image_path):
+    def MMS(cls, to, text, image_path):
         """MMS를 보내기 위한 객체 생성 메소드입니다.
 
         Parameter
@@ -25,18 +25,18 @@ class SMS():
 
         Returns
         -------
-        SMS
-            객체생성된 SMS
+        Messenger
+            객체생성된 Messenger
 
         Example
         -------
-        >>> SMS.mms("01012345678", "메시지 내용", "./image/test.png")
-        <class 'sms.SMS'>
+        >>> Messenger.MMS("01012345678", "메시지 내용", "./image/test.png")
+        <class 'sms.Messenger'>
         """
         return cls(to=to, text=text, type="mms", image_path=image_path)
 
     @classmethod
-    def sms(cls, to, text):
+    def SMS(cls, to, text):
         """SMS를 보내기 위한 객체 생성 메소드입니다.
 
         Parameter
@@ -48,13 +48,13 @@ class SMS():
 
         Returns
         -------
-        SMS
-            객체생성된 SMS
+        Messenger
+            객체생성된 Messenger
 
         Example
         -------
-        >>> SMS.sms("01012345678", "메시지 내용", "./image/test.png")
-        <class 'sms.SMS'>
+        >>> Messenger.SMS("01012345678", "메시지 내용", "./image/test.png")
+        <class 'sms.Messenger'>
         """
         return cls(to=to, text=text, type="sms")
 
@@ -81,13 +81,13 @@ class SMS():
 
         Returns
         -------
-        SMS
-            객체생성된 SMS
+        Messenger
+            객체생성된 Messenger
 
         Example
         -------
-        >>> SMS(to="01012345678", text="test message", type="sms")
-        <class 'sms.SMS'>
+        >>> Messenger(to="01012345678", text="test message", type="sms")
+        <class 'sms.Messenger'>
 
         >>> SMS(to="01012345678", text="test message", type="mms", image_path="./image/test.png")
         <class 'sms.SMS'>
@@ -106,7 +106,7 @@ class SMS():
 
         self.cool = Message(self.__api_key, self.__api_secret)
 
-    def sendMessage(self):
+    def send_message(self):
         """
         메시지 발송, 성공이면 True, 실패면 False
         """
