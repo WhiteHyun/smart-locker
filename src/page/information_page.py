@@ -40,7 +40,7 @@ class InformationPage(tk.Frame):
         text_id = canvas.create_text(controller.width/2,
                                      controller.height/10,
                                      text="empty",
-                                     font=controller.title_font,
+                                     font=controller.title_font if mode == VERIFY_MODE else controller.subtitle_font,
                                      fill="#385ab7")
 
         if self.mode == ADMIN_MODE:
