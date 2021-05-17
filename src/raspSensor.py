@@ -13,6 +13,6 @@ class DetectMotion:
     def wait_for_motion(self):
 
         while True:
-            if GPIO.input(self.pripin) == GPIO.LOW:
+            if GPIO.input(self.pirpin) == GPIO.LOW:
                 return True
             time.sleep(0.2)
