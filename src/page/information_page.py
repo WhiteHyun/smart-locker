@@ -18,6 +18,7 @@ FAILED_ERROR = 2
 DEFAULT_MODE = 0
 VERIFY_MODE = 1
 ADMIN_MODE = 2
+GO_TO_SETTING_MODE = 3
 
 
 class InformationPage(tk.Frame):
@@ -45,6 +46,8 @@ class InformationPage(tk.Frame):
 
         if self.mode == ADMIN_MODE:
             text = "사물함 관리번호를 입력해주세요"
+        elif self.mode == GO_TO_SETTING_MODE:
+            text = "관리자 비밀번호를 입력해주세요"
         else:
             self.page = kwargs["page"]
             self.CRRMngKey = kwargs["CRRMngKey"]
@@ -154,6 +157,12 @@ class InformationPage(tk.Frame):
                 return False, NUMBER_ERROR
             return True, None
 
+        elif self.mode == GO_TO_SETTING_MODE:
+            if number == "1234":
+                return True, None
+            else:
+                return False, FAILED_ERROR
+
     def __set_locker_key(self, locker_manage_key: str) -> None:
         """입력받은 LCKMngKey를 가지고 sync_to_json합니다.
         """
@@ -182,6 +191,10 @@ class InformationPage(tk.Frame):
                 self.controller.show_frame(
                     new_frame="AdminPage",
                     frame=self)
+
+            elif self.mode == GO_TO_SETTING_MODE:
+                self.controller.show_frame(new_frame="AdminPage",
+                                           frame=self)
 
             elif self.page == "FindPage" and self.mode == DEFAULT_MODE:
                 verified_number = f"{randint(0, 999999):06d}"

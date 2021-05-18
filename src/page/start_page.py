@@ -56,4 +56,7 @@ class StartPage(tk.Frame):
         """
         self.count += 1
         if self.count == 5:
-            self.controller.show_frame("AdminPage", frame=self)
+            self.controller.show_frame("InformationPage",
+                                       frame=self,
+                                       mode=3,
+                                       page=None)
