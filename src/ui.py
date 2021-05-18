@@ -83,7 +83,7 @@ class App(tk.Tk):
 
         """)
 
-    def set_timer(self):
+    def set_timer(self, event):
         self.timer = time()
 
     def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
@@ -101,7 +101,7 @@ class App(tk.Tk):
             temp_frame = self.pages[new_frame](
                 parent=parent if parent is not None else self.container, controller=self, bg="white", *args, **kwargs
             )
-            temp_frame.canvas.bind("<B1-Motion>", lambda: self.set_timer)
+            temp_frame.canvas.bind("<B1-Motion>", lambda e: self.set_timer)
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()

@@ -29,4 +29,4 @@ class ScreenSaverPage(tk.Frame):
         self.canvas.create_image(
             controller.width >> 1, controller.height >> 1, image=settings_img)
 
-        self.canvas.bind("<B1-Motion>", lambda: self.destroy)
+        self.canvas.bind("<B1-Motion>", lambda e: self.destroy)
