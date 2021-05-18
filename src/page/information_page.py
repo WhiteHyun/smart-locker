@@ -33,17 +33,17 @@ class InformationPage(tk.Frame):
             "../img/previous.png" if __name__ == "__main__" or __name__ == "information_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
 
-        canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(self, width=controller.width,
+                                height=controller.height, bg=bg)
+        self.canvas.pack(fill="both", expand=True)
         self.controller = controller
         self.mode = mode
         self.page = kwargs["page"]
-        text_id = canvas.create_text(controller.width/2,
-                                     controller.height/10,
-                                     text="empty",
-                                     font=controller.title_font if mode != VERIFY_MODE else controller.subtitle_font,
-                                     fill="#385ab7")
+        text_id = self.canvas.create_text(controller.width/2,
+                                          controller.height/10,
+                                          text="empty",
+                                          font=controller.title_font if mode != VERIFY_MODE else controller.subtitle_font,
+                                          fill="#385ab7")
 
         if self.mode == ADMIN_MODE:
             text = "사물함 관리번호를 입력해주세요"
@@ -59,7 +59,7 @@ class InformationPage(tk.Frame):
                 self.user_key = kwargs["USRMngKey"]
                 text = "인증번호를 전송했습니다. 인증번호를 입력해주세요"
 
-        canvas.itemconfig(text_id, text=text)
+        self.canvas.itemconfig(text_id, text=text)
         entry = tk.Entry(self, font=controller.large_font)
 
         number_frame = InputFrame(parent=self,
