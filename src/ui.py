@@ -24,6 +24,7 @@ else:
 class App(tk.Tk):
 
     def __init__(self, *args, **kwargs):
+        from utils.rasp_sensor import DetectMotion
         super().__init__(*args, **kwargs)
 
         # 화면 설정
@@ -39,6 +40,7 @@ class App(tk.Tk):
         self.width = self.container.winfo_screenwidth()
         self.height = self.container.winfo_screenheight()
         self.timer = time()
+        self.human_sensor = DetectMotion()
 
         # 폰트 지정
         self.title_font = tkfont.Font(
@@ -68,6 +70,10 @@ class App(tk.Tk):
 
     def __screensaver(self):
         time_limit = 10  # 300초 = 5분
+        if self.human_sensor.is_human_coming():
+            self.timer = time()
+            self.after(1000, self.__screensaver)
+            return
         if time() - self.timer < time_limit:
             self.after(1000, self.__screensaver)
             return
