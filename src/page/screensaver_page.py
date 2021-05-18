@@ -22,7 +22,7 @@ class ScreenSaverPage(tk.Frame):
         self.canvas.pack(fill="both", expand=True)
 
         self.canvas.create_text(controller.width >> 1, controller.height/7,
-                                text="화면을 눌러주세요", font=controller.title_font, fill="#ffffff")
+                                text="화면을 눌러주세요", font=controller.title_font, fill="#6D6E6C")
 
         self.logo_img = ImageTk.PhotoImage(Image.open(
             "../img/INU_logo.png" if __name__ == "__main__" or __name__ == "screensaver_page" else "src/img/INU_logo.png"
