@@ -7,8 +7,7 @@ class DetectMotion:
     def __init__(self) -> None:
         GPIO.setmode(GPIO.BCM)
         self.pirpin = 7
-        GPIO.setup(self.pirpin,GPIO.IN,GPIO.PUD_UP)
-    
+        GPIO.setup(self.pirpin, GPIO.IN, GPIO.PUD_UP)
 
     def wait_for_motion(self):
 
