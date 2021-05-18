@@ -72,17 +72,12 @@ class App(tk.Tk):
             print(self.timer)
             self.after(1000, self.__screensaver)
             return
-
-        self.show_frame("ScreenSaverPage")
         page_list = self.container.winfo_children()
-        page_list[0].wait_window(page_list[-1])
-        print("""
-        wait_window 끝 !@#!@#!@#!@#!@#
-
-
-
-
-        """)
+        if len(page_list) == 2:
+            self.after(1000, self.__screensaver)
+            return
+        self.show_frame("ScreenSaverPage")
+        self.after(1, lambda: page_list[0].wait_window(page_list[-1]))
 
     def set_timer(self, event):
         self.timer = time()
