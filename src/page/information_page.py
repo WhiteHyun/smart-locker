@@ -38,6 +38,7 @@ class InformationPage(tk.Frame):
         canvas.pack(fill="both", expand=True)
         self.controller = controller
         self.mode = mode
+        self.page = kwargs["page"]
         text_id = canvas.create_text(controller.width/2,
                                      controller.height/10,
                                      text="empty",
@@ -49,7 +50,6 @@ class InformationPage(tk.Frame):
         elif self.mode == GO_TO_SETTING_MODE:
             text = "관리자 비밀번호를 입력해주세요"
         else:
-            self.page = kwargs["page"]
             self.CRRMngKey = kwargs["CRRMngKey"]
             if self.mode == DEFAULT_MODE:
                 text = "휴대폰 번호를 입력해주세요"

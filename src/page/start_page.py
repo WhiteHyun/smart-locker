@@ -59,4 +59,4 @@ class StartPage(tk.Frame):
             self.controller.show_frame("InformationPage",
                                        frame=self,
                                        mode=3,
-                                       page=None)
+                                       page="StartPage")
