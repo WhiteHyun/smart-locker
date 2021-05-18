@@ -19,7 +19,7 @@ class ScreenSaverPage(tk.Frame):
                                 height=controller.height, bg="black")
         self.canvas.pack(fill="both", expand=True)
 
-        self.canvas.create_text(controller.width/2, controller.height/7,
+        self.canvas.create_text(controller.width >> 1, controller.height/7,
                                 text="화면을 눌러주세요", font=controller.title_font, fill="#385ab7")
 
         settings_img = ImageTk.PhotoImage(Image.open(

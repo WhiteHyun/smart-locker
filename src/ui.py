@@ -71,6 +71,7 @@ class App(tk.Tk):
         if time() - self.timer < time_limit:
             print(self.timer)
             self.after(1000, self.__screensaver)
+            return
 
         self.show_frame("ScreenSaverPage")
         page_list = self.container.winfo_children()
