@@ -15,12 +15,12 @@ class AdminPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(self, width=controller.width,
+                                height=controller.height, bg=bg)
+        self.canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height/7,
-                           text="택배 보관함 (관리자)", font=controller.title_font, fill="#385ab7")
+        self.canvas.create_text(controller.width/2, controller.height/7,
+                                text="택배 보관함 (관리자)", font=controller.title_font, fill="#385ab7")
 
         settings_img = ImageTk.PhotoImage(Image.open(
             "../img/settings.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/settings.png"

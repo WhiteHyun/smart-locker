@@ -34,12 +34,12 @@ class SettingPage(tk.Frame):
             "../img/unlock.png" if __name__ == "__main__" or __name__ == "setting_page" else "src/img/unlock.png"
         ).resize((int(100/1.618), int(100/1.618))))
 
-        canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(self, width=controller.width,
+                                height=controller.height, bg=bg)
+        self.canvas.pack(fill="both", expand=True)
         self.mode = kwargs["mode"]
-        canvas.create_text(controller.width/2, controller.height/7,
-                           text="설정 페이지 (관리자)", font=controller.title_font, fill="#385ab7")
+        self.canvas.create_text(controller.width/2, controller.height/7,
+                                text="설정 페이지 (관리자)", font=controller.title_font, fill="#385ab7")
 
         self.locker_frame = self.__load_locker(self.mode)
 
