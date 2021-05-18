@@ -38,7 +38,7 @@ class LockerState:
             firstUsedDate = self.sql.processDB(
                 f"SELECT AddDt FROM LCKLog WHERE CRRMngKey='{CRRMngKey}' AND UseStat = 'U' ORDER BY LCKLogKey DESC LIMIT 1;")
             if not firstUsedDate:
-                # 사용 데이터가 없으면 초기 데이터라 판단 -> 그냥 최근 데이터 긁어와서 판단해도 괜찮을듯 -> 쿼리만 생성
+                # 사용 데이터가 없으면 초기 데이터라 판단 -> 그냥 최근 데이터 긁어와서 판단
 
                 selectQuery = f"SELECT {', '.join(sensorNmLis)} FROM SensorValue WHERE CRRMngKey = '{CRRMngKey}' ORDER BY SenKey DESC LIMIT 20"
             else:
