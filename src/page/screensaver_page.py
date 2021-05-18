@@ -16,11 +16,11 @@ class ScreenSaverPage(tk.Frame):
         self.controller = controller
 
         self.canvas = tk.Canvas(self, width=controller.width,
-                                height=controller.height, bg="black")
+                                height=controller.height, bg=bg)
         self.canvas.pack(fill="both", expand=True)
 
         self.canvas.create_text(controller.width >> 1, controller.height/7,
-                                text="화면을 눌러주세요", font=controller.title_font, fill="#ffffff")
+                                text="화면을 눌러주세요", font=controller.title_font, fill="#385ab7")
 
         logo_img = ImageTk.PhotoImage(Image.open(
             "../img/INU_logo.png" if __name__ == "__main__" or __name__ == "screensaver_page" else "src/img/INU_logo.png"
@@ -29,4 +29,4 @@ class ScreenSaverPage(tk.Frame):
         self.canvas.create_image(
             controller.width >> 1, controller.height >> 1, image=logo_img)
 
-        self.canvas.bind("<Button-1>", lambda e: self.destroy)
+        self.canvas.bind("<Button-1>", lambda e: self.destroy())

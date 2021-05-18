@@ -102,7 +102,7 @@ class App(tk.Tk):
             temp_frame = self.pages[new_frame](
                 parent=parent if parent is not None else self.container, controller=self, bg="white", *args, **kwargs
             )
-            temp_frame.canvas.bind("<Button-1>", lambda e: self.set_timer)
+            temp_frame.canvas.bind("<Button-1>", self.set_timer)
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
