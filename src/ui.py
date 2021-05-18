@@ -61,6 +61,11 @@ class App(tk.Tk):
             self.show_frame("StartPage")
         else:
             self.show_frame("AdminPage")
+        self.after(100, self.show_parent)
+
+    def show_parent(self):
+        print(self.children)
+        self.after(100, self.show_parent)
 
     def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
         """
