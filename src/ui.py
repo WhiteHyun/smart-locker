@@ -69,20 +69,14 @@ class App(tk.Tk):
     def __screensaver(self):
         time_limit = 10  # 300초 = 5분
         if time() - self.timer < time_limit:
-            print(self.timer)
             self.after(1000, self.__screensaver)
             return
 
         self.show_frame("ScreenSaverPage")
         page_list = self.container.winfo_children()
         page_list[0].wait_window(page_list[-1])
-        print("""
-        wait_window 끝 !@#!@#!@#!@#!@#
-
-
-
-
-        """)
+        self.timer = time()
+        self.after(1000, self.__screensaver)
 
     def set_timer(self, event):
         self.timer = time()

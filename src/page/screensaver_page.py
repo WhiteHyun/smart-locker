@@ -12,6 +12,8 @@ class ScreenSaverPage(tk.Frame):
     """
 
     def __init__(self, parent, controller, bg, *args, **kwargs):
+        from utils.rasp_sensor import DetectMotion
+        self.human_sensor = DetectMotion()
         super().__init__(parent)
         self.controller = controller
 
@@ -28,5 +30,11 @@ class ScreenSaverPage(tk.Frame):
 
         self.canvas.create_image(
             controller.width >> 1, controller.height >> 1, image=self.logo_img)
-
+        self.after(1, self.__check_human)
         self.canvas.bind("<Button-1>", lambda e: self.destroy())
+
+    def __check_human(self):
+        if self.human_sensor.is_human_coming():
+            self.destroy()
+        else:
+            self.after(1, self.__check_human)
