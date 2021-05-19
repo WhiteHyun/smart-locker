@@ -51,7 +51,7 @@ class SensorListener:
         """
         sync_sensor = dict()
         sql_data = self.sql.processDB(
-            f"SELECT CRRMngKey, SyncSensor FROM CRRInfo WHERE LCKMngKey LIKE '{self.LCKMngKey}%'")
+            f"SELECT CRRMngKey, SyncSensor FROM CRRInfo WHERE State = 'N' AND LCKMngKey LIKE '{self.LCKMngKey}%'")
         for dataset in sql_data:
             if dataset["SyncSensor"] is not None:
                 sync_sensor[dataset["SyncSensor"]] = dataset["CRRMngKey"]
@@ -78,7 +78,8 @@ class SensorListener:
                         dataset = {"CRRMngKey": None, "FSR": -1,
                                    "LIG": -1, "SSO": -1, "HAL": -1, "VIB": -1}
 
-                        dataset["CRRMngKey"] = self.sync_sensor[self.arduino_number + res[-1:]]
+                        dataset["CRRMngKey"] = self.sync_sensor.get(
+                            self.arduino_number + res[-1:])
                     elif res[0] == "F":
                         dataset["FSR"] = res[2:]
                     elif res[0] == "S":
