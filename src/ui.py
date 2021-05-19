@@ -50,7 +50,6 @@ class App(tk.Tk):
 
         # 캠을 보여줄 label 객체
         self.__label = tk.Label(width=300, height=250)
-        self.__label.place(x=self.width/2-150, y=10)
 
         # 폰트 지정
         self.title_font = tkfont.Font(
@@ -135,6 +134,11 @@ class App(tk.Tk):
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
+
+            if new_frame == FindPage.__name__:
+                self.__label.place(x=self.width/2-150, y=10)
+            else:
+                self.__label.place_forget()
 
             # 기존 프레임 종료
             if frame is not None:
