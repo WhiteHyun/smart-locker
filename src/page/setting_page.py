@@ -63,8 +63,8 @@ class SettingPage(tk.Frame):
                                        image=closed_img,
                                        command=lambda: self.set_door_state("C"))
 
-        self.open_button.pack(side="top", fill="both", expand=True)
-        self.closed_button.pack(side="bottom", fill="both", expand=True)
+        self.open_button.pack(side="left", fill="both", expand=True)
+        self.closed_button.pack(side="right", fill="both", expand=True)
         self.locker_frame = self.__load_locker(self.mode)
 
         SMLButton(master=self,
@@ -165,7 +165,8 @@ class SettingPage(tk.Frame):
         """
         # 강제개폐 설정모드일 경우 문 여닫기버튼 띄워줌
         if mode == LockerFrame.UNLOCK_MODE:
-            self.button_group.place(x=self.controller.width-180, y=380)
+            self.button_group.place(
+                x=self.controller.width-220, y=self.controller.height-120)
         # 고장상태 설정모드일 경우 여닫기 버튼 지워줌
         elif mode == LockerFrame.FIX_MODE:
             self.button_group.place_forget()
