@@ -27,7 +27,7 @@ if __name__ == "__main__":
         except FileNotFoundError as e:
             pass
 
-    sListener = sensor_listener.SensorListener(0, "/dev/ttyARDMS", LCKMngKey)
+    sListener = sensor_listener.SensorListener(LCKMngKey)
 
     proc2 = Process(target=sListener.listen, args=())
     procs.append(proc2)
