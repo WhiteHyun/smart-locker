@@ -132,6 +132,9 @@ class SettingPage(tk.Frame):
         sql.processDB(
             f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT if current_state == LockerFrame.STATE_BROKEN else LockerFrame.STATE_BROKEN}' WHERE CRRMngKey='{CRRMngKey}';"
         )
+        sqlDict = {'CRRMngKey': CRRMngKey,
+                   'USRMngKey': 'admin', 'UseStat': 'F' if current_state == LockerFrame.STATE_BROKEN else LockerFrame.STATE_BROKEN}
+        sql.processDB(dict2Query('LCKLog', sqlDict))
         self.locker_frame.button_dict[locker_number].configure_color(
             fg_color="#1E8449" if current_state == LockerFrame.STATE_BROKEN else"#7C7877",
             hover_color="#2ECC71" if current_state == LockerFrame.STATE_BROKEN else"#7C7877")
