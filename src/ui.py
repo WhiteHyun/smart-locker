@@ -43,7 +43,7 @@ class App(tk.Tk):
         self.width = self.container.winfo_screenwidth()
         self.height = self.container.winfo_screenheight()
         self.timer = time()
-        self.mode = RESIDENTIAL_MODE
+        self.mode = COMMERCIAL_MODE
         self.human_sensor = DetectMotion()
 
         # 폰트 지정
