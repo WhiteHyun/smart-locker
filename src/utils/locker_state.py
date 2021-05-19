@@ -35,25 +35,7 @@ class LockerState:
         resDict = {}
 
         try:
-            firstUsedDate = self.sql.processDB(
-                f"SELECT AddDt FROM LCKLog WHERE CRRMngKey='{CRRMngKey}' AND UseStat = 'U' ORDER BY LCKLogKey DESC LIMIT 1;")
-            if not firstUsedDate:
-                # 사용 데이터가 없으면 초기 데이터라 판단 -> 그냥 최근 데이터 긁어와서 판단
-
-                selectQuery = f"SELECT {', '.join(sensorNmLis)} FROM SensorValue WHERE CRRMngKey = '{CRRMngKey}' ORDER BY SenKey DESC LIMIT 20"
-            else:
-                aaa = self.sql.processDB(
-                    f"SELECT AddDt FROM LCKLog WHERE CRRMngKey='{CRRMngKey}' AND UseStat <> 'B' AND UseStat <> 'U' AND AddDt < '{firstUsedDate[0]['AddDt']}' ORDER BY LCKLogKey DESC LIMIT 1;")
-                if not aaa:
-                    # 여기 진입했다는 뜻은 최근 첫 사용 데이터라 판단-> 첫 사용 데이터 이전의 값을 가져와 사용
-                    selectQuery = f"SELECT {', '.join(sensorNmLis)} FROM SensorValue WHERE CRRMngKey = '{CRRMngKey}' AND AddDt < '{firstUsedDate[0]['AddDt']}' ORDER BY SenKey DESC LIMIT 20"
-
-                else:
-                    selectQuery = f"SELECT {', '.join(sensorNmLis)} FROM SensorValue WHERE CRRMngKey = '{CRRMngKey}' AND AddDt > '{aaa[0]['AddDt']}' AND AddDt < '{firstUsedDate[0]['AddDt']}' ORDER BY SenKey DESC LIMIT 20"
-
-            if not selectQuery:
-                # 이론상 못들어오는곳
-                pass
+            selectQuery = f"SELECT {', '.join(sensorNmLis)} FROM SensorValue WHERE CRRMngKey = '{CRRMngKey}' ORDER BY SenKey ASC LIMIT 20"
 
             sensorData = self.sql.processDB(selectQuery)
 
