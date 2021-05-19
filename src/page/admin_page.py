@@ -15,12 +15,12 @@ class AdminPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        canvas = tk.Canvas(self, width=controller.width,
-                           height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(self, width=controller.width,
+                                height=controller.height, bg=bg)
+        self.canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height/7,
-                           text="택배 보관함 (관리자)", font=controller.title_font, fill="#385ab7")
+        self.canvas.create_text(controller.width/2, controller.height/7,
+                                text="택배 보관함 (관리자)", font=controller.title_font, fill="#385ab7")
 
         settings_img = ImageTk.PhotoImage(Image.open(
             "../img/settings.png" if __name__ == "__main__" or __name__ == "admin_page" else "src/img/settings.png"
@@ -73,7 +73,7 @@ class AdminPage(tk.Frame):
                       "SettingPage", self, mode=2)
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
-                  text="관리페이지로",
+                  text="시작페이지로",
                   fg_color="#7C7877" if not has_json_file else "#385ab7",
                   hover_color="#7C7877" if not has_json_file else "#496bc9",
                   border_width=1,

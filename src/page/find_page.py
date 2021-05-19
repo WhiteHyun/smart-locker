@@ -29,11 +29,11 @@ class FindPage(tk.Frame):
             "../img/previous.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
 
-        canvas = tk.Canvas(self, width=controller.width,
+        self.canvas = tk.Canvas(self, width=controller.width,
                            height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height*0.36,
+        self.canvas.create_text(controller.width/2, controller.height*0.36,
                            text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
         # 캠을 보여줄 label 객체
         self.label = tk.Label(width=300, height=250)

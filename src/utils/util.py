@@ -1,6 +1,7 @@
 import os
 import sys
 import tkinter as tk
+from time import time
 from tkinter import font as tkfont
 from PIL import Image, ImageTk
 if __name__:
