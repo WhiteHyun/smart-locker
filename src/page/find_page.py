@@ -115,7 +115,7 @@ class FindPage(tk.Frame):
             raise e
 
     def destroy(self) -> None:
-        super().destroy()
         self.label.after_cancel(self.escape)    # 카메라 실행 중지
         self.camera.release()   # 카메라 모듈 사용 해제
         self.label.destroy()    # 캠을 가지고있는 레이블 삭제
+        super().destroy()
