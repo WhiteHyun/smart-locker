@@ -27,11 +27,11 @@ class ProcessPage(tk.Frame):
         from utils.ratchController import RatchController
         self.canvas = tk.Canvas(self, width=controller.width,
                                 height=controller.height, bg=bg)
-        self.canvas.pack(fill="both", expand=True)
         self.controller = controller
         self.CRRMngKey = kwargs["CRRMngKey"]
         self.text_id = self.canvas.create_text(controller.width/2, controller.height/2,
                                                text="문을 여는 중입니다.", font=controller.title_font, fill="#385ab7")
+        self.canvas.pack(fill="both", expand=True)
         self.escape_open_door = ""
         self.escape_has_item = ""
         self.is_door_open = tk.BooleanVar(self, value=True)
