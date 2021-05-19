@@ -21,7 +21,7 @@ class LockerState:
                 map(lambda x: x["CRRMngKey"], json_object["CRRInfo"]))
         self.locker_list = locker_list
 
-    def clac_threshold(self, CRRMngKey, sensorNmLis):
+    def calc_threshold(self, CRRMngKey, sensorNmLis):
         '''각 상태 판별을 위한 문턱값을 계산하여 반환합니다.
 
         Args:
