@@ -51,7 +51,7 @@ class FindPage(tk.Frame):
                   )
                   ).place(x=20, y=controller.height-120)
 
-        self.__open_door_by_qrcode()
+        self.after(1, self.__open_door_by_qrcode())
 
     def __open_door_by_qrcode(self):
         """
