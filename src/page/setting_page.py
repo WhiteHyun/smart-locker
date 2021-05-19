@@ -53,6 +53,7 @@ class SettingPage(tk.Frame):
                                      width=160,
                                      height=100,
                                      image=open_img,
+                                     text="열기 모드",
                                      command=lambda: self.set_door_state("O"))
         self.closed_button = SMLButton(master=self.button_group,
                                        border_width=1,
@@ -61,6 +62,7 @@ class SettingPage(tk.Frame):
                                        width=160,
                                        height=100,
                                        image=closed_img,
+                                       text="닫기 모드",
                                        command=lambda: self.set_door_state("C"))
 
         self.open_button.pack(side="top", fill="both", expand=True)
