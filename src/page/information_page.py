@@ -216,13 +216,25 @@ class InformationPage(tk.Frame):
                         if page.__class__.__name__ == "ProcessPage" and page.CRRMngKey == self.CRRMngKey:
                             page.destroy()
 
-                self.controller.show_frame(
-                    new_frame="ProcessPage",
-                    frame=self,
-                    CRRMngKey=self.CRRMngKey,
-                    page=self.page,
-                    USRMngKey=code,
-                    phone_number=number)
+                # 쓰레드 모드일 때 찾기페이지였을 경우 시작 페이지로 이동
+                if self.page == "FindPage" and self.controller.mode == COMMERCIAL_MODE:
+                    self.controller.show_frame(
+                        new_frame="ProcessPage",
+                        CRRMngKey=self.CRRMngKey,
+                        page=self.page,
+                        USRMngKey=code,
+                        phone_number=number)
+                    self.controller.show_frame(new_frame="StartPage",
+                                               frame=self)
+                # 그 외
+                else:
+                    self.controller.show_frame(
+                        new_frame="ProcessPage",
+                        frame=self,
+                        CRRMngKey=self.CRRMngKey,
+                        page=self.page,
+                        USRMngKey=code,
+                        phone_number=number)
         # 실패메시지 표시
         else:
             if self.mode == VERIFY_MODE:
