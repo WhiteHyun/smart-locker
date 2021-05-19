@@ -95,6 +95,7 @@ class SettingPage(tk.Frame):
                   image=unlock_img,
                   command=lambda: self.__change_locker(LockerFrame.UNLOCK_MODE)
                   ).place(x=controller.width-180, y=200)
+        self.__show_door_mode_button(self.mode)
 
     def set_door_state(self, state):
         """문 개폐 모드를 설정합니다.
@@ -159,12 +160,9 @@ class SettingPage(tk.Frame):
                            y=self.controller.height/2, anchor=tk.CENTER)
         return locker_frame
 
-    def __change_locker(self, mode):
-        """locker의 모드를 바꿉니다
+    def __show_door_mode_button(self, mode):
+        """모드에 따라 문 개폐버튼을 보여줄지 말지 결정합니다
         """
-        # 기존 모드와 동일한 경우
-        if self.mode == mode:
-            return
         # 강제개폐 설정모드일 경우 문 여닫기버튼 띄워줌
         if mode == LockerFrame.UNLOCK_MODE:
             self.button_group.place(x=self.controller.width-180, y=380)
@@ -172,6 +170,13 @@ class SettingPage(tk.Frame):
         elif mode == LockerFrame.FIX_MODE:
             self.button_group.place_forget()
 
+    def __change_locker(self, mode):
+        """locker의 모드를 바꿉니다
+        """
+        # 기존 모드와 동일한 경우
+        if self.mode == mode:
+            return
+        self.__show_door_mode_button(mode)
         self.mode = mode
         self.locker_frame.destroy()
         self.locker_frame = self.__load_locker(mode)
