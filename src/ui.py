@@ -20,6 +20,9 @@ else:
     from .page.setting_page import SettingPage
     from .page.screensaver_page import ScreenSaverPage
 
+RESIDENTIAL_MODE = 1
+COMMERCIAL_MODE = 2
+
 
 class App(tk.Tk):
 
@@ -40,6 +43,7 @@ class App(tk.Tk):
         self.width = self.container.winfo_screenwidth()
         self.height = self.container.winfo_screenheight()
         self.timer = time()
+        self.mode = RESIDENTIAL_MODE
         self.human_sensor = DetectMotion()
 
         # 폰트 지정
