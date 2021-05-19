@@ -73,7 +73,7 @@ class AdminPage(tk.Frame):
                       "SettingPage", self, mode=2)
                   ).place(relx=0.78, rely=0.5, anchor=tk.CENTER)
         SMLButton(master=self,
-                  text="관리페이지로",
+                  text="시작페이지로",
                   fg_color="#7C7877" if not has_json_file else "#385ab7",
                   hover_color="#7C7877" if not has_json_file else "#496bc9",
                   border_width=1,

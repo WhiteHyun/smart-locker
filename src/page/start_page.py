@@ -20,7 +20,7 @@ class StartPage(tk.Frame):
         self.canvas.pack(fill="both", expand=True)
 
         self.canvas.create_text(controller.width/2, controller.height/7,
-                                text="택배 보관함", font=controller.title_font, fill="#385ab7", tags="admin")
+                                text="통합 보관함", font=controller.title_font, fill="#385ab7", tags="admin")
         self.canvas.tag_bind("admin", '<ButtonPress-1>',
                              self.__go_to_admin_page)
         man_img = ImageTk.PhotoImage(Image.open(
@@ -33,7 +33,7 @@ class StartPage(tk.Frame):
 
         SMLButton(master=self,
                   text_font=controller.xlarge_font,
-                  text="맡기기",
+                  text="보관하기",
                   image=man_img,
                   width=controller.width/4,
                   height=controller.height/2.6,
