@@ -50,7 +50,7 @@ class SettingPage(tk.Frame):
         self.button_group = tk.Frame(master=self)
         self.open_button = SMLButton(master=self.button_group,
                                      border_width=1,
-                                     width=200,
+                                     width=100,
                                      height=100,
                                      image=open_img,
                                      command=lambda: self.set_door_state("O"))
@@ -58,7 +58,7 @@ class SettingPage(tk.Frame):
                                        border_width=1,
                                        fg_color="#7C7877",
                                        hover_color="#7C7877",
-                                       width=200,
+                                       width=100,
                                        height=100,
                                        image=closed_img,
                                        command=lambda: self.set_door_state("C"))
