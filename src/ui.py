@@ -48,6 +48,10 @@ class App(tk.Tk):
         self.human_sensor = DetectMotion()
         self.camera = cv2.VideoCapture(0)
 
+        # 캠을 보여줄 label 객체
+        self.__label = tk.Label(width=300, height=250)
+        self.__label.place(x=self.width/2-150, y=10)
+
         # 폰트 지정
         self.title_font = tkfont.Font(
             family="a시월구일1", size=self.width*self.height//22000, weight="bold")
@@ -73,17 +77,24 @@ class App(tk.Tk):
         else:
             self.show_frame("AdminPage")
         self.after(1000, self.__screensaver)
+        self.after(1, self.get_img)
 
-    def get_qr_img(self, img):
+    def get_qr_img(self):
+        # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
+        _, img = self.camera.read()
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    def get_img(self, img):
+    def get_img(self):
+        # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
+        _, img = self.camera.read()
         img = cv2.resize(img, (300, 250))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.flip(img, 1)
         img = Image.fromarray(img)
         img = ImageTk.PhotoImage(img)
-        return img
+        self.__label.configure(image=img)
+        self.__label.image = img
+        self.after(1, self.get_img)
 
     def __screensaver(self):
         time_limit = 10  # 300초 = 5분

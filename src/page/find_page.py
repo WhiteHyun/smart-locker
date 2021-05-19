@@ -36,9 +36,6 @@ class FindPage(tk.Frame):
 
         self.canvas.create_text(controller.width/2, controller.height*0.36,
                                 text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
-        # 캠을 보여줄 label 객체
-        self.label = tk.Label(width=300, height=250)
-        self.label.place(x=controller.width/2-150, y=10)
 
         LockerFrame(parent=self, controller=controller, page="FindPage", relief="solid").place(
             x=controller.width/2, y=controller.height*0.66, anchor=tk.CENTER)
@@ -61,21 +58,12 @@ class FindPage(tk.Frame):
         QR코드를 통해 문을 열게 해주는 함수입니다.
         """
 
-        from utils.qrcodes import detectQR, VideoError
+        from utils.qrcodes import detectQR
         from utils.sql import SQL
         try:
 
-            # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
-            ret, img = self.controller.camera.read()
-            if not ret:  # 카메라 캡처에 실패할 경우
-                print("camera read failed")
-                raise VideoError
-
             # 흑백이미지로 변환하여 qr 디코드
-            hash_data = detectQR(self.controller.get_qr_img(img))
-            img = self.controller.get_img(img)
-            self.label.configure(image=img)
-            self.label.image = img
+            hash_data = detectQR(self.controller.get_qr_img())
 
             # 받아오지 못한 경우 단순 리턴
             if hash_data is None:
