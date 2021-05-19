@@ -72,12 +72,12 @@ class ProcessPage(tk.Frame):
 
         if not self.locker_state.is_door_open(self.CRRMngKey):
 
-            sqlDict = {'CRRMngKey': self.CRRMngKey,
-                       'USRMngKey': user_key, 'HashKey': hash_value, 'UseStat': 'U'}
-            sql.processDB(dict2Query('LCKLog', sqlDict))
-
             self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
+
+        sqlDict = {'CRRMngKey': self.CRRMngKey,
+                   'USRMngKey': user_key, 'HashKey': hash_value, 'UseStat': 'U'}
+        sql.processDB(dict2Query('LCKLog', sqlDict))
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
