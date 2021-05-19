@@ -63,7 +63,7 @@ class FindPage(tk.Frame):
         try:
 
             # 흑백이미지로 변환하여 qr 디코드
-            hash_data = detectQR(self.controller.get_qr_img())
+            hash_data = detectQR(self.controller.qr_image)
 
             # 받아오지 못한 경우 단순 리턴
             if hash_data is None:

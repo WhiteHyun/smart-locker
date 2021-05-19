@@ -47,6 +47,7 @@ class App(tk.Tk):
         self.mode = COMMERCIAL_MODE
         self.human_sensor = DetectMotion()
         self.camera = cv2.VideoCapture(0)
+        self.qr_image = None
 
         # 캠을 보여줄 label 객체
         self.__label = tk.Label(width=300, height=250)
@@ -78,14 +79,10 @@ class App(tk.Tk):
         self.after(1000, self.__screensaver)
         self.after(1, self.get_img)
 
-    def get_qr_img(self):
-        # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
-        _, img = self.camera.read()
-        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
     def get_img(self):
         # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
         _, img = self.camera.read()
+        self.qr_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = cv2.resize(img, (300, 250))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.flip(img, 1)
