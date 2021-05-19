@@ -181,7 +181,8 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 
     def __listen_item(self, flag=True):
         if (flag and not self.locker_state.has_item(self.CRRMngKey)) or (not flag and self.locker_state.has_item(self.CRRMngKey)):
-            self.escape_has_item = self.canvas.after(1, self.__listen_item)
+            self.escape_has_item = self.canvas.after(
+                1, lambda: self.__listen_item(flag))
         else:
             self.has_item.set(flag)
             if self.escape_has_item:
