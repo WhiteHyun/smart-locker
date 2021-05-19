@@ -40,6 +40,9 @@ class SensorListener:
         self.sync_sensor = self.__set_sensor_number()
 
     def __get_serial_connection(self):
+        '''
+        DB에 저장되어있는 아두이노 정보를 가지고 포트를 사용하여 아두이노 커넥션을 생성하여 반환하고 아두이노번호를 반환
+        '''
         try:
 
             sql = SQL("root", "", "10.80.76.63", "SML")
@@ -90,7 +93,7 @@ class SensorListener:
                                    "LIG": -1, "SSO": -1, "HAL": -1, "VIB": -1}
 
                         dataset["CRRMngKey"] = self.sync_sensor.get(
-                            ardNum + res[-1:])
+                            str(ardNum) + res[-1:])
                     elif res[0] == "F":
                         dataset["FSR"] = res[2:]
                     elif res[0] == "S":

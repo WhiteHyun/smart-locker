@@ -15,7 +15,7 @@ if __name__ == "__main__":
     procs.append(proc1)
     proc1.start()
 
-    while LCKMngKey:
+    while not LCKMngKey:
         try:
             with open("data/information.json") as f:
                 file_read = f.readlines()
