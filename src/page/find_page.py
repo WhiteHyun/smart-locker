@@ -51,7 +51,7 @@ class FindPage(tk.Frame):
                   )
                   ).place(x=20, y=controller.height-120)
 
-        self.after(1, self.__open_door_by_qrcode())
+        self.controller.after(1, self.__open_door_by_qrcode())
 
     def __open_door_by_qrcode(self):
         """
@@ -67,7 +67,7 @@ class FindPage(tk.Frame):
 
             # 받아오지 못한 경우 단순 리턴
             if hash_data is None:
-                self.after(1, self.__open_door_by_qrcode)
+                self.controller.after(1, self.__open_door_by_qrcode)
                 return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
@@ -95,3 +95,7 @@ class FindPage(tk.Frame):
             MessageFrame(self.controller, "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
+
+    def destroy(self) -> None:
+        self.controller.after_cancel(self.escape)
+        super().destroy()
