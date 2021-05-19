@@ -135,7 +135,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
-
+        self.update()
         sql = SQL("root", "", "10.80.76.63", "SML")
 
         if not self.locker_state.is_door_open(self.CRRMngKey):
