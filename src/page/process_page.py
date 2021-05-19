@@ -12,6 +12,9 @@ if __name__ == "__main__" or __name__ == "process_page":
 else:
     from .locker_frame import LockerFrame
 
+RESIDENTIAL_MODE = 1
+COMMERCIAL_MODE = 2
+
 
 class ProcessPage(tk.Frame):
     """
@@ -48,7 +51,8 @@ class ProcessPage(tk.Frame):
             self.after(1, lambda: self.__process_delivery(
                 user_key, kwargs["phone_number"]))
         elif page == "FindPage":
-            self.after(1, lambda: self.__find_delivery(user_key))
+            self.after(1, lambda: self.__find_delivery(
+                user_key, self.controller.mode))
 
     def __process_delivery(self, user_key, phone_number):
         """
@@ -127,10 +131,17 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         # 일반화면으로 이동
         self.controller.show_frame("StartPage", self)
 
-    def __find_delivery(self, user_key):
+    def __find_delivery(self, user_key, mode):
         """
         택배함을 열어 유저가 택배를 가져갈 수 있게 처리해줍니다.
         """
+
+        # 쓰레드화되어야하는 경우 자신을 kill하지 않고 시작 페이지로 이동
+        if mode == COMMERCIAL_MODE:
+            self.controller.show_frame("StartPage")
+
+        sql = SQL("root", "", "10.80.76.63", "SML")
+
         if not self.locker_state.is_door_open(self.CRRMngKey):
             self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
@@ -145,15 +156,8 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
         sleep(2)
-        self.canvas.after(100, self.__listen_door)
-        self.canvas.wait_variable(self.is_door_open)
-        self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
-        self.ratch.execute(self.sync_sensor, "C")
-        sleep(2)
-
-        sql = SQL("root", "", "10.80.76.63", "SML")
-
+        # 물건을 가져갔으면 그 즉시 WAIT로 변경
         sql.processDB(
             f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
         )
@@ -161,11 +165,23 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
                    'USRMngKey': user_key, 'UseStat': 'W'}
         sql.processDB(dict2Query('LCKLog', sqlDict))
 
-        # 완료메시지 표시
-        MessageFrame(self.controller, "완료되었습니다.")
+        self.canvas.after(100, self.__listen_door)
+        self.canvas.wait_variable(self.is_door_open)
+        self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
 
-        # 일반화면으로 이동
-        self.controller.show_frame("StartPage", self)
+        self.ratch.execute(self.sync_sensor, "C")
+        sleep(2)
+
+        if mode == RESIDENTIAL_MODE:
+            # 완료메시지 표시
+            MessageFrame(self.controller, "완료되었습니다.")
+
+            # 일반화면으로 이동
+            self.controller.show_frame("StartPage", self)
+
+        # 쓰레드화 되어있는 상태면 자신 삭제
+        elif mode == COMMERCIAL_MODE:
+            self.destroy()
 
     def __listen_item(self, flag=True):
         if (flag and not self.locker_state.has_item(self.CRRMngKey)) or (not flag and self.locker_state.has_item(self.CRRMngKey)):

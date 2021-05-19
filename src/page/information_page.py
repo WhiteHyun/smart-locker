@@ -19,6 +19,7 @@ DEFAULT_MODE = 0
 VERIFY_MODE = 1
 ADMIN_MODE = 2
 GO_TO_SETTING_MODE = 3
+COMMERCIAL_MODE = 2
 
 
 class InformationPage(tk.Frame):
@@ -209,6 +210,11 @@ class InformationPage(tk.Frame):
                     phone_number=number,
                     verified_number=verified_number)
             else:
+                # 해당 함의 쓰레드가 동작하고 있는 경우 Kill
+                if self.controller.mode == COMMERCIAL_MODE:
+                    for page in self.controller.container.winfo_children():
+                        if page.__class__.__name__ == "ProcessPage" and page.CRRMngKey == self.CRRMngKey:
+                            page.destroy()
 
                 self.controller.show_frame(
                     new_frame="ProcessPage",
