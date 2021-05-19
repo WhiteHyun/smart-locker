@@ -211,7 +211,7 @@ class InformationPage(tk.Frame):
                     verified_number=verified_number)
             else:
                 # 해당 함의 쓰레드가 동작하고 있는 경우 Kill
-                if self.controller.mode == COMMERCIAL_MODE:
+                if self.page == "DeliveryPage" and self.controller.mode == COMMERCIAL_MODE:
                     for page in self.controller.container.winfo_children():
                         if page.__class__.__name__ == "ProcessPage" and page.CRRMngKey == self.CRRMngKey:
                             page.destroy()
