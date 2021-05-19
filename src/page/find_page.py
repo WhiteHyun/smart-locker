@@ -67,7 +67,7 @@ class FindPage(tk.Frame):
 
             # 받아오지 못한 경우 단순 리턴
             if hash_data is None:
-                self.escape = self.label.after(1, self.__open_door_by_qrcode)
+                self.after(1, self.__open_door_by_qrcode)
                 return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
@@ -95,9 +95,3 @@ class FindPage(tk.Frame):
             MessageFrame(self.controller, "존재하지 않는 QR코드입니다.")
         except Exception as e:
             raise e
-
-    def destroy(self) -> None:
-        self.label.after_cancel(self.escape)    # 카메라 실행 중지
-        # self.camera.release()   # 카메라 모듈 사용 해제
-        self.label.destroy()    # 캠을 가지고있는 레이블 삭제
-        super().destroy()
