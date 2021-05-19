@@ -56,13 +56,15 @@ class SettingPage(tk.Frame):
                                      command=lambda: self.set_door_state("O"))
         self.closed_button = SMLButton(master=self.button_group,
                                        border_width=1,
+                                       fg_color="#7C7877",
+                                       hover_color="#7C7877",
                                        width=200,
                                        height=100,
                                        image=closed_img,
                                        command=lambda: self.set_door_state("C"))
 
-        self.open_button.pack(side="left", fill="both", expand=True)
-        self.closed_button.pack(side="right", fill="both", expand=True)
+        self.open_button.pack(side="top", fill="both", expand=True)
+        self.closed_button.pack(side="bottom", fill="both", expand=True)
         self.locker_frame = self.__load_locker(self.mode)
 
         SMLButton(master=self,
@@ -106,15 +108,15 @@ class SettingPage(tk.Frame):
             return
         # 오픈상태로 바꿀예정인가?
         if state == "O":
-            self.open_button.configure_color(fg_color="#1E8449",
-                                             hover_color="#2ECC71")
-            self.closed_button.configure_color(fg_color="#A93226",
-                                               hover_color="#CD6155")
+            self.open_button.configure_color(fg_color="#385ab7",
+                                             hover_color="#496bc9")
+            self.closed_button.configure_color(fg_color="#7C7877",
+                                               hover_color="#7C7877")
         elif state == "C":
-            self.closed_button.configure_color(fg_color="#1E8449",
-                                               hover_color="#2ECC71")
-            self.open_button.configure_color(fg_color="#A93226",
-                                             hover_color="#CD6155")
+            self.closed_button.configure_color(fg_color="#385ab7",
+                                               hover_color="#496bc9")
+            self.open_button.configure_color(fg_color="#7C7877",
+                                             hover_color="#7C7877")
         else:   # dangerous!
             print("!DANGEROUS! PLESASE FIX ME!!")
             return
@@ -165,7 +167,7 @@ class SettingPage(tk.Frame):
             return
         # 강제개폐 설정모드일 경우 문 여닫기버튼 띄워줌
         if mode == LockerFrame.UNLOCK_MODE:
-            self.button_group.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+            self.button_group.place(x=self.controller.width-180, y=380)
         # 고장상태 설정모드일 경우 여닫기 버튼 지워줌
         elif mode == LockerFrame.FIX_MODE:
             self.button_group.place_forget()
