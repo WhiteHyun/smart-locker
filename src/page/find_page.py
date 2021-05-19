@@ -1,6 +1,5 @@
 import os
 import sys
-import cv2
 if __name__:
     sys.path.append(os.path.dirname(
         os.path.abspath(os.path.dirname(__file__))))
@@ -24,7 +23,6 @@ class FindPage(tk.Frame):
         super().__init__(parent)
         controller.sync_to_json()
         self.controller = controller
-        self.camera = cv2.VideoCapture(0)
         # after 함수를 종료시키기 위한 탈출 id
         self.escape = ""
 
@@ -68,18 +66,14 @@ class FindPage(tk.Frame):
         try:
 
             # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
-            ret, img = self.camera.read()
+            ret, img = self.controller.camera.read()
             if not ret:  # 카메라 캡처에 실패할 경우
                 print("camera read failed")
                 raise VideoError
 
             # 흑백이미지로 변환하여 qr 디코드
-            hash_data = detectQR(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
-            img = cv2.resize(img, (300, 250))
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img = cv2.flip(img, 1)
-            img = Image.fromarray(img)
-            img = ImageTk.PhotoImage(img)
+            hash_data = detectQR(self.controller.get_qr_img(img))
+            img = self.controller.get_img(img)
             self.label.configure(image=img)
             self.label.image = img
 
@@ -116,6 +110,6 @@ class FindPage(tk.Frame):
 
     def destroy(self) -> None:
         self.label.after_cancel(self.escape)    # 카메라 실행 중지
-        self.camera.release()   # 카메라 모듈 사용 해제
+        # self.camera.release()   # 카메라 모듈 사용 해제
         self.label.destroy()    # 캠을 가지고있는 레이블 삭제
         super().destroy()

@@ -1,3 +1,4 @@
+import cv2
 if __name__ == "__main__" or __name__ == "ui":
     from utils.util import *
     from page.find_page import FindPage
@@ -45,6 +46,7 @@ class App(tk.Tk):
         self.timer = time()
         self.mode = COMMERCIAL_MODE
         self.human_sensor = DetectMotion()
+        self.camera = cv2.VideoCapture(0)
 
         # 폰트 지정
         self.title_font = tkfont.Font(
@@ -71,6 +73,17 @@ class App(tk.Tk):
         else:
             self.show_frame("AdminPage")
         self.after(1000, self.__screensaver)
+
+    def get_qr_img(self, img):
+        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    def get_img(self, img):
+        img = cv2.resize(img, (300, 250))
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.flip(img, 1)
+        img = Image.fromarray(img)
+        img = ImageTk.PhotoImage(img)
+        return img
 
     def __screensaver(self):
         time_limit = 10  # 300초 = 5분
