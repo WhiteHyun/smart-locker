@@ -103,7 +103,7 @@ class LockerState:
         """
         try:
 
-            threshold = self.clac_threshold(CRRMngKey, ['SSO', 'FSR'])
+            threshold = self.calc_threshold(CRRMngKey, ['SSO', 'FSR'])
 
             if not threshold:
                 # 뭔가 문제가 있어 문턱값 못구함
