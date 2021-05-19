@@ -88,7 +88,7 @@ class ProcessPage(tk.Frame):
         self.canvas.after(100, self.__listen_item)
 
         # 이미 물건이 들어있는 상태라면 바로 넘어감
-        if not self.has_item.get():
+        if not self.locker_state.has_item(self.CRRMngKey):
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
@@ -147,7 +147,7 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         self.canvas.after(100, lambda: self.__listen_item(False))
 
         # 물건이 존재하지 않으면 바로 넘어감
-        if self.has_item.get():
+        if self.locker_state.has_item(self.CRRMngKey):
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
