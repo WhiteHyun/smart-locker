@@ -75,7 +75,7 @@ class LockerState:
         """`CRRMngKey`의 함의 문 개폐 여부를 확인합니다.
         """
         try:
-            threshold = self.clac_threshold(CRRMngKey, ['LIG'])
+            threshold = self.calc_threshold(CRRMngKey, ['LIG'])
 
             if not threshold:
                 # 뭔가 문제가 있어 문턱값 못구함
