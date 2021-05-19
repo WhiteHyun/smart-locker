@@ -124,7 +124,6 @@ class App(tk.Tk):
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()
-            temp_frame.update()
 
             # 기존 프레임 종료
             if frame is not None:
