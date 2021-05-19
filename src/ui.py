@@ -128,7 +128,8 @@ class App(tk.Tk):
             # 기존 프레임 종료
             if frame is not None:
                 frame.destroy()
-            print(self.container.winfo_children())
+            print(list(map(lambda page: page.__class__.__name__,
+                           self.container.winfo_children())))
         except Exception as e:
             raise e
 
