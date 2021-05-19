@@ -213,10 +213,11 @@ class SMLButton(tkinter.Frame):
                                        rely=0.5,
                                        anchor=tkinter.CENTER)
             else:
-                self.canvas.create_text(self.width/2, self.height/2+self.image.height()*0.6, text=self.text, font=self.text_font, fill="#ffffff")
+                self.canvas.create_text(self.width/2, self.height/2+self.image.height(
+                )*0.6, text=self.text, font=self.text_font, fill="#ffffff")
 
-
-                self.image_label.place(relx=0.5, rely=0.4, anchor=tkinter.CENTER)
+                self.image_label.place(
+                    relx=0.5, rely=0.4, anchor=tkinter.CENTER)
 
             # bind events the the button click and hover events also to the image_label
             if self.hover is True:
@@ -266,16 +267,19 @@ class SMLButton(tkinter.Frame):
             self.image_label.configure(bg=self.hover_color)
 
     def on_leave(self, event=0):
-        for part in self.canvas_fg_parts:
-            self.canvas.itemconfig(part, fill=self.fg_color, width=0)
+        try:
+            for part in self.canvas_fg_parts:
+                self.canvas.itemconfig(part, fill=self.fg_color, width=0)
 
-        if self.text_label is not None:
-            # change background color of image_label
-            self.text_label.configure(bg=self.fg_color)
+            if self.text_label is not None:
+                # change background color of image_label
+                self.text_label.configure(bg=self.fg_color)
 
-        if self.image_label is not None:
-            # change background color of image_label
-            self.image_label.configure(bg=self.fg_color)
+            if self.image_label is not None:
+                # change background color of image_label
+                self.image_label.configure(bg=self.fg_color)
+        except Exception as e:
+            print(e)
 
     def clicked(self, event=0):
         if self.function is not None:
