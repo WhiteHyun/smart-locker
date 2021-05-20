@@ -27,7 +27,7 @@ class FindPage(tk.Frame):
         self.camera = cv2.VideoCapture(0)
         # after 함수를 종료시키기 위한 탈출 id
         self.escape = ""
-
+        self.image = None
         previous_arrow_img = ImageTk.PhotoImage(Image.open(
             "../img/previous.png" if __name__ == "__main__" or __name__ == "find_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
@@ -86,6 +86,7 @@ class FindPage(tk.Frame):
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(img)
             self.canvas.itemconfig(self.image_id, image=img)
+            self.image = img
             # self.label.configure(image=img)
             # self.label.image = img
 
