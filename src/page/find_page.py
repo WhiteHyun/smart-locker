@@ -91,7 +91,7 @@ class FindPage(tk.Frame):
 
             # 받아오지 못한 경우 단순 리턴
             if hash_data is None:
-                self.escape = self.label.after(1, self.__open_door_by_qrcode)
+                self.escape = self.canvas.after(1, self.__open_door_by_qrcode)
                 return
 
             sql = SQL("root", "", "10.80.76.63", "SML")
@@ -121,8 +121,8 @@ class FindPage(tk.Frame):
             raise e
 
     def destroy(self) -> None:
-        self.label.after_cancel(self.escape)    # 카메라 실행 중지
+        self.canvas.after_cancel(self.escape)    # 카메라 실행 중지
         if self.camera.isOpened():
             self.camera.release()   # 카메라 모듈 사용 해제
-        self.label.destroy()    # 캠을 가지고있는 레이블 삭제
+        self.canvas.destroy()    # 캠을 가지고있는 레이블 삭제
         super().destroy()
