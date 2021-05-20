@@ -39,7 +39,7 @@ class FindPage(tk.Frame):
         self.text_id = self.canvas.create_text(controller.width/2, controller.height*0.36,
                                                text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
         self.image_id = self.canvas.create_image(
-            (controller.width >> 1)-150, y=10)
+            (controller.width >> 1)-150, 10)
         # 캠을 보여줄 label 객체
         # self.label = tk.Label(width=300, height=250)
         # self.label.place(x=controller.width/2-150, y=10)
