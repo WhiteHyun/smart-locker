@@ -36,11 +36,13 @@ class FindPage(tk.Frame):
                                 height=controller.height, bg=bg)
         self.canvas.pack(fill="both", expand=True)
 
-        self.canvas.create_text(controller.width/2, controller.height*0.36,
-                                text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
+        self.text_id = self.canvas.create_text(controller.width/2, controller.height*0.36,
+                                               text="QR코드를 이용하실 분은 QR코드를 화면에 보여지게 해주세요.", font=controller.large_font)
+        self.image_id = self.canvas.create_image(
+            (controller.width >> 1)-150, y=10)
         # 캠을 보여줄 label 객체
-        self.label = tk.Label(width=300, height=250)
-        self.label.place(x=controller.width/2-150, y=10)
+        # self.label = tk.Label(width=300, height=250)
+        # self.label.place(x=controller.width/2-150, y=10)
 
         LockerFrame(parent=self, controller=controller, page="FindPage", relief="solid").place(
             x=controller.width/2, y=controller.height*0.66, anchor=tk.CENTER)
@@ -68,6 +70,9 @@ class FindPage(tk.Frame):
         try:
 
             # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
+            if not self.camera.isOpened():
+                self.canvas.itemconfig(self.text_id, text="")
+                return
             ret, img = self.camera.read()
             if not ret:  # 카메라 캡처에 실패할 경우
                 print("camera read failed")
@@ -80,8 +85,9 @@ class FindPage(tk.Frame):
             img = cv2.flip(img, 1)
             img = Image.fromarray(img)
             img = ImageTk.PhotoImage(img)
-            self.label.configure(image=img)
-            self.label.image = img
+            self.canvas.itemconfig(self.image_id, image=img)
+            # self.label.configure(image=img)
+            # self.label.image = img
 
             # 받아오지 못한 경우 단순 리턴
             if hash_data is None:
@@ -116,6 +122,7 @@ class FindPage(tk.Frame):
 
     def destroy(self) -> None:
         self.label.after_cancel(self.escape)    # 카메라 실행 중지
-        self.camera.release()   # 카메라 모듈 사용 해제
+        if self.camera.isOpened():
+            self.camera.release()   # 카메라 모듈 사용 해제
         self.label.destroy()    # 캠을 가지고있는 레이블 삭제
         super().destroy()
