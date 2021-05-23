@@ -107,7 +107,7 @@ class LockerFrame(tk.Frame):
                            image=locker_image if json_data["useState"] != self.STATE_KIOSK else kiosk_image,
                            border_width=1,
                            corner_radius=10,
-                           text=locker_number,
+                           text=locker_number if json_data["useState"] != self.STATE_KIOSK else None,
                            text_font=text_font,
                            width=button_size*width,
                            height=button_size*height,
