@@ -66,7 +66,7 @@ class LockerFrame(tk.Frame):
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
         locker_width, locker_height = self.size
-        img_size = 170 - 50*(max(locker_height, locker_width)-1)
+        img_size = 170 - 20*(max(locker_height, locker_width)-1)
         button_size = 250 - 50*(max(locker_width, locker_height)-1)
         text_font = tkfont.Font(
             family="a시월구일1",
