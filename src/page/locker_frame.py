@@ -93,7 +93,9 @@ class LockerFrame(tk.Frame):
             if state == self.STATE_USED and self.page == "FindPage" or state == self.STATE_WAIT and self.page == "DeliveryPage":
                 return lambda CRRMngKey=CRRMngKey: self.controller.show_frame("InformationPage", frame=self.parent, CRRMngKey=CRRMngKey, mode=0, page=self.page)
             elif self.page == "SettingPage":
-                if self.mode == self.FIX_MODE:
+                if state == self.STATE_KIOSK:
+                    return
+                elif self.mode == self.FIX_MODE:
                     return lambda CRRMngKey=CRRMngKey: self.parent.set_locker(CRRMngKey, state, locker_number)
                 elif self.mode == self.UNLOCK_MODE:
                     return lambda CRRMngKey=CRRMngKey: self.parent.force_open_door(CRRMngKey)
@@ -107,7 +109,7 @@ class LockerFrame(tk.Frame):
                            image=locker_image if json_data["useState"] != self.STATE_KIOSK else kiosk_image,
                            border_width=1,
                            corner_radius=10,
-                           text=locker_number if json_data["useState"] != self.STATE_KIOSK else None,
+                           text=locker_number if json_data["useState"] != self.STATE_KIOSK else "",
                            text_font=text_font,
                            width=button_size*width,
                            height=button_size*height,
