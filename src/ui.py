@@ -80,17 +80,22 @@ class App(tk.Tk):
         self.after(1, self.get_img)
 
     def get_img(self):
-        # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
-        _, img = self.camera.read()
-        self.qr_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        img = cv2.resize(img, (300, 250))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.flip(img, 1)
-        img = Image.fromarray(img)
-        img = ImageTk.PhotoImage(img)
-        self.__label.configure(image=img)
-        self.__label.image = img
-        self.after(1, self.get_img)
+        try:
+            # 프레임 받아오기 -> ret: 성공하면 True, 아니면 False, img: 현재 프레임(numpy.ndarray)
+            _, img = self.camera.read()
+            self.qr_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (300, 250))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = cv2.flip(img, 1)
+            img = Image.fromarray(img)
+            img = ImageTk.PhotoImage(img)
+            self.__label.configure(image=img)
+            self.__label.image = img
+            self.after(1, self.get_img)
+        except Exception as e:
+            print("ERRORERRORERRORERRORERRORERRORERRORERRORERRORERROR")
+            print(e)
+            print("ERRORERRORERRORERRORERRORERRORERRORERRORERRORERROR")
 
     def __screensaver(self):
         time_limit = 10  # 300초 = 5분
