@@ -11,6 +11,7 @@ class LockerFrame(tk.Frame):
     STATE_WAIT = "W"
     STATE_USED = "U"
     STATE_BROKEN = "B"
+    STATE_KIOSK = "K"
     DEFAULT_MODE = 0
     FIX_MODE = 1
     UNLOCK_MODE = 2
@@ -26,7 +27,8 @@ class LockerFrame(tk.Frame):
         self.color_dict = {
             f"{self.STATE_WAIT}": ("#A93226", "#CD6155") if self.page == "FindPage" else ("#385ab7", "#496bc9") if self.mode == self.UNLOCK_MODE else ("#1E8449", "#2ECC71"),
             f"{self.STATE_USED}": ("#1E8449", "#2ECC71") if self.page == "FindPage" else ("#385ab7", "#496bc9") if self.mode == self.UNLOCK_MODE else ("#A93226", "#CD6155"),
-            f"{self.STATE_BROKEN}": ("#7C7877", "#7C7877")
+            f"{self.STATE_BROKEN}": ("#7C7877", "#7C7877"),
+            f"{self.STATE_KIOSK}": ("#7C7877", "#7C7877")
         }
         self.button_dict = {}
         self.__show_locker()
@@ -73,6 +75,9 @@ class LockerFrame(tk.Frame):
         locker_image = ImageTk.PhotoImage(Image.open(
             "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
         ).resize((img_size, img_size)))
+        kiosk_image = ImageTk.PhotoImage(Image.open(
+            "../img/kiosk.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/kiosk.png"
+        ).resize((img_size, img_size)))
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
@@ -99,7 +104,7 @@ class LockerFrame(tk.Frame):
         button = SMLButton(master=self,
                            fg_color=self.color_dict[json_data["useState"]][0],
                            hover_color=self.color_dict[json_data["useState"]][1],
-                           image=locker_image,
+                           image=locker_image if json_data["useState"] != self.STATE_KIOSK else kiosk_image,
                            border_width=1,
                            corner_radius=10,
                            text=locker_number,
