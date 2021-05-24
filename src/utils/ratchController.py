@@ -63,10 +63,10 @@ class RatchController(SingletonInstane):
         self.seri[index].write(
             bytes(f'{sync_number[1]}:{order}', encoding='ascii'))
         if order == "O":
-            path = "../../data/opened.wav" if __name__ == "__main__" or __name__ == "ratchController" else "data/opened.png"
+            path = "../../data/opened.wav" if __name__ == "__main__" or __name__ == "ratchController" else "data/opened.wav"
             Sound(path=path).play()
         else:
-            path = "../../data/closed.wav" if __name__ == "__main__" or __name__ == "ratchController" else "data/closed.png"
+            path = "../../data/closed.wav" if __name__ == "__main__" or __name__ == "ratchController" else "data/closed.wav"
             Sound(path=path).play()
 
 
