@@ -11,6 +11,7 @@ class LockerFrame(tk.Frame):
     STATE_WAIT = "W"
     STATE_USED = "U"
     STATE_BROKEN = "B"
+    STATE_KIOSK = "K"
     DEFAULT_MODE = 0
     FIX_MODE = 1
     UNLOCK_MODE = 2
@@ -22,11 +23,12 @@ class LockerFrame(tk.Frame):
         self.controller = controller
         self.page = page
         self.mode = mode
-
+        self.size = None
         self.color_dict = {
             f"{self.STATE_WAIT}": ("#A93226", "#CD6155") if self.page == "FindPage" else ("#385ab7", "#496bc9") if self.mode == self.UNLOCK_MODE else ("#1E8449", "#2ECC71"),
             f"{self.STATE_USED}": ("#1E8449", "#2ECC71") if self.page == "FindPage" else ("#385ab7", "#496bc9") if self.mode == self.UNLOCK_MODE else ("#A93226", "#CD6155"),
-            f"{self.STATE_BROKEN}": ("#7C7877", "#7C7877")
+            f"{self.STATE_BROKEN}": ("#7C7877", "#7C7877"),
+            f"{self.STATE_KIOSK}": ("#7C7877", "#7C7877")
         }
         self.button_dict = {}
         self.__show_locker()
@@ -43,6 +45,8 @@ class LockerFrame(tk.Frame):
                 locker_list = sorted(
                     json_object["CRRInfo"], key=lambda dic: dic["location"]["start"]["row"]
                 )
+                self.size = (json_object["LCKSize"]["width"],
+                             json_object["LCKSize"]["height"])
                 for json_data in locker_list:
                     self.__make_locker_button(json_data)
         except Exception as e:
@@ -61,10 +65,19 @@ class LockerFrame(tk.Frame):
             빨간색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용할 수 없다는 경고창이 발생합니다.
             초록색의 사물(택배)함 버튼이 만들어지며 누를 경우 사용관련 창으로 넘어갑니다.
         """
-
+        locker_width, locker_height = self.size
+        img_size = 170 - 40*(max(locker_height, locker_width)-1)
+        button_size = 250 - 50*(max(locker_width, locker_height)-1)
+        text_font = tkfont.Font(
+            family="a시월구일1",
+            size=20-2*(max(locker_width, locker_height)-1),
+            weight="bold")
         locker_image = ImageTk.PhotoImage(Image.open(
             "../img/lockers.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/lockers.png"
-        ).resize((60, 60)))
+        ).resize((img_size, img_size)))
+        kiosk_image = ImageTk.PhotoImage(Image.open(
+            "../img/kiosk.png" if __name__ == "__main__" or __name__ == "locker_frame" else "src/img/kiosk.png"
+        ).resize((img_size, img_size)))
         location = json_data["location"]
         width = location["width"]
         height = location["height"]
@@ -78,9 +91,11 @@ class LockerFrame(tk.Frame):
             """
             # useState == 'U' when FindPage, useState == 'W' when DeliveryPage
             if state == self.STATE_USED and self.page == "FindPage" or state == self.STATE_WAIT and self.page == "DeliveryPage":
-                return lambda CRRMngKey=CRRMngKey: self.controller.show_frame("InformationPage", frame=self.parent, CRRMngKey=CRRMngKey, page=self.page)
+                return lambda CRRMngKey=CRRMngKey: self.controller.show_frame("InformationPage", frame=self.parent, CRRMngKey=CRRMngKey, mode=0, page=self.page)
             elif self.page == "SettingPage":
-                if self.mode == self.FIX_MODE:
+                if state == self.STATE_KIOSK:
+                    return
+                elif self.mode == self.FIX_MODE:
                     return lambda CRRMngKey=CRRMngKey: self.parent.set_locker(CRRMngKey, state, locker_number)
                 elif self.mode == self.UNLOCK_MODE:
                     return lambda CRRMngKey=CRRMngKey: self.parent.force_open_door(CRRMngKey)
@@ -91,12 +106,13 @@ class LockerFrame(tk.Frame):
         button = SMLButton(master=self,
                            fg_color=self.color_dict[json_data["useState"]][0],
                            hover_color=self.color_dict[json_data["useState"]][1],
-                           image=locker_image,
+                           image=locker_image if json_data["useState"] != self.STATE_KIOSK else kiosk_image,
                            border_width=1,
                            corner_radius=10,
-                           text=locker_number,
-                           width=100*width,
-                           height=100*height,
+                           text=locker_number if json_data["useState"] != self.STATE_KIOSK else "",
+                           text_font=text_font,
+                           width=button_size*width,
+                           height=button_size*height,
                            command=decide_function()
                            )
         button.grid(row=location["start"]["row"], column=location["start"]

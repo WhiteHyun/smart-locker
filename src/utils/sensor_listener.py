@@ -1,4 +1,5 @@
 import serial
+import threading
 if __name__ == "__main__" or __name__ == "sensor_listener":
     from util import dict2Query, connect_arduino
     from sql import SQL
@@ -22,16 +23,10 @@ class SensorListener:
         아두이노 번호(arduino_number)와 센서묶음셋 번호를 합친 문자열
     """
 
-    def __init__(self, arduino_num, port, LCKMngKey):
+    def __init__(self, LCKMngKey):
         """
         Parameters
         ----------
-        arduino_num : int
-            부착된 아두이노의 번호
-
-        port : str
-            연결된 포트
-
         LCKMngKey : str
             사물함 관리번호
 
@@ -41,9 +36,28 @@ class SensorListener:
         """
         self.sql = SQL("root", "", "10.80.76.63", "SML")
         self.LCKMngKey = LCKMngKey
-        self.seri = connect_arduino(f"{port}{arduino_num}")
-        self.arduino_number = str(arduino_num)
+        self.seri, self.arduino_number = self.__get_serial_connection()
         self.sync_sensor = self.__set_sensor_number()
+
+    def __get_serial_connection(self):
+        '''
+        DB에 저장되어있는 아두이노 정보를 가지고 포트를 사용하여 아두이노 커넥션을 생성하여 반환하고 아두이노번호를 반환
+        '''
+        try:
+
+            sql = SQL("root", "", "10.80.76.63", "SML")
+            result = sql.processDB(
+                f"SELECT Port, ARDNum FROM ARDInfo WHERE LCKMngKey='{self.LCKMngKey}' AND ARDKind='S' ORDER BY ARDNum;")
+
+            seri = []
+            ardNum = []
+            for portDict in result:
+                seri.append(connect_arduino(f"/dev/{portDict['Port']}"))
+                ardNum.append(portDict['ARDNum'])
+
+            return seri, ardNum
+        except Exception as e:
+            print(e)
 
     def __set_sensor_number(self):
         """
@@ -51,21 +65,21 @@ class SensorListener:
         """
         sync_sensor = dict()
         sql_data = self.sql.processDB(
-            f"SELECT CRRMngKey, SyncSensor FROM CRRInfo WHERE LCKMngKey LIKE '{self.LCKMngKey}%'")
+            f"SELECT CRRMngKey, SyncSensor FROM CRRInfo WHERE State = 'N' AND LCKMngKey = '{self.LCKMngKey}'")
         for dataset in sql_data:
             if dataset["SyncSensor"] is not None:
                 sync_sensor[dataset["SyncSensor"]] = dataset["CRRMngKey"]
         return sync_sensor
 
-    def listen(self):
+    def __listen_sensor(self, seri, ardNum):
         """각 함들의 센서들의 듣는(Listening) 값을 DB에 저장합니다.
         """
         dataset = {"CRRMngKey": None, "FSR": -1,
                    "LIG": -1, "SSO": -1, "HAL": -1, "VIB": -1}
         while True:
-            if self.seri.readable():
+            if seri.readable():
                 try:
-                    res = self.seri.readline().decode()
+                    res = seri.readline().decode()
                     res = res[:-2]
                     if not res:
                         continue
@@ -78,7 +92,8 @@ class SensorListener:
                         dataset = {"CRRMngKey": None, "FSR": -1,
                                    "LIG": -1, "SSO": -1, "HAL": -1, "VIB": -1}
 
-                        dataset["CRRMngKey"] = self.sync_sensor[self.arduino_number + res[-1:]]
+                        dataset["CRRMngKey"] = self.sync_sensor.get(
+                            str(ardNum) + res[-1:])
                     elif res[0] == "F":
                         dataset["FSR"] = res[2:]
                     elif res[0] == "S":
@@ -92,6 +107,11 @@ class SensorListener:
                 except Exception as e:
                     print(f'sensor exception : {e}')
 
+    def listen(self):
+        for i in range(len(self.seri)):
+            t = threading.Thread(target=self.__listen_sensor, args=(
+                self.seri[i], self.arduino_number[i]))
+            t.start()
 
 # test = sensorListener(0,"COM6","H001234")
 

@@ -7,6 +7,7 @@ if __name__ == "__main__" or __name__ == "ui":
     from page.process_page import ProcessPage
     from page.admin_page import AdminPage
     from page.setting_page import SettingPage
+    from page.screensaver_page import ScreenSaverPage
 
 else:
     from .utils.util import *
@@ -17,11 +18,13 @@ else:
     from .page.process_page import ProcessPage
     from .page.admin_page import AdminPage
     from .page.setting_page import SettingPage
+    from .page.screensaver_page import ScreenSaverPage
 
 
 class App(tk.Tk):
 
     def __init__(self, *args, **kwargs):
+        from utils.rasp_sensor import DetectMotion
         super().__init__(*args, **kwargs)
 
         # 화면 설정
@@ -36,10 +39,14 @@ class App(tk.Tk):
         self.container.grid_columnconfigure(0, weight=1)
         self.width = self.container.winfo_screenwidth()
         self.height = self.container.winfo_screenheight()
+        self.timer = time()
+        self.human_sensor = DetectMotion()
 
         # 폰트 지정
         self.title_font = tkfont.Font(
             family="a시월구일1", size=self.width*self.height//22000, weight="bold")
+        self.subtitle_font = tkfont.Font(
+            family="a시월구일1", size=self.width*self.height//25000, weight="bold")
         self.medium_font = tkfont.Font(
             family='a시월구일1', size=self.width*self.height//98000, weight="bold")
         self.xlarge_font = tkfont.Font(
@@ -49,7 +56,7 @@ class App(tk.Tk):
 
         # 모든 프레임들을 가지는 변수
         self.pages = {}
-        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage, SettingPage):
+        for F in (StartPage, DeliveryPage, FindPage, InformationPage, ProcessPage, AdminPage, SettingPage, ScreenSaverPage):
             page_name = F.__name__
             self.pages[page_name] = F
 
@@ -59,6 +66,26 @@ class App(tk.Tk):
             self.show_frame("StartPage")
         else:
             self.show_frame("AdminPage")
+        self.after(1000, self.__screensaver)
+
+    def __screensaver(self):
+        time_limit = 10  # 300초 = 5분
+        if self.human_sensor.is_human_coming():
+            self.timer = time()
+            self.after(1000, self.__screensaver)
+            return
+        if time() - self.timer < time_limit:
+            self.after(1000, self.__screensaver)
+            return
+
+        self.show_frame("ScreenSaverPage")
+        page_list = self.container.winfo_children()
+        page_list[0].wait_window(page_list[-1])
+        self.timer = time()
+        self.after(1000, self.__screensaver)
+
+    def set_timer(self, event):
+        self.timer = time()
 
     def show_frame(self, new_frame, frame=None, parent=None, *args, **kwargs):
         """
@@ -75,6 +102,8 @@ class App(tk.Tk):
             temp_frame = self.pages[new_frame](
                 parent=parent if parent is not None else self.container, controller=self, bg="white", *args, **kwargs
             )
+            if new_frame != ScreenSaverPage.__name__:
+                temp_frame.canvas.bind("<Button-1>", self.set_timer)
 
             temp_frame.grid(row=0, column=0, sticky="nsew")
             temp_frame.tkraise()

@@ -213,20 +213,10 @@ class SMLButton(tkinter.Frame):
                                        rely=0.5,
                                        anchor=tkinter.CENTER)
             else:
+                self.canvas.create_text(self.width/2, self.height/2+self.image.height()*0.6, text=self.text, font=self.text_font, fill="#ffffff")
 
-                self.text_label = tkinter.Label(master=self,
-                                                text=self.text,
-                                                font=self.text_font,
-                                                bg=self.fg_color,
-                                                fg=self.text_color)
 
-                self.text_label.place(
-                    x=int(self.width) >> 1, y=(int(self.height) >> 1)+self.image.height()*0.6, anchor=tkinter.CENTER)
-
-                self.image_label.place(x=int(self.width) >> 1,
-                                       y=(int(self.height) >> 1) -
-                                       self.image.height()*0.2,
-                                       anchor=tkinter.CENTER)
+                self.image_label.place(relx=0.5, rely=0.4, anchor=tkinter.CENTER)
 
             # bind events the the button click and hover events also to the image_label
             if self.hover is True:

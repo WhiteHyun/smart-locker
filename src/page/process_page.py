@@ -56,7 +56,7 @@ class ProcessPage(tk.Frame):
         그리고 데이터베이스에 해당 내용을 저장합니다.
         """
         from datetime import datetime
-        from utils.sms import SMS
+        from utils.sms import Messenger
         from utils.encrypt import encrypt
         from utils.qrcodes import generateQR
 
@@ -68,19 +68,27 @@ class ProcessPage(tk.Frame):
             MessageFrame(self.controller, "qr코드 생성에 실패하였습니다.")
             return
 
+        sql = SQL("root", "", "10.80.76.63", "SML")
+
         if not self.locker_state.is_door_open(self.CRRMngKey):
+
             self.ratch.execute(self.sync_sensor, "O")
             sleep(2)
+
+        sqlDict = {'CRRMngKey': self.CRRMngKey,
+                   'USRMngKey': user_key, 'HashKey': hash_value, 'UseStat': 'U'}
+        sql.processDB(dict2Query('LCKLog', sqlDict))
 
         self.canvas.itemconfig(self.text_id, text="문이 열렸습니다. 물건을 넣어주세요")
 
         self.canvas.after(100, self.__listen_item)
 
         # 이미 물건이 들어있는 상태라면 바로 넘어감
-        if not self.has_item.get():
+        if not self.locker_state.has_item(self.CRRMngKey):
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="물건을 인지했습니다. 문을 닫아주세요.")
+        sleep(2)
 
         self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
@@ -89,8 +97,6 @@ class ProcessPage(tk.Frame):
         self.ratch.execute(self.sync_sensor, "C")
         sleep(2)
 
-#         # 여기서부터 데이터베이스 저장 시작
-        sql = SQL("root", "", "10.80.76.63", "SML")
 
 #         # 저장하려는 함의 정보가 존재할 때
         if sql.processDB(f"SELECT * FROM LCKStat WHERE CRRMngKey='{self.CRRMngKey}';"):
@@ -102,7 +108,7 @@ class ProcessPage(tk.Frame):
                 f"INSERT INTO LCKStat(CRRMngkey, USRMngKey, AddDt, HashKey, UseStat) values('{self.CRRMngKey}', '{user_key}', '{time}', '{hash_value}', '{LockerFrame.STATE_USED}');"
             )
 
-        nSMS = SMS(
+        messenger = Messenger.MMS(
             to=phone_number,
             text="""
 QR코드가 발급되었습니다!!
@@ -110,8 +116,8 @@ QR코드가 발급되었습니다!!
 QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 항상 저희 택배(사물)함을 이용해주셔서 감사합니다. 🙏
                 """,
-            imagePath=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
-        if not nSMS.sendMessage():
+            image_path=f"../data/{hash_value}.png" if __name__ == "__main__" or __name__ == "ui" else f"data/{hash_value}.png")
+        if not messenger.send_message():
             MessageFrame(self.controller, "문자전송에 실패 하였습니다.")
             return
 
@@ -134,11 +140,11 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         self.canvas.after(100, lambda: self.__listen_item(False))
 
         # 물건이 존재하지 않으면 바로 넘어감
-        if self.has_item.get():
+        if self.locker_state.has_item(self.CRRMngKey):
             self.canvas.wait_variable(self.has_item)
 
         self.canvas.itemconfig(self.text_id, text="사용이 완료되었습니다. 문을 닫아주세요.")
-
+        sleep(2)
         self.canvas.after(100, self.__listen_door)
         self.canvas.wait_variable(self.is_door_open)
         self.canvas.itemconfig(self.text_id, text="문을 닫고있습니다.")
@@ -151,6 +157,10 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
         sql.processDB(
             f"UPDATE LCKStat SET UseStat='{LockerFrame.STATE_WAIT}' WHERE USRMngKey='{user_key}';"
         )
+        sqlDict = {'CRRMngKey': self.CRRMngKey,
+                   'USRMngKey': user_key, 'UseStat': 'W'}
+        sql.processDB(dict2Query('LCKLog', sqlDict))
+
         # 완료메시지 표시
         MessageFrame(self.controller, "완료되었습니다.")
 
@@ -159,7 +169,8 @@ QR코드를 카메라에 보여주게 되면 간편하게 열립니다.
 
     def __listen_item(self, flag=True):
         if (flag and not self.locker_state.has_item(self.CRRMngKey)) or (not flag and self.locker_state.has_item(self.CRRMngKey)):
-            self.escape_has_item = self.canvas.after(1, self.__listen_item)
+            self.escape_has_item = self.canvas.after(
+                1, lambda: self.__listen_item(flag))
         else:
             self.has_item.set(flag)
             if self.escape_has_item:

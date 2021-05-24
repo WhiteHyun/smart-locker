@@ -26,15 +26,15 @@ class DeliveryPage(tk.Frame):
             "../img/previous.png" if __name__ == "__main__" or __name__ == "delivery_page" else "src/img/previous.png"
         ).resize((int(100/1.618), int(100/1.618))))
 
-        canvas = tk.Canvas(self, width=controller.width,
+        self.canvas = tk.Canvas(self, width=controller.width,
                            height=controller.height, bg=bg)
-        canvas.pack(fill="both", expand=True)
+        self.canvas.pack(fill="both", expand=True)
 
-        canvas.create_text(controller.width/2, controller.height/7,
+        self.canvas.create_text(controller.width/2, controller.height/7,
                            text="택배 넣을 함을 선택해주세요.", font=controller.title_font, fill="#385ab7")
 
         LockerFrame(
-            parent=self, controller=controller, page="DeliveryPage", relief="solid").place(x=controller.width/2, y=controller.height/2, anchor=tk.CENTER)
+            parent=self, controller=controller, page="DeliveryPage", relief="solid").place(relx=0.5, rely=0.55, anchor=tk.CENTER)
 
         SMLButton(master=self,
                   text="이전으로",
