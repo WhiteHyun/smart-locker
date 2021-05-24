@@ -27,22 +27,14 @@
   True
   ```
 
-  단, 어떠한 이유로 인한 오류 발생 시 에러를 일으킵니다.
+  단, 어떠한 이유로 인한 오류 발생 시 False를 리턴합니다.
 
   ```python
   # 빈 문자열을 넣는 경우
   >>> generateQR("")
 
 
-  ValueError
-  ```
-
-  ```python
-  # 그 외 코드 실행중 오류가 발생한 경우
-  >>> generateQR("test code")
-
-
-  QRCode 생성 중 오류가 발생하였습니다. QRCodeError
+  False
   ```
 
 ### QR인식
@@ -52,25 +44,25 @@
 
   ```python
   >>> detectQR()
+  "Hello World!"
 
-
-  [("Hello World!", "QRCODE"), ("https://github.com/WhiteHyun", "QRCODE")]
+  >>> detectQR()
+  "https://github.com/WhiteHyun"
   ```
 
-  물론 카메라 오류가 발생할 경우 에러를 출력합니다.
+  물론 카메라 오류가 발생할 경우 None을 리턴합니다.
 
   ```python
   # 에러가 발생했을 경우
   >>> detectQR()
-
-
-  VideoError
+  None
   ```
 
 ### 선택구현사항
 
 - QRCode에 이미지를 넣어 사물함 QR코드라는 것을 인식하게 만들기
   - 손실률이 발생하지만 충분히 복구 가능하기 때문에 구현 가능성 ⬆
+    > 현재 기능 추가 된 상태임
 
 ## 해시
 
@@ -78,24 +70,8 @@
 
   ```python
   >>> encrypt('a')
-
-
   "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
   ```
-
-## 통신
-
-- `socket` 라이브러리를 사용하였으며 `TCP`로 통신합니다.
-- 통신 포트는 `12000` 이 기본값입니다.
-
-```python
-
->>> network.receiveDataToClient()
-"The server is ready to receive"
-
->>> network.sendDataToServer("a")
-"Received from (127.0.0.1), Message: 'a'"
-```
 
 ## SQL
 
@@ -103,52 +79,11 @@
 - 연결할 DB와 상호작용하기위한 `cursor` 객체를 리턴합니다.
 
 ```python
->>> cursor, conn = connect_sql("admin", "1234", "127.0.0.1", "testdb")
->>> print(cursor, conn)
+>>> sql = SQL("admin", "1234", "127.0.0.1", "testdb")
+>>> print(sql.__cursor, sql.__conn)
 
 
 <pymysql.cursors.DictCursor object at 0x01C8E598> <pymysql.connections.Connection object at 0x01C8E658>
-
-```
-
-## 동작 방식
-
-### Open Locker
-
-```mermaid
-
-sequenceDiagram
-  participant User
-  participant Locker(Arduino)
-  participant Rasp
-  participant Server
-  User->>Rasp: Showing QRCode
-  Rasp->>Server: SQL Query Command
-  Server->>Rasp: Result value
-  Rasp->>Locker(Arduino): Open
-
-```
-
-### Create QRCode
-
-```mermaid
-
-sequenceDiagram
-  participant User
-  participant Rasp
-  participant Server
-  User->>Rasp: Send LockNo + UserID
-  Rasp->>Rasp: Generate hash value from LockNo + UserID
-  alt old
-  Rasp->>Server: SQL Query Command to store hash
-  Server->>Rasp: Result value (True)
-  Rasp->>User: Send QRcode based on hash value
-  else new
-  Rasp->>Server: SQL Query Command to store hash
-  Server->>Server: Decode hash and store values to DB
-  Server->>User: Send QRCode
-  end
-
 
 ```
 
@@ -157,7 +92,5 @@ sequenceDiagram
 - [Generate QR code image with Python, Pillow, qrcode | note.nkmk.me](https://note.nkmk.me/en/python-pillow-qrcode/)
 
 - [해시(hash)란?](https://medium.com/@yeon22/crypto-%ED%95%B4%EC%8B%9C-hash-%EB%9E%80-6962be197523)
-
-- [소켓 프로그래밍](https://recipes4dev.tistory.com/153)
 
 - [pymysql 모듈 이해 및 실습](https://www.fun-coding.org/mysql_basic6.html)
