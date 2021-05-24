@@ -3,7 +3,7 @@ import pygame
 
 
 class Sound:
-    def __init__(self, path='test.wav') -> None:
+    def __init__(self, path) -> None:
         pygame.mixer.init()
         self.s = pygame.mixer.Sound(path)
 

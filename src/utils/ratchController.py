@@ -1,9 +1,11 @@
 import serial
 if __name__ == "__main__" or __name__ == "ratchController":
     from util import connect_arduino
+    from sound import Sound
     from sql import SQL
 else:
     from .util import connect_arduino
+    from .sound import Sound
     from .sql import SQL
 
 
@@ -60,6 +62,12 @@ class RatchController(SingletonInstane):
         index = int(sync_number[0])
         self.seri[index].write(
             bytes(f'{sync_number[1]}:{order}', encoding='ascii'))
+        if order == "O":
+            path = "../../data/opened.wav" if __name__ == "__main__" or __name__ == "ratchController" else "data/opened.wav"
+            Sound(path=path).play()
+        else:
+            path = "../../data/closed.wav" if __name__ == "__main__" or __name__ == "ratchController" else "data/closed.wav"
+            Sound(path=path).play()
 
 
 if __name__ == "__main__":
