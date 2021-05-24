@@ -209,7 +209,6 @@ class InformationPage(tk.Frame):
                     phone_number=number,
                     verified_number=verified_number)
             else:
-
                 self.controller.show_frame(
                     new_frame="ProcessPage",
                     frame=self,
@@ -217,6 +216,7 @@ class InformationPage(tk.Frame):
                     page=self.page,
                     USRMngKey=code,
                     phone_number=number)
+
         # 실패메시지 표시
         else:
             if self.mode == VERIFY_MODE:
