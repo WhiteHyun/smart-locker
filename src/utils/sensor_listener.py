@@ -1,5 +1,5 @@
 import serial
-import threading
+from multiprocessing import *
 if __name__ == "__main__" or __name__ == "sensor_listener":
     from util import dict2Query, connect_arduino
     from sql import SQL
@@ -109,7 +109,7 @@ class SensorListener:
 
     def listen(self):
         for i in range(len(self.seri)):
-            t = threading.Thread(target=self.__listen_sensor, args=(
+            t = Process(target=self.__listen_sensor, args=(
                 self.seri[i], self.arduino_number[i]))
             t.start()
 
